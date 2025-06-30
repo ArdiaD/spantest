@@ -28,10 +28,7 @@
 #' residual-based oracle approximations that remain valid when K increases with T.
 #'
 #' @references
-#' Carlstein, E. (1986). "The Use of Subseries Values for Estimating the Variance of a General Statistic from a Stationary Sequence." \emph{Annals of Statistics}, 14(3), 1171–1179.
-#' Liu, Y., & Xie, J. (2020). "Cauchy Combination Test: A Powerful Test With Analytic p-Value Calculation Under Arbitrary Dependency Structures." \emph{JASA}, 115(529), 393–402.
-#' Chernozhukov, V., et al. (2021). "High-Dimensional CLTs, Causal Inference, and Robust Hypothesis Testing." \emph{Annals of Statistics}.
-#' Gungor, S., & Luger, R. (2016). "A New Test of Mean–Variance Spanning." \emph{Econometric Reviews}, 35(6), 1146–1171.
+#' Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}
 #'
 #' @keywords internal
 #'
@@ -177,8 +174,7 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 #' However, computation time increases with sample size and number of simulations.
 #'
 #' @references
-#' Ardia, D., & Sessinou, M. (2025). "High-Dimensional Spanning Tests Using Residual-Based Subseries Methods." \emph{Working paper}.\cr
-#' Liu, Y., & Xie, J. (2020). "Cauchy Combination Test: A Powerful Test With Analytic p-Value Calculation Under Arbitrary Dependency Structures." \emph{JASA}, 115(529), 393–402.
+#' Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}.
 #'
 #' @export
 #'

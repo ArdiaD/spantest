@@ -39,6 +39,6 @@ result$H0    # Null hypothesis tested
 
 }
 \references{
-Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{Journal of Finance}, 42(4), 873–888. \cr
+Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{The Journal of Finance}, 42(4), 873–888. \cr
 Kan, R., & Zhou, G. (2012). "Tests of Mean-Variance Spanning." \emph{Annals of Economics and Finance}, 13(1), 145–193.
 }

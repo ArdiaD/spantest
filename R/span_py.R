@@ -23,8 +23,8 @@
 #' the benchmark assets fully explain the expected returns of the test assets.
 #'
 #' @references
-#' Pesaran, M. H., & Yamagata, T. (2023). "On Testing Cross-Sectional Dependence of the Intercepts."
-#' \emph{Working Paper}.
+#' Pesaran, M. H., & Yamagata, T. (2023). "Testing for alpha in linear factor pricing models with a large number of securities."
+#' \emph{Journal of Financial Econometrics}, 22(2), 407-460.
 #'
 #' @examples
 #' set.seed(123)

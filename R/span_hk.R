@@ -15,7 +15,7 @@
 #' }
 #'
 #' @references
-#' Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{Journal of Finance}, 42(4), 873–888.
+#' Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{The Journal of Finance}, 42(4), 873–888.
 #'
 #' @examples
 #' set.seed(123)

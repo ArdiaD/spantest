@@ -35,8 +35,8 @@
 #' conditional heteroskedasticity and autocorrelation without restrictive distributional assumptions.
 #'
 #' @references
-#' Gungor, S., & Luger, R. (2016). "The Role of the Investment Horizon in Optimal Portfolio Selection."
-#' \emph{Journal of Financial and Quantitative Analysis}, 51(4), 1219–1244.
+#' Gungor, S., & Luger, R. (2016). "Multivariate Tests of Mean-Variance Efficiency and Spanning With a Large Number of Assets and Time-Varying Covariances."
+#' \emph{Journal of Business & Economic Statistics}, 34(2), 161-175.
 #'
 #' @examples
 #' set.seed(123)

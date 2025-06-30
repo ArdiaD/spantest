@@ -59,6 +59,5 @@ test  <- matrix(rnorm(200), nrow = 100, ncol = 2)  # Test assets
 span_as(bench, test)
 }
 \references{
-Ardia, D., & Sessinou, M. (2025). "High-Dimensional Spanning Tests Using Residual-Based Subseries Methods." \emph{Working paper}.\cr
-Liu, Y., & Xie, J. (2020). "Cauchy Combination Test: A Powerful Test With Analytic p-Value Calculation Under Arbitrary Dependency Structures." \emph{JASA}, 115(529), 393–402.
+Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}.\cr
 }

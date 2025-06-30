@@ -205,7 +205,7 @@ realistic market conditions where classical methods may lack power or
 suffer from size distortions.
 
 In addition to classical tests such as GRS and PY, the recent work by
-Ardia and Sessinou (2025) (AS) introduces a novel high-dimensional
+@ArdiaSessinou2025 (AS) introduces a novel high-dimensional
 mean-variance spanning test based on a subseries Cauchy Combination Test
 (SCT) methodology. This approach extends mean-variance spanning tests to
 settings with many benchmark and test assets where traditional methods
@@ -270,7 +270,7 @@ spanning is due to risk reduction potential even if no significant alpha
 is found.
 
 As discussed in the previous section on maximum Sharpe ratio spanning
-tests, Ardia and Sessinou (2025) develop a unified high-dimensional
+tests, @ArdiaSessinou2025 develop a unified high-dimensional
 testing framework based on the SCT. This framework also applies
 naturally to variance spanning hypotheses, assessing whether the
 inclusion of new assets can significantly reduce the global minimum
@@ -361,18 +361,18 @@ tests_df <- data.frame(
   Reference = c(
     "@HubermanKandel1987",
     "@GungorLuger2016",
-    "To be published",
+    "@ArdiaSessinou2025",
     "",
     "@GungorLuger2016",
     "@GRS1989",
     "@KanZhou2012",
     "@BrittenJones1999",
     "@PesaranYamagata2012",
-    "To be published",
+    "@ArdiaSessinou2025",
     "",
     "@KempfMemmel2006",
     "@KanZhou2012",
-    "To be published"
+    "@ArdiaSessinou2025"
   ),
   Hypothesis = c(
     "$\\alpha = 0~\\&~ \\delta = 0$",

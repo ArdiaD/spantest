@@ -21,7 +21,7 @@
 #'
 #' @references
 #' Britten-Jones, M. (1999). "The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights."
-#' \emph{Journal of Finance}, 54(2), 655–671.
+#' \emph{The Journal of Finance}, 54(2), 655–671.
 #'
 #' @examples
 #' set.seed(321)
