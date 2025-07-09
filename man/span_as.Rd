@@ -59,5 +59,5 @@ test  <- matrix(rnorm(200), nrow = 100, ncol = 2)  # Test assets
 span_as(bench, test)
 }
 \references{
-Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}.\cr
+Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}.
 }

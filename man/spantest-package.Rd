@@ -13,7 +13,7 @@ Import functions from other packages
 
 Authors:
 \itemize{
-  \item David Ardia \email{david.ardia@hec.ca}
+  \item David Ardia \email{david.ardia.ch@gmail.com}
 }
 
 }
