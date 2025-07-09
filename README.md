@@ -7,7 +7,7 @@
 Please cite the package in publications!\
 By using `spantest` you agree to the following rules:
 
--   You must cite Ardia and Sessinou (2025) when using the residual-based subseries spanning tests.
+-   You must cite [Ardia and Sessinou (2025)](https://arxiv.org/pdf/2403.17127) when using the residual-based subseries spanning tests.
 -   You should cite the classical spanning test references implemented in the package where applicable.
 -   You assume all risk for the use of `spantest`.
 
