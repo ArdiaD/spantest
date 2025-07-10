@@ -1,23 +1,35 @@
 ---
-title: "Spanning Tests with the spantest Package"
+title: "Spantest: An R Package for Mean-Variance Spanning Tests in Portfolio Analysis"
+date: "2025-07-09"
+abstract: >
+  Implements a comprehensive suite of portfolio spanning tests, including classical methods by Huberman and Kandel (1987), Gibbons, Ross, and Shanken (1989), Kempf and Memmel (2006), Pesaran and Yamagata (2023), and Gungor and Luger (2016), alongside the recent residual-based subseries tests developed by Ardia and Sessinou (2025). Supports both asset-level and global hypothesis testing with the Cauchy Combination Test (CCT) for robust inference under serial dependence, heteroskedasticity, and high-dimensional regimes where the number of benchmark assets is less than the number of observations.
+draft: true
+author:
+  - name: Benjamin Seguin
+    affiliation: HEC Montreal
+    address:
+      - Department of Decision Science
+      - Montreal, Canada
+    email: benjamin.seguin@outlook.fr
+  - name: David Ardia
+    affiliation: HEC Montreal
+    address:
+      - Department of Decision Science
+      - Montreal, Canada
+    email: david.ardia.ch@gmail.com
+type: package
 output:
-  rmarkdown::html_vignette:
-    toc: true
-    toc_depth: 2
-bibliography: "references.bib"
-# csl: apa.csl  # optional: controls citation style
-vignette: >
-  %\VignetteIndexEntry{Spanning Tests with the spantest Package}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
-  markdown: 
+  rjtools::rjournal_article:
+    self_contained: yes
+    toc: no
+    citation_package: natbib
+bibliography: myvignette.bib
+editor_options:
+  markdown:
     wrap: 72
 ---
 
-# Mean-Variance Spanning Tests in Portfolio Analysis: The spantest Package
-
-## Introduction
+# Introduction
 
 *Mean-variance spanning* (MVS) refers to the hypothesis that a given set
 of “benchmark” assets already spans the efficient frontier achievable by
@@ -52,7 +64,7 @@ volatility [@GungorLuger2016].
 The `spantest` package brings together these developments, implementing
 a comprehensive set of mean-variance spanning tests from the literature.
 
-## Theoretical Framework
+# Theoretical framework
 
 Consider a benchmark set of $K$ asset returns (e.g., an existing
 portfolio or set of portfolios) and a test set of $N$ additional asset
@@ -79,7 +91,7 @@ where $\mathbb{E}[\varepsilon_{j,t}] = 0$.
 If a risk-free asset is available (or returns are measured in excess of
 the risk-free rate), mean-variance spanning is equivalent to all
 intercepts being zero, $\alpha_j = 0$ for each test asset
-[@PesaranYamagata2012].
+[@PesaranYamagata2023].
 
 This hypothesis is formulated as:
 
@@ -141,12 +153,7 @@ or $\chi^2$-statistics under $H_0$), differ in how they handle finite
 sample issues, large-dimensional cases, or general distributional
 assumptions (e.g., non-normal returns).
 
-## Types of Spanning Tests and Null Hypotheses
-
-Mean-variance spanning tests can be categorized by the aspect of the
-hypothesis they target:
-
-### Maximum Sharpe Ratio Spanning Test (Mean Efficiency)
+## Maximum Sharpe Ratio Spanning Test (Mean Efficiency)
 
 Maximum Sharpe ratio spanning tests examine whether adding assets yields
 any improvement in expected returns for a given level of risk. They test
@@ -166,7 +173,7 @@ this test with the `span_grs()` function.
 A limitation of the GRS test is that it assumes a moderate number of
 assets and i.i.d. normally distributed returns. For large cross-sections
 of assets, the test can suffer from size distortions or low power.
-@PesaranYamagata2012 address this by proposing two asymptotic $Z$-tests
+@PesaranYamagata2023 address this by proposing two asymptotic $Z$-tests
 for alpha spanning in panels with $N$ large relative to $T$. Their first
 test (sometimes denoted $J_1$) is asymptotically standard normal as
 $N \to \infty$ (with $T$ fixed) under Gaussian errors. Even when the
@@ -227,7 +234,7 @@ test via the `span_as()` function, providing a practical and
 computationally efficient tool for researchers and practitioners
 assessing portfolio efficiency in large asset universes.
 
-### Variance Spanning Tests (Minimum-Variance Efficiency)
+## Variance Spanning Tests (Minimum-Variance Efficiency)
 
 Variance-spanning tests focus on whether adding new assets can achieve a
 lower global minimum variance. The null hypothesis is that the
@@ -270,20 +277,19 @@ spanning is due to risk reduction potential even if no significant alpha
 is found.
 
 As discussed in the previous section on maximum Sharpe ratio spanning
-tests, @ArdiaSessinou2025 develop a unified high-dimensional
-testing framework based on the SCT. This framework also applies
-naturally to variance spanning hypotheses, assessing whether the
-inclusion of new assets can significantly reduce the global minimum
-variance beyond sampling error and estimation uncertainty. By leveraging
-residual-based subseries p-value aggregation, their SCT-based variance
-spanning test maintains correct size and power in high-dimensional,
-heteroskedastic, and dependent data environments where traditional
-variance spanning tests (e.g., KM or BJ) face limitations. The
-`span_as()` function in the `spantest` package implements this test,
-providing a powerful and robust tool to evaluate minimum-variance
-efficiency in large asset universes.
+tests, @ArdiaSessinou2025 develop a unified high-dimensional testing
+framework based on the SCT. This framework also applies naturally to
+variance spanning hypotheses, assessing whether the inclusion of new
+assets can significantly reduce the global minimum variance beyond
+sampling error and estimation uncertainty. By leveraging residual-based
+subseries p-value aggregation, their SCT-based variance spanning test
+maintains correct size and power in high-dimensional, heteroskedastic,
+and dependent data environments where traditional variance spanning
+tests (e.g., KM or BJ) face limitations. The `span_as()` function in the
+`spantest` package implements this test, providing a powerful and robust
+tool to evaluate minimum-variance efficiency in large asset universes.
 
-### Joint Mean-Variance Spanning Tests
+## Joint Mean-Variance Spanning Tests
 
 Joint tests consider the full mean-variance spanning hypothesis, testing
 all conditions simultaneously. These tests will reject the null if
@@ -337,27 +343,20 @@ In summary, the `spantest` package provides a suite of functions
 covering all the above categories of tests. Table 1 summarizes the
 tests, their null hypotheses, their restrictions and their references.
 
----
-title: "Spanning Tests Summary"
-output:
-  bookdown::html_document2: default
-  bookdown::pdf_document2: default
-bibliography: references.bib
-link-citations: yes
----
-
-# Summary of Spanning Tests {#sec:spanning_tests}
+## Summary of Spanning Tests {#sec:spanning_tests}
 
 Table \@ref(tab:spanning_tests) summarizes the main spanning tests
 implemented or planned in the `spantest` package. Each test is
 characterized by its null hypothesis and sample size or dimension
 requirements.
 
-```{r spanning_tests_table, echo=FALSE, message=FALSE}
+```{r tab:spanning_tests, echo=FALSE, message=FALSE}
 library(knitr)
 
 tests_df <- data.frame(
-  Name = c("span_hk", "span_gl_ad", "span_as", "", "span_gl_a", "span_grs", "span_f1", "span_bj", "span_py", "span_as", "", "span_km", "span_f2", "span_as"),
+  Name = c("span\\_hk", "span\\_gl\\_ad", "span\\_as", "",
+           "span\\_gl\\_a", "span\\_grs", "span\\_f1", "span\\_bj", "span\\_py", "span\\_as", "",
+           "span\\_km", "span\\_f2", "span\\_as"),
   Reference = c(
     "@HubermanKandel1987",
     "@GungorLuger2016",
@@ -367,7 +366,7 @@ tests_df <- data.frame(
     "@GRS1989",
     "@KanZhou2012",
     "@BrittenJones1999",
-    "@PesaranYamagata2012",
+    "@PesaranYamagata2023",
     "@ArdiaSessinou2025",
     "",
     "@KempfMemmel2006",
@@ -375,9 +374,9 @@ tests_df <- data.frame(
     "@ArdiaSessinou2025"
   ),
   Hypothesis = c(
-    "$\\alpha = 0~\\&~ \\delta = 0$",
-    "$\\alpha = 0~\\&~ \\delta = 0$",
-    "$\\alpha = 0~\\&~ \\delta = 0$",
+    "$\\alpha = 0\\,\\text{ and }\\, \\delta = 0$",
+    "$\\alpha = 0\\,\\text{ and }\\, \\delta = 0$",
+    "$\\alpha = 0\\,\\text{ and }\\, \\delta = 0$",
     "",
     "$\\alpha = 0$",
     "$\\alpha = 0$",
@@ -411,9 +410,9 @@ tests_df <- data.frame(
 
 knitr::kable(
   tests_df,
-  caption = "Summary of Spanning Tests Implemented or Planned in the `spantest` Package {#tab:spanning_tests}",
   booktabs = TRUE,
-  align = "llll"
+  align = "llll",
+  escape = FALSE
 )
 ```
 
@@ -433,23 +432,23 @@ resulting power curves, available in the package's GitHub repository,
 serve as a reference to help users select appropriate tests under
 varying empirical conditions.*
 
-### Empirical Illustration
+# Empirical illustration
 
 To demonstrate the practical use of the `spantest` package, we conduct a
 comprehensive empirical analysis based on a monthly rolling-window
-framework, using one year of daily returns per window. This approach
-is inspired from the methodology employed by @GungorLuger2016. Our setup mimics
-the real-world challenge faced by a U.S.-based investor who is already
-exposed to North American markets (S&P 500 and Dow Jones) and seeks to
-assess the incremental diversification value of adding European equities
-(DAX and CAC 40).
+framework, using one year of daily returns per window. This approach is
+inspired from the methodology employed by @GungorLuger2016. Our setup
+mimics the real-world challenge faced by a U.S.-based investor who is
+already exposed to North American markets (S&P 500 and Dow Jones) and
+seeks to assess the incremental diversification value of adding European
+equities (DAX and CAC 40).
 
 We begin by downloading daily adjusted prices from Yahoo Finance using
 quantmod, and we compute arithmetic daily returns, ensuring all missing
-values are appropriately filled forward. The North American indices are treated as the benchmark assets ($R1$), while the
-European indices serve as the test assets ($R2$). For
-each rolling window, we apply the full suite of spanning tests
-implemented in `spantest`.
+values are appropriately filled forward. The North American indices are
+treated as the benchmark assets ($R1$), while the European indices serve
+as the test assets ($R2$). For each rolling window, we apply the full
+suite of spanning tests implemented in `spantest`.
 
 We report the $p$-values over time of the HK test in figure 1.
 
@@ -457,13 +456,32 @@ We report the $p$-values over time of the HK test in figure 1.
 knitr::include_graphics("figures/fig_hk_pvals.png")
 ```
 
-Figure 1 shows the monthly $p$-values of the HK spanning test computed over a rolling one-year window of daily returns, using the S&P 500 and Dow Jones indices as the benchmark portfolio and the DAX and CAC 40 as test assets. The graph reveals the time-varying nature of the spanning relationship between North American and European equity markets.
+Figure 1 shows the monthly $p$-values of the HK spanning test computed
+over a rolling one-year window of daily returns, using the S&P 500 and
+Dow Jones indices as the benchmark portfolio and the DAX and CAC 40 as
+test assets. The graph reveals the time-varying nature of the spanning
+relationship between North American and European equity markets.
 
-Periods when the $p$-values are close to or above 1 indicate no evidence against the null hypothesis, suggesting the benchmark portfolio fully spans the test assets, i.e., adding European equities does not improve the mean-variance efficient frontier. Conversely, dips toward zero signal statistically significant rejection of spanning, meaning the European indices contribute diversification benefits and improve portfolio efficiency during those times.
+Periods when the $p$-values are close to or above 1 indicate no evidence
+against the null hypothesis, suggesting the benchmark portfolio fully
+spans the test assets, i.e., adding European equities does not improve
+the mean-variance efficient frontier. Conversely, dips toward zero
+signal statistically significant rejection of spanning, meaning the
+European indices contribute diversification benefits and improve
+portfolio efficiency during those times.
 
-This graph shows pronounced clustering of high p-values near 1, indicating that for extended periods the benchmark dominates the test assets in terms of mean-variance efficiency. The fluctuations throughout the 2000s and early 2010s coincide with known market events and structural changes, such as the dot-com bubble burst, the 2008 financial crisis, and the Eurozone debt crisis, reflecting evolving correlation and integration dynamics.
+This graph shows pronounced clustering of high p-values near 1,
+indicating that for extended periods the benchmark dominates the test
+assets in terms of mean-variance efficiency. The fluctuations throughout
+the 2000s and early 2010s coincide with known market events and
+structural changes, such as the dot-com bubble burst, the 2008 financial
+crisis, and the Eurozone debt crisis, reflecting evolving correlation
+and integration dynamics.
 
-Overall, this visualization emphasizes the importance of dynamically assessing spanning relations in global portfolio construction, as the benefits of international diversification appear strongly time-dependent.
+Overall, this visualization emphasizes the importance of dynamically
+assessing spanning relations in global portfolio construction, as the
+benefits of international diversification appear strongly
+time-dependent.
 
 The previous example is done on a low dimensional setting (2 benchmark
 assets, and 2 test assets). We provide another empirical illustration
@@ -479,19 +497,51 @@ knitr::include_graphics("figures/fig_as_pvals_bigN_smallK.png")
 ```
 
 We perform a monthly rolling-window analysis similar to the previous
-example, but now using 250 randomly sampled stocks from the S&P 500 and the full EuroStoxx index constituents. Daily returns are computed as arithmetic differences
-of forward-filled adjusted prices, and windows span one year of daily
-observations.
+example, but now using 250 randomly sampled stocks from the S&P 500 and
+the full EuroStoxx index constituents. Daily returns are computed as
+arithmetic differences of forward-filled adjusted prices, and windows
+span one year of daily observations.
 
-The two plots illustrate rolling p-values from the high-dimensional `span_as()` test applied in reversed roles between two portfolios: one with a large number of benchmark assets (S&P500 constituents: $K=250$) and a small test set (Eurostoxx constituents: $N=50$), and the other with a small benchmark ($K=50$) and a large test set ($N=250$).
+The two plots illustrate rolling p-values from the high-dimensional
+`span_as()` test applied in reversed roles between two portfolios: one
+with a large number of benchmark assets (S&P500 constituents: $K=250$)
+and a small test set (Eurostoxx constituents: $N=50$), and the other
+with a small benchmark ($K=50$) and a large test set ($N=250$).
 
-The first plot corresponds to the scenario where the large portfolio of 250 S&P 500 stocks serves as the benchmark ($K$), and the smaller Eurostoxx 50 portfolio is the test set ($N$). Here, the p-values frequently fall below the 5% significance threshold, indicating repeated rejection of the spanning null hypothesis. This suggests that the large benchmark set does not fully span the test assets, meaning the additional Eurostoxx stocks provide incremental diversification benefits not captured by the large S&P benchmark alone.
+The first plot corresponds to the scenario where the large portfolio of
+250 S&P 500 stocks serves as the benchmark ($K$), and the smaller
+Eurostoxx 50 portfolio is the test set ($N$). Here, the p-values
+frequently fall below the 5% significance threshold, indicating repeated
+rejection of the spanning null hypothesis. This suggests that the large
+benchmark set does not fully span the test assets, meaning the
+additional Eurostoxx stocks provide incremental diversification benefits
+not captured by the large S&P benchmark alone.
 
-The second plot flips the roles: the Eurostoxx 50 stocks are now the benchmark ($K$) and the 250 S&P 500 stocks form the test set ($N$). In this configuration, the p-values are mostly above the 5% level, implying fewer rejections of the spanning hypothesis. This indicates that the smaller Eurostoxx portfolio sufficiently spans the larger S&P 500 test set, so adding the larger pool of S&P stocks does not significantly improve mean-variance efficiency relative to the Eurostoxx benchmark.
+The second plot flips the roles: the Eurostoxx 50 stocks are now the
+benchmark ($K$) and the 250 S&P 500 stocks form the test set ($N$). In
+this configuration, the p-values are mostly above the 5% level, implying
+fewer rejections of the spanning hypothesis. This indicates that the
+smaller Eurostoxx portfolio sufficiently spans the larger S&P 500 test
+set, so adding the larger pool of S&P stocks does not significantly
+improve mean-variance efficiency relative to the Eurostoxx benchmark.
 
-This asymmetry may be caused by the fact that the smaller Eurostoxx 50 index represents a more concentrated and possibly more diversified set in terms of risk factors relevant to the joint market, whereas the larger S&P 500 portfolio contains many stocks with overlapping risk exposures. Consequently, the large S&P portfolio cannot fully capture the specific risk-return characteristics of the Eurostoxx 50, while the reverse is less true. Moreover, the random selection might play a role too if the stocks selected are closer in terms of risk-return dynamics, thus containing overlapping characteristics.
+This asymmetry may be caused by the fact that the smaller Eurostoxx 50
+index represents a more concentrated and possibly more diversified set
+in terms of risk factors relevant to the joint market, whereas the
+larger S&P 500 portfolio contains many stocks with overlapping risk
+exposures. Consequently, the large S&P portfolio cannot fully capture
+the specific risk-return characteristics of the Eurostoxx 50, while the
+reverse is less true. Moreover, the random selection might play a role
+too if the stocks selected are closer in terms of risk-return dynamics,
+thus containing overlapping characteristics.
 
-In summary, these results emphasize the importance of benchmark selection and the dimensionality of the spanning problem: a larger benchmark does not necessarily guarantee better spanning, and a smaller, carefully selected benchmark may capture most of the investment opportunity set. The `span_as()` test, by accommodating high-dimensional settings and dependence, provides a powerful tool to detect such nuanced relationships.
+In summary, these results emphasize the importance of benchmark
+selection and the dimensionality of the spanning problem: a larger
+benchmark does not necessarily guarantee better spanning, and a smaller,
+carefully selected benchmark may capture most of the investment
+opportunity set. The `span_as()` test, by accommodating high-dimensional
+settings and dependence, provides a powerful tool to detect such nuanced
+relationships.
 
 Together, these results underscore the value of using robust,
 high-dimensional spanning tests when evaluating investment decisions in
@@ -506,7 +556,7 @@ The package’s consistent interface (matrix of benchmark returns, matrix
 of test returns) makes it straightforward to try different tests on the
 same data.
 
-### Conclusion
+# Conclusion
 
 Mean-variance spanning tests provide a rigorous tool to evaluate
 portfolio efficiency and the merits of new investment opportunities. The
@@ -537,5 +587,3 @@ portfolio excess returns and test assets with factor returns (e.g.,
 Fama-French factors), as illustrated by @GungorLuger2016. This expands
 the utility of the `spantest` package to rigorous factor model
 validation and performance evaluation beyond asset allocation.
-
-### Bibliography
