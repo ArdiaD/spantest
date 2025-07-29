@@ -16,12 +16,12 @@ Ardia, D., & Sessinou, M. (2025).
 *Working paper*.
 
 Other references\
-Huberman, G., & Kandel, S. (1987).  
-[Mean-variance spanning](https://doi.org/10.1111/j.1540-6261.1987.tb03917.x).  
+Huberman, G., & Kandel, S. (1987).\
+[Mean-variance spanning](https://doi.org/10.1111/j.1540-6261.1987.tb03917.x).\
 *Journal of Finance*, 42(4), 873-888.
 
-Gibbons, M. R., Ross, S. A., & Shanken, J. (1989).  
-[A test of the efficiency of a given portfolio](https://doi.org/10.2307/1913625).  
+Gibbons, M. R., Ross, S. A., & Shanken, J. (1989).\
+[A test of the efficiency of a given portfolio](https://doi.org/10.2307/1913625).\
 *Econometrica*, 57(5), 1121-1152.
 
 Kempf, A., & Memmel, C. (2006).  
@@ -40,7 +40,7 @@ Kan, R., & Zhou, G. (2012).
 [Tests of Mean-Variance Spanning](https://www-2.rotman.utoronto.ca/~kan/papers/span_AEF.pdf).
 *Annals of Economics and Finance*, 13(1), 145-193.
 
-Britten-Jones, M. (1999).  
+Britten-Jones, M. (1999).
 [The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights](https://www.jstor.org/stable/2697722).  
 *Journal of Finance*, 54(2), 655-671.
 
