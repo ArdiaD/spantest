@@ -12,13 +12,13 @@ By using `spantest` you agree to the following rules:
 -   You assume all risk for the use of `spantest`.
 
 Ardia, D., & Sessinou, M. (2025).  
-[High-Dimensional Mean-Variance Spanning Tests](https://arxiv.org/pdf/2403.17127).  
+[Robust Inference in Large Panels and Markowitz Portfolios](https://dx.doi.org/10.2139/ssrn.5033399).  
 *Working paper*.
 
 Other references\
 Huberman, G., & Kandel, S. (1987).  
 [Mean-variance spanning](https://doi.org/10.1111/j.1540-6261.1987.tb03917.x).  
-*The Journal of Finance*, 42(4), 873-888.
+*Journal of Finance*, 42(4), 873-888.
 
 Gibbons, M. R., Ross, S. A., & Shanken, J. (1989).  
 [A test of the efficiency of a given portfolio](https://doi.org/10.2307/1913625).  
@@ -42,7 +42,7 @@ Kan, R., & Zhou, G. (2012).
 
 Britten-Jones, M. (1999).  
 [The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights](https://www.jstor.org/stable/2697722).  
-*The Journal of Finance*, 54(2), 655-671.
+*Journal of Finance*, 54(2), 655-671.
 
 ------------------------------------------------------------------------
 

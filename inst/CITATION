@@ -4,17 +4,28 @@ vers <- paste("version", meta$Version)
 
 citHeader("To cite 'spantest' in publications use:")
 
-bibentry(bibtype = "article",
-  title  = "High-Dimensional Mean-Variance Spanning Tests",
+bibentry(bibtype = "Misc",
+  title  = "Robust Inference in Large Panels and Markowitz Portfolios",
 	author = c(person("David","Ardia"),
-                      person("Rosnel","Sessinou")),
+                   person("Rosnel","Sessinou")),
   year = "2025",
-  journal = "x",
-  volume  = "x",
-  pages   = "x",
-  doi  = "10.1016/j.jbankfin.2017.10.014",
-	textVersion = paste("Ardia, D., Boudt, K. (2018).",
-	  "The peer performance ratios of hedge funds.",
-	  "Journal of Banking and Finance 87, pp 351-368",
-    "doi:10.1016/j.jbankfin.2017.10.014")
+  doi  = "10.2139/ssrn.5033399",
+	textVersion = paste("Ardia, D., Sessinou, R. (2025).",
+	  "Robust Inference in Large Panels and Markowitz Portfolios.",
+	  "Working paper",
+    "doi:10.2139/ssrn.5033399")
+)
+
+bibentry(bibtype = "Manual",
+  title  = "spantest: Spanning Tests for Asset Pricing",
+author = c(person("David","Ardia"),
+           person("Benjamin","Seguin")),
+  year   = "2025",
+  note   = "R package version 1.1-0",
+  organization = "CRAN",
+  url    = "https://CRAN.R-project.org/package=spantest",
+  textVersion = paste("Ardia, D., Seguin, B. (2025).",
+    "spantest: Spanning Tests for Asset Pricing.",
+    "R package version 1.1-0.",
+    "Retrieved from https://CRAN.R-project.org/package=spantest")
 )
