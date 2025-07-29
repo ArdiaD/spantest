@@ -383,11 +383,11 @@ f_span_gl_a <- function(R1, R2, control = list()) {
       SSRr_LMC_vec <- colSums(Ehat0_mat^2)
 
       temp_LMC <- (SSRr_LMC_vec - SSRu_vec) / SSRu_vec
-      LMCstats[1:sim_count] <- matrix(temp_LMC, ncol = N, byrow = TRUE) %>% apply(1, max)
+      LMCstats[1:sim_count] <- matrix(temp_LMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
       SSRr_BMC_vec <- colSums(matrix(esim_array^2, TT, N * sim_count))
       temp_BMC <- (SSRr_BMC_vec - SSRu_vec) / SSRu_vec
-      BMCstats[1:sim_count] <- matrix(temp_BMC, ncol = N, byrow = TRUE) %>% apply(1, max)
+      BMCstats[1:sim_count] <- matrix(temp_BMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
       uu <- runif(totsim)
 
@@ -614,12 +614,12 @@ f_span_gl_ad <- function(R1, R2, control = list()) {
 
       # Test statistics
       temp_LMC <- (SSRr_LMC_vec - SSRu_vec) / SSRu_vec
-      LMCstats[1:(totsim - 1)] <- matrix(temp_LMC, ncol = N, byrow = TRUE) %>% apply(1, max)
+      LMCstats[1:(totsim - 1)] <- matrix(temp_LMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
       # BMC statistics
       SSRr_BMC_vec <- colSums(matrix(esim_array^2, TT, N * (totsim - 1)))
       temp_BMC <- (SSRr_BMC_vec - SSRu_vec) / SSRu_vec
-      BMCstats[1:(totsim - 1)] <- matrix(temp_BMC, ncol = N, byrow = TRUE) %>% apply(1, max)
+      BMCstats[1:(totsim - 1)] <- matrix(temp_BMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
       # Optimized p-value calculation
       uu <- runif(totsim)

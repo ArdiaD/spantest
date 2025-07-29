@@ -4,5 +4,4 @@
 #'
 #' @importFrom stats cov na.omit pf pnorm pt qnorm rnorm runif sd t.test
 #' @importFrom utils head
-#' @importFrom magrittr %>%
 "_PACKAGE"
