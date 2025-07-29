@@ -37,7 +37,7 @@ Gungor, S., & Luger, R. (2016).
 *Journal of Business & Economic Statistics*, 34(2), 161-175.
 
 Kan, R., & Zhou, G. (2012).  
-[Tests of Mean-Variance Spanning](https://www-2.rotman.utoronto.ca/~kan/papers/span_AEF.pdf). 
+[Tests of Mean-Variance Spanning](https://www-2.rotman.utoronto.ca/~kan/papers/span_AEF.pdf).
 *Annals of Economics and Finance*, 13(1), 145-193.
 
 Britten-Jones, M. (1999).  
