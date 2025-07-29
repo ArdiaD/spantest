@@ -36,7 +36,7 @@ Gungor, S., & Luger, R. (2016).
 [Multivariate Tests of Mean-Variance Efficiency and Spanning With a Large Number of Assets and Time-Varying Covariances](https://doi.org/10.1080/07350015.2015.1019510).  
 *Journal of Business & Economic Statistics*, 34(2), 161-175.
 
-Kan, R., & Zhou, G. (2012).  
+Kan, R., & Zhou, G. (2012).
 [Tests of Mean-Variance Spanning](https://www-2.rotman.utoronto.ca/~kan/papers/span_AEF.pdf).
 *Annals of Economics and Finance*, 13(1), 145-193.
 
