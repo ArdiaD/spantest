@@ -292,7 +292,7 @@ tool to evaluate minimum-variance efficiency in large asset universes.
 ## Joint Mean-Variance Spanning Tests
 
 Joint tests consider the full mean-variance spanning hypothesis, testing
-all conditions simultaneously. These tests will reject the null if
+all conditions simultaneously. These tests reject the null if
 either expected returns or attainable variance (or both) are improved by
 the new assets. The original spanning test of @HubermanKandel1987 falls
 in this category: it is a multivariate test (Chi-square or $F$) for the
