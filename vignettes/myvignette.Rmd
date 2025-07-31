@@ -2,7 +2,7 @@
 title: "Spantest: An R Package for Mean-Variance Spanning Tests in Portfolio Analysis"
 date: "2025-07-09"
 abstract: >
-  Implements a comprehensive suite of portfolio spanning tests, including classical methods by Huberman and Kandel (1987), Gibbons, Ross, and Shanken (1989), Kempf and Memmel (2006), Pesaran and Yamagata (2023), and Gungor and Luger (2016), alongside the recent residual-based subseries tests developed by Ardia and Sessinou (2025). Supports both asset-level and global hypothesis testing with the Cauchy Combination Test (CCT) for robust inference under serial dependence, heteroskedasticity, and high-dimensional regimes where the number of benchmark assets is less than the number of observations.
+  Implements a comprehensive suite of portfolio spanning tests, including classical methods by Huberman and Kandel (1987), Gibbons, Ross, and Shanken (1989), Kempf and Memmel (2006), Pesaran and Yamagata (2023), and Gungor and Luger (2016), alongside the recent residual-based subseries tests developed by Ardia and Sessinou (2024). Supports both asset-level and global hypothesis testing with the Cauchy Combination Test (CCT) for robust inference under serial dependence, heteroskedasticity, and high-dimensional regimes where the number of benchmark assets is less than the number of observations.
 draft: true
 author:
   - name: Benjamin Seguin
@@ -292,10 +292,10 @@ tool to evaluate minimum-variance efficiency in large asset universes.
 ## Joint Mean-Variance Spanning Tests
 
 Joint tests consider the full mean-variance spanning hypothesis, testing
-all conditions simultaneously. These tests reject the null if
-either expected returns or attainable variance (or both) are improved by
-the new assets. The original spanning test of @HubermanKandel1987 falls
-in this category: it is a multivariate test (Chi-square or $F$) for the
+all conditions simultaneously. These tests reject the null if either
+expected returns or attainable variance (or both) are improved by the
+new assets. The original spanning test of @HubermanKandel1987 falls in
+this category: it is a multivariate test (Chi-square or $F$) for the
 combined restrictions $\alpha = 0$ and $\delta = 0$.
 
 In practice, one can perform a joint test by combining the statistics

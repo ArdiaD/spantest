@@ -2,7 +2,6 @@
 % Please edit documentation in R/dependencies.R
 \docType{package}
 \name{spantest-package}
-\alias{spantest}
 \alias{spantest-package}
 \title{Package imports}
 \description{

@@ -28,7 +28,7 @@
 #' residual-based oracle approximations that remain valid when K increases with T.
 #'
 #' @references
-#' Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}
+#' Ardia, D., & Sessinou, M. (2024) "Robust Inference in Large Panels and Markowitz Portfolios" \emph{working paper}
 #'
 #' @keywords internal
 #'
@@ -174,7 +174,7 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 #' However, computation time increases with sample size and number of simulations.
 #'
 #' @references
-#' Ardia, D., & Sessinou, M. (2025) "High-Dimensional Mean-Variance Spanning Tests" \emph{working paper}.
+#' Ardia, D., & Sessinou, M. (2024) "Robust Inference in Large Panels and Markowitz Portfolios" \emph{working paper}.
 #'
 #' @export
 #'
