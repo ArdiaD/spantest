@@ -4,18 +4,6 @@ vers <- paste("version", meta$Version)
 
 citHeader("To cite 'spantest' in publications use:")
 
-bibentry(bibtype = "Misc",
-  title  = "Robust Inference in Large Panels and Markowitz Portfolios",
-	author = c(person("David","Ardia"),
-                   person("Rosnel","Sessinou")),
-  year = "2025",
-  doi  = "10.2139/ssrn.5033399",
-	textVersion = paste("Ardia, D., Sessinou, R. (2025).",
-	  "Robust Inference in Large Panels and Markowitz Portfolios.",
-	  "Working paper",
-    "doi:10.2139/ssrn.5033399")
-)
-
 bibentry(bibtype = "Manual",
   title  = "spantest: Spanning Tests for Asset Pricing",
 author = c(person("David","Ardia"),

@@ -1,12 +1,12 @@
 Package: spantest
-Title: Spanning Tests for Asset Pricing
+Title: Mean-Variance Spanning Tests
 Depends: R (>= 4.1.0)
 Version: 1.1-0
 Maintainer: David Ardia <david.ardia.ch@gmail.com>
 Authors@R: c(
   person("David", "Ardia", email = "david.ardia.ch@gmail.com", role = "aut"),
   person("Benjamin", "Seguin", email = "benjamin.seguin@outlook.fr", role = c("aut", "cre")))
-Description: Implements a comprehensive suite of portfolio spanning tests, including classical methods by Huberman and Kandel (1987), Gibbons, Ross, and Shanken (1989), Kempf and Memmel (2006), Pesaran and Yamagata (2023), and Gungor and Luger (2016), alongside the recent residual-based subseries tests developed by Ardia and Sessinou (2024). Supports both asset-level and global hypothesis testing with the Cauchy Combination Test (CCT) for robust inference under serial dependence, heteroskedasticity, and high-dimensional regimes (number of benchmark assets < number of observations).
+Description: Implements a comprehensive suite of mean-variance spanning tests, including classical methods by Huberman and Kandel (1987), Gibbons, Ross, and Shanken (1989), Kempf and Memmel (2006), Pesaran and Yamagata (2023), and Gungor and Luger (2016), alongside the recent residual-based subseries tests developed by Ardia and Sessinou (2024).
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,6 +18,5 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Imports:
-    magrittr,
     stats,
     utils
