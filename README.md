@@ -11,7 +11,7 @@ alongside the recent residual-based subseries spanning tests developed by [Ardia
 Please cite the package in publications!\
 By using `spantest` you agree to the following rules:
 
--   You must cite the package as Ardia and (2025). "spantest: Spanning Tests for Asset Pricing."
+-   You must cite the package as Ardia and Seguin (2025). "spantest: Mean-Variance Spanning Tests in R", R package.
 -   You assume all risk for the use of `spantest`.
 
 Other references\

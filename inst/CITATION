@@ -5,7 +5,7 @@ vers <- paste("version", meta$Version)
 citHeader("To cite 'spantest' in publications use:")
 
 bibentry(bibtype = "Manual",
-  title  = "spantest: Spanning Tests for Asset Pricing",
+  title  = "spantest: Mean-Variance Spanning Tests in R",
 author = c(person("David","Ardia"),
            person("Benjamin","Seguin")),
   year   = "2025",
@@ -13,7 +13,7 @@ author = c(person("David","Ardia"),
   organization = "CRAN",
   url    = "https://CRAN.R-project.org/package=spantest",
   textVersion = paste("Ardia, D., Seguin, B. (2025).",
-    "spantest: Spanning Tests for Asset Pricing.",
+    "spantest: Mean-Variance Spanning Tests in R.",
     "R package version 1.1-0.",
     "Retrieved from https://CRAN.R-project.org/package=spantest")
 )
