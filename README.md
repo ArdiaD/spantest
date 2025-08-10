@@ -1,4 +1,4 @@
-# spantest
+# spantest: Mean-Variance Spanning Tests in R
 
 `spantest` is an R package providing a comprehensive suite of portfolio spanning tests for asset pricing. 
 In particular, it implements classical tests by [Huberman and Kandel (1987)](https://doi.org/10.1111/j.1540-6261.1987.tb03917.x), 
