@@ -15,4 +15,9 @@ Authors:
   \item David Ardia \email{david.ardia.ch@gmail.com}
 }
 
+Other contributors:
+\itemize{
+  \item Rosnel Sessinou \email{srosnels@gmail.com} [contributor]
+}
+
 }
