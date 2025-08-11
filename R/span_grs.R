@@ -34,30 +34,30 @@ span_grs <- function(R1, R2) {
   X <- R1  # Benchmark assets
   Y <- R2  # Test assets
 
-  T <- nrow(X)
+  t <- nrow(X)
   K <- ncol(X)
   N <- ncol(Y)
 
-  if ((T - N - K) < 1) {
+  if ((t - N - K) < 1) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
   }
 
-  ones <- matrix(1, T, 1)
+  ones <- matrix(1, t, 1)
   XX <- cbind(ones, X)
   Bhat1 <- solve(crossprod(XX)) %*% crossprod(XX, Y)
   SSRu <- crossprod(Y - XX %*% Bhat1)
-  SigmaU <- SSRu / T
+  SigmaU <- SSRu / t
 
   ahat <- Bhat1[1, ]
   mufactor <- matrix(colMeans(X), K, 1)
-  ssqm <- crossprod(scale(X, center = TRUE, scale = FALSE)) / T
+  ssqm <- crossprod(scale(X, center = TRUE, scale = FALSE)) / t
   mufactor_ssqm <- solve(ssqm, mufactor)
 
   denom <- 1 + crossprod(mufactor, mufactor_ssqm)
-  num <- ((T - N - K) / N) * crossprod(ahat, solve(SigmaU, ahat))
+  num <- ((t - N - K) / N) * crossprod(ahat, solve(SigmaU, ahat))
 
   stat <- as.numeric(num / denom)
-  pval <- 1 - pf(stat, N, T - N - K)
+  pval <- 1 - pf(stat, N, t - N - K)
 
   list(pval = pval, stat = stat, H0 = "alpha = 0")
 }

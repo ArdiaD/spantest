@@ -35,15 +35,15 @@
 #' @export
 span_bj <- function(R1, R2) {
   Rbig <- cbind(R1, R2)  # Combine benchmark (R1) and test (R2)
-  T <- nrow(Rbig)
+  t <- nrow(Rbig)
   K <- ncol(R1)          # K = benchmark assets
   N <- ncol(R2)          # N = test assets
 
-  if ((T - K - N) < 1) {
+  if ((t - K - N) < 1) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "delta = 0"))
   }
 
-  y <- rep(1, T)
+  y <- rep(1, t)
 
   # Take differences between first column and others
   Diff <- sweep(Rbig[, -1, drop = FALSE], 1, Rbig[, 1], FUN = function(x, y) y - x)
@@ -53,7 +53,7 @@ span_bj <- function(R1, R2) {
   XtXi_inv <- solve(XtXi)
   coef <- XtXi_inv %*% crossprod(X, y)
   resid <- y - X %*% coef
-  sigma2 <- drop(crossprod(resid) / (T - ncol(X)))
+  sigma2 <- drop(crossprod(resid) / (t - ncol(X)))
 
   offset <- (K - 1)
   C <- cbind(matrix(0, N, offset), diag(N))
@@ -62,7 +62,7 @@ span_bj <- function(R1, R2) {
   )
 
   stat <- num / sigma2
-  pval <- pf(stat, N, T - ncol(X), lower.tail = FALSE)
+  pval <- pf(stat, N, t - ncol(X), lower.tail = FALSE)
 
   list(pval = as.numeric(pval), stat = as.numeric(stat), H0 = "delta = 0")
 }

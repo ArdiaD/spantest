@@ -70,8 +70,8 @@ f_hk <- function(R1, R2) {
       p_values <- 2 * pt(abs(t_stats), TT - ncol(X_mat), lower.tail = FALSE)
 
       # Cauchy combination
-      CCTa_pval = f_cauchypv(p_values[1, ])
-      CCTd_pval = f_cauchypv(p_values[2, ])
+      CCTa_pval <- f_cauchypv(p_values[1, ])
+      CCTd_pval <- f_cauchypv(p_values[2, ])
 
       # Portfolio efficiency with optimized matrix ops
       mu <- matrix(colMeans(R))
@@ -101,9 +101,9 @@ f_hk <- function(R1, R2) {
       F2_stat <- ((TT - K - N + 1) / N) * (((c_val + d_val) / (c1 + d1)) * ((1 + a1) / (1 + a)) - 1)
 
       # P-values
-      HK_pval = pf(HK_stat, 2 * N, 2 * (TT - K - N), lower.tail = FALSE) # H0 alpha et delta =0
-      F1_pval = pf(F1_stat, N, (TT - K - N), lower.tail = FALSE) # H0 alpha = 0
-      F2_pval = pf(F2_stat, N, (TT - K - N + 1), lower.tail = FALSE) # H0 delta = 0
+      HK_pval <- pf(HK_stat, 2 * N, 2 * (TT - K - N), lower.tail = FALSE) # H0 alpha et delta =0
+      F1_pval <- pf(F1_stat, N, (TT - K - N), lower.tail = FALSE) # H0 alpha = 0
+      F2_pval <- pf(F2_stat, N, (TT - K - N + 1), lower.tail = FALSE) # H0 delta = 0
 
       ### !!!FIXME: Why do we return outpv and perform cauchy transformation in this function ?
 

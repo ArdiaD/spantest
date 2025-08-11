@@ -47,21 +47,21 @@
 span_py <- function(R1, R2) {
   X <- R1
   Y <- R2
-  T <- nrow(X)
+  t <- nrow(X)
   N <- ncol(Y)
   K <- ncol(X)
 
-  if ((T - K - N) < 1 || (T - K - 1) <= 4) {
+  if ((t - K - N) < 1 || (t - K - 1) <= 4) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
   }
 
   XX <- cbind(1, X)
   Bhat1 <- solve(crossprod(XX)) %*% crossprod(XX, Y)
   Ehat1 <- Y - XX %*% Bhat1
-  SigmaU <- crossprod(Ehat1) / T
+  SigmaU <- crossprod(Ehat1) / t
 
-  v <- T - K - 1
-  ones <- matrix(1, T, 1)
+  v <- t - K - 1
+  ones <- matrix(1, t, 1)
   X_crossprod <- crossprod(X)
   X_crossprod_inv <- solve(X_crossprod)
   X_ones <- X %*% X_crossprod_inv %*% crossprod(X, ones)
@@ -70,7 +70,7 @@ span_py <- function(R1, R2) {
   num_scalar <- crossprod(ones, MX_ones)[1, 1] * v
   num <- matrix(num_scalar, N, 1)
   diag_SigmaU <- diag(SigmaU)
-  t2 <- (Bhat1[1, ]^2) * num / (T * diag_SigmaU)
+  t2 <- (Bhat1[1, ]^2) * num / (t * diag_SigmaU)
 
   pN <- 0.05 / (N - 1)
   thetaN <- qnorm(1 - pN / 2)^2

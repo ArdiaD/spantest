@@ -36,10 +36,10 @@ span_f2 <- function(R1, R2) {
   R <- cbind(R1, R2)
   K <- ncol(R1)
   N <- ncol(R2)
-  T <- nrow(R)
+  t <- nrow(R)
 
   df1 <- N
-  df2 <- T - K - N + 1
+  df2 <- t - K - N + 1
   if (df2 < 1) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "delta = 0"))
   }
