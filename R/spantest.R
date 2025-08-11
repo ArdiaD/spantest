@@ -1,6 +1,6 @@
 #' @name spantest
 #' @aliases spantest-package
-#' @title spantest: Mean-Variance Spanning Tests for Portfolio Analysis
+#' @title spantest: Mean-Variance Spanning Tests in R
 #' @description
 #' \code{spantest} is an R package for conducting rigorous mean-variance spanning tests in financial and econometric analysis.
 #' It implements classical and modern methods to assess whether a given set of benchmark assets spans the mean-variance
@@ -25,11 +25,14 @@
 #' @author David Ardia and Benjamin Seguin
 #'
 #' @note By using \code{spantest}, you agree to the following:
-#' (1) You must cite Ardia and Sessinou (2025) in any working or published paper using \code{spantest},
+#' (1) You must cite Ardia and Seguin (2025) in any working or published paper using \code{spantest},
 #' (2) You must place the URL \url{https://CRAN.R-project.org/package=spantest} in a footnote or appendix,
 #' (3) You assume all responsibility for use and interpretation of the results.
 #'
 #' @references
+#'
+#' Ardia, D., Seguin, B. (2025). spantest: Mean-Variance Spanning Tests in R. \emph{The R Journal}
+#'
 #' Ardia, D., Sessinou, V. (2024). Robust Inference in Large Panels and Markowitz Portfolios. Working paper.
 #'
 #' Gungor, S., Luger, R. (2016). Spanning tests with time-varying second moments. \emph{Journal of Financial Econometrics}, \bold{14}(3), 561--589.

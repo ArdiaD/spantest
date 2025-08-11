@@ -3,7 +3,7 @@
 \name{spantest}
 \alias{spantest}
 \alias{spantest-package}
-\title{spantest: Mean-Variance Spanning Tests for Portfolio Analysis}
+\title{spantest: Mean-Variance Spanning Tests in R}
 \description{
 \code{spantest} is an R package for conducting rigorous mean-variance spanning tests in financial and econometric analysis.
 It implements classical and modern methods to assess whether a given set of benchmark assets spans the mean-variance
