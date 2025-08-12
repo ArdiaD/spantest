@@ -55,7 +55,6 @@ span_gl_ad <- function(R1, R2, control = list()) {
   con[names(control)] <- control
   thresh <- con$pval_thresh
 
-  # Renaming to match former implementation
   X <- R1
   Y <- R2
 
@@ -69,7 +68,6 @@ span_gl_ad <- function(R1, R2, control = list()) {
 
   XX <- matrix(cbind(ones, X), TT, (K + 1))
 
-  # OLS parameter estimates
   XX_crossprod <- crossprod(XX)
   Xtemp <- solve(XX_crossprod)
   Bhat1 <- Xtemp %*% crossprod(XX, Y)
@@ -87,16 +85,16 @@ span_gl_ad <- function(R1, R2, control = list()) {
 
   # Precompute constraint components
   HXt <- H %*% Xtemp
-  HXtHt <- HXt %*% t(H)  # Critical fix here
+  HXtHt <- HXt %*% t(H)
   HXtHt_inv <- solve(HXtHt)
-  XtH <- crossprod(Xtemp, t(H))  # Xtemp %*% t(H)
+  XtH <- crossprod(Xtemp, t(H))
 
   Bhat0 <- Bhat1 - XtH %*% HXtHt_inv %*% (H %*% Bhat1 - C) # Restricted
   Ehat0 <- Y - XX %*% Bhat0
   SSRr <- crossprod(Ehat0)
   SigmaR <- SSRr / TT
 
-  ## MC tests optimization
+  # MC tests optimization
   diag_SSRr <- diag(SSRr)
   diag_SSRu <- diag(SSRu)
   Fmax <- max((diag_SSRr - diag_SSRu) / diag_SSRu)
@@ -177,7 +175,7 @@ span_gl_ad <- function(R1, R2, control = list()) {
   out <- list(pval_LMC = GL_pval_LMC, pval_BMC = GL_pval_BMC,
               stat = Fmax_actual, Decisions = Decisions,
               Decisions_string = Decisions_string,
-              H0 = "alpha = 0 and delta = 0") # H0 alpha et Delta = 0
+              H0 = "alpha = 0 and delta = 0")
 
   return(out)
 }

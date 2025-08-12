@@ -37,20 +37,16 @@
 #' @importFrom stats pf
 #' @export
 span_km <- function(R1, R2) {
-  # Kempf & Memmel (2006) test: H0 = delta = 0
-  # Step 1: combine benchmark and test asset returns
+
   R <- cbind(R1, R2)
   TT <- nrow(R)
   p <- ncol(R1)
   p2 <- ncol(R2)
 
-  # Step 2: y = constant vector of 1s
   y <- rep(1, TT)
 
-  # Step 3: create difference matrix: R[,1] - R[,-1]
   Diff <- sweep(R[, -1, drop = FALSE], 1, R[, 1], FUN = function(x, y) y - x)
 
-  # Step 4: regression of y on Diff (no intercept)
   X <- Diff
   XtX <- crossprod(X)
   XtX_inv <- tryCatch(solve(XtX), error = function(e) return(NULL))
@@ -62,9 +58,8 @@ span_km <- function(R1, R2) {
   residuals <- y - X %*% beta_hat
   sigma2 <- drop(crossprod(residuals) / (TT - ncol(X)))
 
-  # Step 5: F-test on the last p2 coefficients
   offset <- p - 1
-  C <- cbind(matrix(0, p2, offset), diag(p2))  # p2 × (p-1 + p2)
+  C <- cbind(matrix(0, p2, offset), diag(p2))
 
   middle <- tryCatch(solve(C %*% XtX_inv %*% t(C)), error = function(e) return(NULL))
   if (is.null(middle)) {

@@ -35,7 +35,7 @@
 #' @importFrom stats pf cov
 #' @export
 span_f2 <- function(R1, R2) {
-  # Combine and define dimensions
+
   R <- cbind(R1, R2)
   K <- ncol(R1)
   N <- ncol(R2)
@@ -47,7 +47,6 @@ span_f2 <- function(R1, R2) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "delta = 0"))
   }
 
-  # Compute a, b, c, d for full portfolio (R)
   mu  <- matrix(colMeans(R), ncol = 1)
   V   <- cov(R)
   iV  <- solve(V)
@@ -58,7 +57,6 @@ span_f2 <- function(R1, R2) {
   c_ <- t(one) %*% iV %*% one
   d  <- a * c_ - b^2
 
-  # Compute a1, b1, c1, d1 for benchmark only (R1)
   mu1  <- matrix(colMeans(R1), ncol = 1)
   V1   <- cov(R1)
   iV1  <- solve(V1)

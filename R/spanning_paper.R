@@ -58,14 +58,14 @@ f_hk <- function(R1, R2) {
       # Initialize storage
       p_values <- matrix(nrow = 2, ncol = ncol(Y_cct))
 
-      # Vectorized coefficient estimation (all columns at once)
+      # Coefficient estimation
       coef <- R_inv %*% (t(Q) %*% Y_cct)
 
-      # Vectorized residuals and sigma calculation
+      # Residuals and sigma calculation
       resid <- Y_cct - X_mat %*% coef
       sigma <- sqrt(colSums(resid^2) / (TT - ncol(X_mat)))
 
-      # Vectorized t-statistics and p-values for first 2 coefficients
+      # t-statistics and p-values for first 2 coefficients
       t_stats <- coef[1:2, ] / (se_factors[1:2] %o% sigma)
       p_values <- 2 * pt(abs(t_stats), TT - ncol(X_mat), lower.tail = FALSE)
 
@@ -105,11 +105,9 @@ f_hk <- function(R1, R2) {
       F1_pval <- pf(F1_stat, N, (TT - K - N), lower.tail = FALSE) # H0 alpha = 0
       F2_pval <- pf(F2_stat, N, (TT - K - N + 1), lower.tail = FALSE) # H0 delta = 0
 
-      ### !!!FIXME: Why do we return outpv and perform cauchy transformation in this function ?
 
       CCTad_pval <- f_cauchypv(c(CCTa_pval, CCTd_pval))
 
-      # Faire que des outputs comme ça
       out <- list(HK = list(pval = HK_pval, stat = HK_stat, H0 = "alpha = 0 and delta = 0"),
                   F1 = list(pval = F1_pval, stat = F1_stat, H0 = "alpha = 0"),
                   F2 = list(pval = F2_pval, stat = F2_stat, H0 = "delta = 0"),
@@ -122,8 +120,6 @@ f_hk <- function(R1, R2) {
 }
 
 f_alternative_tests <- function(R1, R2) {
-  # R1: TT×p   bench returns
-  # R2: TT×p2  test returns
 
   X <- R2
   Y <- R1
@@ -136,21 +132,17 @@ f_alternative_tests <- function(R1, R2) {
   # Dependent y = first column of Rbig
   y <- Rbig[,1]
 
-  # Build the FULL difference matrix: R[,1] - R[,-1]
-  # this will be TT × (p-1 + p2)
   Diff <- sweep(Rbig[,-1, drop=FALSE], 1, y, FUN = function(x,y) y - x)
 
-  # 1) GMVP regression: intercept + *all* differences
-  X1    <- cbind(1, Diff)                # TT × (1 + p-1 + p2)
+  # 1) GMVP regression
+  X1    <- cbind(1, Diff)
   k1    <- ncol(X1)
   XtX1  <- crossprod(X1)
   XtX1i <- solve(XtX1)
-  theta1 <- XtX1i %*% crossprod(X1, y)   # (1 + p-1 + p2) × 1
+  theta1 <- XtX1i %*% crossprod(X1, y)
   resid1 <- y - X1 %*% theta1
   sigma2_1 <- drop(crossprod(resid1)/(TT - k1))
 
-  # Contrast to pick *only* the last p2* coefficients of theta1:
-  # offset = 1 + (p-1)  (i.e. after intercept + bench‐bench diffs)
   offset <- 1 + (p-1)
   C1 <- cbind(
     matrix(0, p2, offset),    # zeros for the first offset columns
@@ -166,22 +158,20 @@ f_alternative_tests <- function(R1, R2) {
   p_gmvp <- pf(F_gmvp, p2, TT - k1, lower.tail = FALSE)
 
 
-  # 2) Tangency:  y2 = constant 1 regressed on *the same* differences, no intercept
+  # 2) Tangency
   y2    <- rep(1, TT)
-  X2    <- Diff                        # TT × (p-1 + p2)
+  X2    <- Diff
   XtX2  <- crossprod(X2)
   XtX2i <- solve(XtX2)
-  gamma2 <- XtX2i %*% crossprod(X2, y2) # (p-1+p2) × 1
+  gamma2 <- XtX2i %*% crossprod(X2, y2)
   resid2 <- y2 - X2 %*% gamma2
   sigma2_2 <- drop(crossprod(resid2)/(TT - ncol(X2)))
 
-  # Contrast to pick the *last* p2 columns of gamma2
-  # gamma2 has length (p-1 + p2)
   offset2 <- (p-1)
   C2 <- cbind(
     matrix(0, p2, offset2),
     diag(p2)
-  )                                     # p2 × (p-1 + p2)
+  )
 
   num2 <- as.numeric(
     crossprod(C2 %*% gamma2,
@@ -344,7 +334,7 @@ f_span_gl_a <- function(R1, R2, control = list()) {
             PY_pval <- 1 - pnorm(PY_stat)
       }
 
-      ## MC Fmax tests (always computed)
+      # MC Fmax tests (always computed)
       diag_SSRr <- diag(SSRr)
       diag_SSRu <- diag(SSRu)
       temp <- (diag_SSRr - diag_SSRu) / diag_SSRu
@@ -564,9 +554,9 @@ f_span_gl_ad <- function(R1, R2, control = list()) {
 
       # Precompute constraint components
       HXt <- H %*% Xtemp
-      HXtHt <- HXt %*% t(H)  # Critical fix here
+      HXtHt <- HXt %*% t(H)
       HXtHt_inv <- solve(HXtHt)
-      XtH <- crossprod(Xtemp, t(H))  # Xtemp %*% t(H)
+      XtH <- crossprod(Xtemp, t(H))
 
       Bhat0 <- Bhat1 - XtH %*% HXtHt_inv %*% (H %*% Bhat1 - C) # Restricted
       Ehat0 <- Y - XX %*% Bhat0

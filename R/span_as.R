@@ -102,9 +102,6 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
     process_scores(score_alpha, sn = sn_value)
   })
 
-  #test5 <- apply(cbind(test3, test4), 1, f_cauchypv)
-
-  #result <- c(test1, test2, test3, test4, test5)
   result <- unlist(c(test1, test2, test4))
 
   # Dynamic naming
@@ -113,7 +110,6 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
   }
 
   suffixes <- f_ksuffix(ks)
-  #test_names <- paste0(rep(c("CCTd", "CCTad", "CCTd.a", "CCTa", "CCTd.a.a"), each = length(ks)), suffixes)
   test_names <- paste0(
     # Test types (CCTd, CCTad, CCTa)
     rep(c("CCTd", "CCTad", "CCTa"),

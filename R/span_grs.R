@@ -35,7 +35,7 @@
 #' @importFrom stats pf
 #' @export
 span_grs <- function(R1, R2) {
-  # Reassign roles for clarity
+
   X <- R1  # Benchmark assets
   Y <- R2  # Test assets
 
