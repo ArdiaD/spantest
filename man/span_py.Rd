@@ -2,55 +2,52 @@
 % Please edit documentation in R/span_py.R
 \name{span_py}
 \alias{span_py}
-\title{Pesaran-Yamagata Test for Cross-Sectional Dependence of Intercepts}
+\title{Pesaran–Yamagata Alpha Spanning Test (2023)}
 \usage{
 span_py(R1, R2)
 }
 \arguments{
-\item{R1}{Numeric matrix of benchmark returns with dimensions (T x K), where T is the number of time observations and K the number of benchmark assets.}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{R2}{Numeric matrix of test asset returns with dimensions (T x N), where N is the number of test assets.}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 }
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value of the test under the null hypothesis.}
-\item{\code{stat}}{Test statistic value (standardized).}
-\item{\code{H0}}{Description of the null hypothesis: \code{"alpha = 0"}.}
+\item{\code{pval}}{P-value under the standard normal reference distribution.}
+\item{\code{stat}}{Standardized test statistic.}
+\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 }
 }
 \description{
-Implements the Pesaran-Yamagata (2023) test to assess whether intercepts in a multi-factor
-spanning regression are jointly zero, while accounting for cross-sectional dependence across assets.
-This test is used to check if the benchmark assets' returns span the test assets in terms of expected returns.
+Implements the Pesaran–Yamagata test for the joint null that all intercepts
+are zero in a multi-factor spanning regression with possible cross-sectional
+dependence across test assets.
 }
 \details{
-The Pesaran-Yamagata test extends classical intercept tests by allowing for cross-sectional
-dependence among test assets. It uses residual covariance structure to adjust the test statistic,
-improving inference in panels with correlated assets.
-
-The null hypothesis is that all intercepts are zero (\eqn{\alpha = 0}), implying that
-the benchmark assets fully explain the expected returns of the test assets.
+The null hypothesis is that all intercepts are zero (\eqn{\alpha = 0}), meaning
+the benchmark assets span the expected returns of the test assets. The statistic
+adjusts for cross-sectional dependence via the residual covariance and has an
+asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. Finite-sample
+safeguards require \eqn{T-K-1 > 4}.
 }
 \examples{
 set.seed(123)
-# Simulate benchmark and test asset returns
-R1 <- matrix(rnorm(300), nrow = 100, ncol = 3)  # Benchmark returns
-R2 <- matrix(rnorm(200), nrow = 100, ncol = 2)  # Test asset returns
-res <- span_py(R1, R2)
-res$pval   # P-value of the test
-res$stat   # Test statistic
-res$H0     # Null hypothesis being tested
-
-# Interpret result
-if (res$pval < 0.05) {
-  cat("Reject null: intercepts differ significantly\n")
-} else {
-  cat("Fail to reject null: no evidence intercepts differ\n")
-}
+R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, N=2
+out <- span_py(R1, R2)
+out$pval; out$stat; out$H0
 
 }
 \references{
-Pesaran, M. H., & Yamagata, T. (2023). "Testing for alpha in linear factor pricing models with a large number of securities."
-\emph{Journal of Financial Econometrics}, 22(2), 407-460.
+\insertRef{PesaranYamagata2023}{spantest}
 }
+\seealso{
+Other Alpha Spanning Tests: 
+\code{\link{span_as}()},
+\code{\link{span_bj}()},
+\code{\link{span_f1}()},
+\code{\link{span_gl_a}()},
+\code{\link{span_grs}()}
+}
+\concept{Alpha Spanning Tests}

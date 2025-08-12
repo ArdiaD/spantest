@@ -1,35 +1,38 @@
-#' F2 Spanning Test for Slope Coefficients (Variance Spanning)
+#' F2 Variance-Spanning Test (Slopes Only)
 #'
-#' Implements the F2 test which examines the null hypothesis
-#' \eqn{H_0: \delta = 0}, indicating that the test assets do not improve the
-#' minimum variance frontier beyond the benchmark assets.
+#' Tests the null \eqn{H_0:\ \delta = 0} that adding test assets does not
+#' improve the minimum-variance frontier spanned by the benchmarks (variance
+#' spanning). The statistic compares frontier-defining quantities of the
+#' augmented (benchmark + test) universe to those of the benchmark subset.
 #'
-#' The test compares variance-related parameters of the extended portfolio versus
-#' the benchmark portfolio. It assumes i.i.d. normally distributed returns and full-rank covariance matrices.
-#'
-#' @param R1 A numeric matrix of benchmark asset returns (T observations by K assets).
-#' @param R2 A numeric matrix of test asset returns (T observations by N assets).
+#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times K}.
+#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times N}.
 #'
 #' @return A named list with components:
 #' \describe{
-#'   \item{\code{pval}}{P-value associated with the F2 test statistic under the null hypothesis.}
-#'   \item{\code{stat}}{The F2 test statistic measuring variance spanning.}
-#'   \item{\code{H0}}{A character string describing the null hypothesis tested: \code{"delta = 0"}.}
+#'   \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+#'   \item{\code{stat}}{F2 \eqn{F}-statistic.}
+#'   \item{\code{H0}}{Null hypothesis description, \code{"delta = 0"}.}
 #' }
 #'
+#' @details
+#' Under standard conditions (i.i.d. returns, full-rank covariances), the reference
+#' distribution is \eqn{F_{N,\ T-K-N+1}}. Finite-sample feasibility requires
+#' \eqn{T-K-N+1 \ge 1}.
+#'
 #' @references
-#' Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{The Journal of Finance}, 42(4), 873–888. \cr
-#' Kan, R., & Zhou, G. (2012). "Tests of Mean-Variance Spanning." \emph{Annals of Economics and Finance}, 13(1), 145–193.
+#' \insertRef{HubermanKandel1987}{spantest}
 #'
 #' @examples
 #' set.seed(123)
-#' R1 <- matrix(rnorm(300), 100, 3)  # Benchmark asset returns
-#' R2 <- matrix(rnorm(200), 100, 2)  # Test asset returns
-#' result <- span_f2(R1, R2)
-#' result$stat  # F2 statistic
-#' result$pval  # P-value of the test
-#' result$H0    # Null hypothesis tested
+#' R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+#' R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, N=2
+#' out <- span_f2(R1, R2)
+#' out$stat; out$pval; out$H0
 #'
+#' @family Variance Spanning Tests
+#'
+#' @importFrom stats pf cov
 #' @export
 span_f2 <- function(R1, R2) {
   # Combine and define dimensions

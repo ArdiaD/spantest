@@ -2,62 +2,68 @@
 % Please edit documentation in R/span_as.R
 \name{span_as}
 \alias{span_as}
-\title{Subseries-Based Cauchy Combination Test (SCT) for Spanning Hypotheses}
+\title{Ardia and Sessinou (2024) Subseries-Based Cauchy Combination Test (SCT) for Spanning}
 \usage{
 span_as(bench, test, control = list())
 }
 \arguments{
-\item{bench}{A numeric matrix of benchmark asset returns (T x K), used as the spanning base.}
+\item{bench}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{test}{A numeric matrix of test asset returns (T x N), to be evaluated for spanning.}
+\item{test}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 
-\item{control}{Optional named list of control parameters passed to f_getpv (internal function):
+\item{control}{Optional list passed to internal computation:
 \describe{
-\item{\code{ks}}{A numeric vector of subseries exponents controlling block size scaling, \code{c(1/3)} (default).}
-\item{\code{L}}{A numeric vector of perturbation scaling constants controlling randomized projection behavior \code{c(0, 2)} (default).}
+\item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
+\item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
 }}
 }
 \value{
-A named list of global p-values for each hypothesis type and configuration:
-\describe{
-\item{\code{CCTd}}{Global p-value for the null \eqn{\delta = 0} (no slope deviation).}
-\item{\code{CCTa}}{Global p-value for the null \eqn{\alpha = 0} (no intercept deviation).}
-\item{\code{CCTad}}{Global p-value for the joint null \eqn{\alpha = 0, \delta = 0}.}
+A named list of global (combined) p-values. Names encode hypothesis and settings:
+\itemize{
+\item \code{CCTd_L{L}_k{i}} — variance (slope) spanning, \eqn{\delta = 0};
+\item \code{CCTa_L{L}_k{i}} — alpha spanning, \eqn{\alpha = 0};
+\item \code{CCTad_L{L}_k{i}} — joint mean–variance spanning, \eqn{\alpha = 0,\ \delta = 0}.
 }
-Each entry is suffixed by the subseries settings used, e.g., \code{CCTa_L0_k1}.
 }
 \description{
-Computes robust p-values for testing spanning-related linear restrictions using the residual-based
-subseries method. This function supports high-dimensional inference on hypotheses such as
-\eqn{H_0^\delta}, \eqn{H_0^\alpha}, and their joint null \eqn{H_0^{\alpha, \delta}} using
-a simulation-based approximation and aggregation via the Cauchy Combination Test (CCT).
+Computes robust p-values for linear spanning restrictions using a residual-based
+subseries procedure with Cauchy Combination Test (CCT) aggregation. Supports high-dimensional
+inference for \eqn{H_0^\delta} (variance/spread slopes), \eqn{H_0^\alpha} (intercepts),
+and the joint null \eqn{H_0^{\alpha,\delta}}.
 }
 \details{
-The function performs residual-based inference by dividing the data into overlapping subseries
-of length approximately \code{floor(T^k)} for each exponent \code{k} in \code{ks}. Randomized
-perturbations of residuals controlled by \code{L} generate test statistics robust to serial
-and cross-sectional dependence. P-values from these subseries tests are combined using the
-Cauchy Combination Test (CCT), which controls for dependence between tests and retains good
-power in high dimensions.
-
-The naming convention of the output encodes the test type:
-\itemize{
-\item \code{CCTd}: minimum-variance (delta) spanning test,
-\item \code{CCTa}: max Sharpe (alpha) spanning test,
-\item \code{CCTad}: Full mean variance spanning (MVS), joint test of alpha and delta.
-}
-Suffixes specify the perturbation scale \code{L} and block size index \code{k}.
-
-This method is particularly useful in large asset universes where classical F-tests or GRS
-tests become invalid due to dimensionality and complex dependence structures.
-However, computation time increases with sample size and number of simulations.
+For each \code{k} in \code{ks}, data are partitioned into overlapping subseries of length \code{floor(T^k)}.
+Residual perturbations controlled by \code{L} generate test statistics robust to serial and
+cross-sectional dependence and conditional heteroskedasticity. Resulting sub-p-values are aggregated
+by the Cauchy Combination Test (CCT), which remains valid under dependence and retains power in high dimensions.
 }
 \examples{
 set.seed(123)
-bench <- matrix(rnorm(300), nrow = 100, ncol = 3)  # Benchmark assets
-test  <- matrix(rnorm(200), nrow = 100, ncol = 2)  # Test assets
-span_as(bench, test)
+bench <- matrix(rnorm(300), 100, 3)
+test  <- matrix(rnorm(200), 100, 2)
+out <- span_as(bench, test)
+out$CCTa_L0_k1; out$CCTd_L0_k1; out$CCTad_L0_k1
+
 }
 \references{
-Ardia, D., & Sessinou, M. (2024) "Robust Inference in Large Panels and Markowitz Portfolios" \emph{working paper}.
+\insertRef{ArdiaSessinou2025}{spantest} \cr
 }
+\seealso{
+Other Alpha Spanning Tests: 
+\code{\link{span_bj}()},
+\code{\link{span_f1}()},
+\code{\link{span_gl_a}()},
+\code{\link{span_grs}()},
+\code{\link{span_py}()}
+
+Other Variance Spanning Tests: 
+\code{\link{span_f2}()},
+\code{\link{span_km}()}
+
+Other Joint Mean-Variance Spanning Tests: 
+\code{\link{span_gl_ad}()},
+\code{\link{span_hk}()}
+}
+\concept{Alpha Spanning Tests}
+\concept{Joint Mean-Variance Spanning Tests}
+\concept{Variance Spanning Tests}

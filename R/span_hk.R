@@ -1,34 +1,39 @@
-#' Huberman-Kandel Spanning Test (1987)
+#' Huberman–Kandel Joint Mean–Variance Spanning Test (1987)
 #'
-#' Tests the joint null hypothesis \eqn{H_0: \alpha = 0, \delta = 0} using the
-#' mean-variance spanning criterion of Huberman and Kandel (1987). This test evaluates
-#' whether adding new assets (R2) improves the efficient frontier spanned by a benchmark (R1).
+#' Tests the joint null \eqn{H_0:\ \alpha = 0,\ \delta = 0} that the benchmark
+#' assets span the mean–variance frontier of the augmented (benchmark + test)
+#' universe. Following Huberman & Kandel (1987), the statistic compares the
+#' frontiers with and without the additional assets.
 #'
-#' @param R1 Numeric matrix of benchmark returns (T x K)
-#' @param R2 Numeric matrix of test asset returns (T x N)
+#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times K}.
+#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times N}.
 #'
-#' @return A list with:
+#' @return A named list with components:
 #' \describe{
-#'   \item{\code{pval}}{The p-value associated with the test statistic.}
-#'   \item{\code{stat}}{The test statistic, F-distributed under the null.}
-#'   \item{\code{H0}}{The null hypothesis tested: \code{"alpha = 0 and delta = 0"}.}
+#'   \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+#'   \item{\code{stat}}{\eqn{F}-statistic value.}
+#'   \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0 and delta = 0"}.}
 #' }
 #'
+#' @details
+#' The test evaluates whether adding the test assets changes the efficient
+#' frontier implied by the benchmarks. Under standard regularity conditions,
+#' the statistic has an \eqn{F} reference with \eqn{(2N,\ 2(T-K-N))} degrees of
+#' freedom. Finite-sample feasibility requires \eqn{T-K-N \ge 1}.
+#'
 #' @references
-#' Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{The Journal of Finance}, 42(4), 873–888.
+#' \insertRef{HubermanKandel1987}{spantest} \cr
 #'
 #' @examples
 #' set.seed(123)
-#' R1 <- matrix(rnorm(300), 100, 3)  # Benchmark returns
-#' R2 <- matrix(rnorm(200), 100, 2)  # Test returns
-#' result <- span_hk(R1, R2)
-#' print(result$stat)  # F-statistic
-#' print(result$pval)  # P-value
-#' print(result$H0)    # Null hypothesis
+#' R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+#' R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, N=2
+#' out <- span_hk(R1, R2)
+#' out$stat; out$pval; out$H0
 #'
-#' # Interpretation:
-#' # A p-value below 0.05 suggests rejecting the null that the benchmark spans the extended portfolio.
+#' @family Joint Mean-Variance Spanning Tests
 #'
+#' @importFrom stats pf cov
 #' @export
 span_hk <- function(R1, R2) {
   R <- cbind(R1, R2)

@@ -2,40 +2,51 @@
 % Please edit documentation in R/span_grs.R
 \name{span_grs}
 \alias{span_grs}
-\title{Gibbons-Ross-Shanken (GRS) Spanning Test}
+\title{Gibbons–Ross–Shanken (GRS) Alpha Spanning Test (1989)}
 \usage{
 span_grs(R1, R2)
 }
 \arguments{
-\item{R1}{A numeric matrix of benchmark returns (T x K).}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{R2}{A numeric matrix of test asset returns (T x N).}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 }
 \value{
-A list with the following elements:
+A named list with components:
 \describe{
-\item{\code{pval}}{The associated p-value under the null.}
-\item{\code{stat}}{The GRS F-statistic.}
-\item{\code{H0}}{A description of the null hypothesis: \code{"alpha = 0"}.}
+\item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+\item{\code{stat}}{GRS \eqn{F}-statistic.}
+\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 }
 }
 \description{
-Implements the Gibbons, Ross, and Shanken (1989) test for the joint null hypothesis that all intercepts
-(\eqn{\alpha = 0}) are zero in the multivariate regression of test asset excess returns on benchmark portfolios.
-The test assumes homoskedasticity and normally distributed errors. It is most reliable when the number of time periods
-is sufficiently greater than the number of test assets and benchmark factors.
+Implements the GRS test of the joint null \eqn{H_0:\ \alpha = 0} in the
+multivariate regression of test-asset returns on benchmark portfolios
+(with an intercept). The statistic assumes homoskedastic, normally
+distributed errors and is most reliable when \eqn{T} is large relative
+to \eqn{K} (benchmarks) and \eqn{N} (test assets).
+}
+\details{
+Under standard conditions, the reference distribution is
+\eqn{F_{N,\ T-N-K}}. Finite-sample feasibility requires \eqn{T-N-K \ge 1}.
 }
 \examples{
 set.seed(42)
-R1 <- matrix(rnorm(300), nrow = 100, ncol = 3)  # Benchmark returns
-R2 <- matrix(rnorm(200), nrow = 100, ncol = 2)  # Test asset returns
-res <- span_grs(R1, R2)
-res$stat   # GRS test statistic
-res$pval   # P-value
-res$H0     # Null hypothesis tested
+R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, N=2
+out <- span_grs(R1, R2)
+out$stat; out$pval; out$H0
 
 }
 \references{
-Gibbons, M. R., Ross, S. A., & Shanken, J. (1989).
-"A Test of the Efficiency of a Given Portfolio." \emph{Econometrica}, 57(5), 1121–1152.
+\insertRef{GRS1989}{spantest} \cr
 }
+\seealso{
+Other Alpha Spanning Tests: 
+\code{\link{span_as}()},
+\code{\link{span_bj}()},
+\code{\link{span_f1}()},
+\code{\link{span_gl_a}()},
+\code{\link{span_py}()}
+}
+\concept{Alpha Spanning Tests}

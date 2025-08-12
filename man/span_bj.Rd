@@ -2,45 +2,52 @@
 % Please edit documentation in R/span_bj.R
 \name{span_bj}
 \alias{span_bj}
-\title{Britten-Jones Tangency Portfolio Spanning Test}
+\title{Britten–Jones Tangency-Portfolio Spanning Test (1999)}
 \usage{
 span_bj(R1, R2)
 }
 \arguments{
-\item{R1}{Numeric matrix of benchmark asset returns with dimensions (T x N).}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{R2}{Numeric matrix of test asset returns with dimensions (T x K).}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 }
 \value{
-A list containing:
+A named list with components:
 \describe{
-\item{\code{pval}}{The p-value under the null hypothesis that the tangency portfolio
-is spanned by the benchmark assets.}
-\item{\code{stat}}{The F-statistic of the test.}
-\item{\code{H0}}{A character string describing the null hypothesis tested: \code{"Tangency portfolio is spanned by benchmark"}.}
+\item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+\item{\code{stat}}{Britten–Jones \eqn{F}-statistic.}
+\item{\code{H0}}{Null hypothesis description, \code{"tangency portfolio spanned by benchmark"}.}
 }
 }
 \description{
-Implements the test proposed by Britten-Jones (1999), which evaluates whether the tangency portfolio
-formed from the combined set of benchmark and test assets is spanned by the benchmark assets alone.
-The test uses an F-statistic based on a regression of a constant vector on differences in returns,
-reflecting whether the benchmark assets span the Sharpe-optimal portfolio of the full asset universe.
+Tests whether the tangency (maximum Sharpe) portfolio of the augmented
+universe (benchmarks + test assets) is spanned by the benchmark assets
+alone. Following Britten–Jones (1999), the statistic arises from a
+regression of a constant on return differences and yields an \eqn{F}
+test of the tangency-spanning restriction.
 }
 \details{
-This test is particularly relevant for assessing if the benchmark portfolio captures the maximum
-Sharpe ratio achievable when adding new assets.
+With \code{X} formed from pairwise differences, the reference distribution is
+\eqn{F_{N,\ T - ncol(X)}}; here \code{ncol(X)} = \eqn{K + N - 1}.
+Finite-sample feasibility requires \code{T - (K + N - 1) >= 1}.
 }
 \examples{
 set.seed(321)
-R1 <- matrix(rnorm(300), 100, 3)  # Benchmark asset returns
-R2 <- matrix(rnorm(200), 100, 2)  # Test asset returns
-res <- span_bj(R1, R2)
-res$stat   # F-statistic
-res$pval   # p-value
-res$H0     # Null hypothesis tested
+R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, N=2
+out <- span_bj(R1, R2)
+out$stat; out$pval; out$H0
 
 }
 \references{
-Britten-Jones, M. (1999). "The Sampling Error in Estimates of Mean-Variance Efficient Portfolio Weights."
-\emph{The Journal of Finance}, 54(2), 655–671.
+\insertRef{BrittenJones1999}{spantest} \cr
 }
+\seealso{
+Other Alpha Spanning Tests: 
+\code{\link{span_as}()},
+\code{\link{span_f1}()},
+\code{\link{span_gl_a}()},
+\code{\link{span_grs}()},
+\code{\link{span_py}()}
+}
+\concept{Alpha Spanning Tests}

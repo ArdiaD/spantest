@@ -2,62 +2,65 @@
 % Please edit documentation in R/span_gl_a.R
 \name{span_gl_a}
 \alias{span_gl_a}
-\title{Gungor-Luger Alpha-Only Spanning Test}
+\title{Gungor–Luger Alpha-Only Spanning Test (2016)}
 \usage{
 span_gl_a(R1, R2, control = list())
 }
 \arguments{
-\item{R1}{Numeric matrix (T x N) of benchmark asset returns.}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times N}.}
 
-\item{R2}{Numeric matrix (T x K) of test asset returns.}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times K}.}
 
-\item{control}{A named list of control parameters:
+\item{control}{List of options:
 \describe{
-\item{\code{seed}}{Random seed for reproducibility (default: 1).}
-\item{\code{totsim}}{Number of Monte Carlo simulations (default: 500).}
-\item{\code{pval_thresh}}{Significance level for decision-making (default: 0.05).}
-\item{\code{do_trace}}{If TRUE, prints intermediate test details (default: TRUE).}
+\item{\code{seed}}{Integer seed for reproducibility (default \code{1}).}
+\item{\code{totsim}}{Number of MC simulations (default \code{500}).}
+\item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
+\item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
 }}
 }
 \value{
-A list containing:
+A list with components:
 \describe{
-\item{\code{pval_LMC}}{Monte Carlo p-value using the Least Favorable configuration.}
-\item{\code{pval_BMC}}{Monte Carlo p-value using the Balanced configuration.}
-\item{\code{stat}}{Observed maximum F-statistic from the sample.}
-\item{\code{Decisions}}{Numeric decision code: 1 (Accept), 0 (Reject), or NA (Inconclusive).}
-\item{\code{Decisions_string}}{Human-readable decision string.}
-\item{\code{H0}}{Description of the null hypothesis: \code{"alpha = 0"}.}
+\item{\code{pval_LMC}}{Least-Favorable MC p-value.}
+\item{\code{pval_BMC}}{Balanced MC p-value.}
+\item{\code{stat}}{Observed \eqn{F_{\max}} statistic.}
+\item{\code{Decisions}}{Decision code: \code{1} = Accept, \code{0} = Reject, \code{NA} = Inconclusive.}
+\item{\code{Decisions_string}}{Text label: \code{"Accept"}, \code{"Reject"}, or \code{"Inconclusive"}.}
+\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 }
 }
 \description{
-Performs the subseries-based spanning test for the null hypothesis \eqn{H_0: \alpha = 0} as proposed by
-Gungor and Luger (2016). The test assesses whether the intercepts (alphas) of the test assets are
-jointly zero, indicating that the benchmark assets fully span the mean returns of the test assets.
+Tests the null \eqn{H_0:\ \alpha = 0} that benchmark assets span the mean
+(intercepts) of the test assets. Following Gungor & Luger (2016), the
+procedure uses a Monte Carlo (MC) test based on an \eqn{F_{\max}} statistic
+with residual sign-flip simulations, yielding Least-Favorable (LMC) and
+Balanced (BMC) MC p-values and a three-way decision rule.
 }
 \details{
-This method uses a residual-based Monte Carlo simulation with Least Favorable (LMC) and Balanced (BMC)
-configurations to compute robust p-values that account for possible heteroskedasticity,
-serial correlation, and fat tails in the return series.
-
-The test is particularly suitable for high-dimensional settings where the number of test assets may be large,
-and classical tests (like GRS) suffer from size distortions or loss of power.
-The subseries bootstrap procedure accounts for time-dependence and conditional heteroskedasticity,
-making the test robust to realistic market dynamics.
-
-The Least Favorable (LMC) p-value provides a conservative inference, while the Balanced (BMC)
-p-value may be more powerful but less conservative. The test decision is made based on these values.
+Accept if \code{pval_LMC > alpha}; Reject if \code{pval_BMC <= alpha};
+otherwise Inconclusive. The subseries sign-flip MC approach is robust to
+heteroskedasticity, serial dependence, and heavy tails, making it suitable
+for high-dimensional settings where classical alpha tests (e.g., GRS) may
+suffer from size distortions.
 }
 \examples{
 set.seed(123)
 R1 <- matrix(rnorm(300), 100, 3)
 R2 <- matrix(rnorm(200), 100, 2)
-result <- span_gl_a(R1, R2, control = list(totsim = 100))
-result$Decisions_string
-result$pval_LMC
+out <- span_gl_a(R1, R2, control = list(totsim = 100, do_trace = FALSE))
+out$Decisions_string; out$pval_LMC; out$pval_BMC
 
 }
 \references{
-Gungor, S., & Luger, R. (2016). "Multivariate Tests of Mean-Variance Efficiency and Spanning With a Large Number of Assets and Time-Varying Covariances."
-\emph{Journal of Business & Economic Statistics}, 34(2), 161-175.
+\insertRef{GungorLuger2016}{spantest} \cr
 }
+\seealso{
+Other Alpha Spanning Tests: 
+\code{\link{span_as}()},
+\code{\link{span_bj}()},
+\code{\link{span_f1}()},
+\code{\link{span_grs}()},
+\code{\link{span_py}()}
+}
+\concept{Alpha Spanning Tests}

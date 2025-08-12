@@ -2,44 +2,50 @@
 % Please edit documentation in R/span_km.R
 \name{span_km}
 \alias{span_km}
-\title{Kempf-Memmel GMVP Spanning Test}
+\title{Kempf–Memmel GMVP Spanning Test}
 \usage{
 span_km(R1, R2)
 }
 \arguments{
-\item{R1}{Numeric matrix of benchmark returns (T x N), with T time observations and N benchmark assets.}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times N}.}
 
-\item{R2}{Numeric matrix of test asset returns (T x K), with K test assets.}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times K}.}
 }
 \value{
-A named list with:
+A named list with components:
 \describe{
-\item{\code{pval}}{P-value corresponding to the F-statistic under the null.}
-\item{\code{stat}}{F-statistic value of the test.}
-\item{\code{H0}}{Description of the null hypothesis tested: \code{"GMVP of benchmark = GMVP of full asset universe"}.}
+\item{\code{pval}}{P-value for the F-statistic under the null.}
+\item{\code{stat}}{F-statistic value.}
+\item{\code{H0}}{Null hypothesis description, \code{"GMVP(bmk) = GMVP(full)"}.}
 }
 }
 \description{
-Tests whether the Global Minimum Variance Portfolio (GMVP) constructed from the combined
-benchmark and test assets is equivalent to the GMVP of the benchmark assets alone.
-This test, proposed by Kempf and Memmel (2006), evaluates if adding new assets
-significantly improves the minimum variance frontier.
+Tests whether the Global Minimum Variance Portfolio (GMVP) of the combined
+(benchmark + test) universe equals the GMVP of the benchmark assets alone.
+Following Kempf & Memmel (2006), the null assesses whether adding new assets
+improves the minimum-variance frontier.
+}
+\details{
+The null hypothesis \eqn{H_0} is that augmenting the benchmark set with the
+test assets does not change the GMVP weights (\eqn{\Delta = 0}), i.e.,
+the GMVP of the full universe coincides with that of the benchmark subset.
+The test is implemented via a linear restriction on coefficients in an
+equivalent regression representation, yielding an \eqn{F}-statistic.
 }
 \examples{
 set.seed(123)
-R1 <- matrix(rnorm(300), nrow = 100, ncol = 3)  # Benchmark assets
-R2 <- matrix(rnorm(200), nrow = 100, ncol = 2)  # Test assets
-result <- span_km(R1, R2)
-print(result$pval)  # p-value of the test
-print(result$stat)  # F-statistic
-if (result$pval < 0.05) {
-  cat("Reject null: GMVP of full set differs from benchmark\n")
-} else {
-  cat("Fail to reject null: no evidence of improvement in GMVP\n")
-}
+R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, N=3
+R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, K=2
+ans <- span_km(R1, R2)
+ans$pval; ans$stat; ans$H0
 
 }
 \references{
-Kempf, A., & Memmel, C. (2006). "Estimating the Global Minimum Variance Portfolio."
-\emph{Schmalenbach Business Review}, 58(4), 332–348.
+\insertRef{KempfMemmel2006}{spantest} \cr
 }
+\seealso{
+Other Variance Spanning Tests: 
+\code{\link{span_as}()},
+\code{\link{span_f2}()}
+}
+\concept{Variance Spanning Tests}

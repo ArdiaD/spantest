@@ -1,33 +1,37 @@
-#' F1 Spanning Test for Intercepts (Alpha = 0)
+#' F1 Alpha-Spanning Test (Intercepts Only)
 #'
-#' Implements the F1 test proposed by Kan and Zhou (2012), which tests the null hypothesis
-#' \eqn{H_0: \alpha = 0}, meaning the intercepts in the return-generating process of the test assets
-#' are jointly zero. This tests whether the mean of the test asset returns lies within the
-#' mean-variance frontier of the benchmark assets.
+#' Tests the null \eqn{H_0:\ \alpha = 0} that the intercepts of the test assets
+#' are jointly zero when regressed on the benchmark assets, i.e., benchmarks
+#' span the mean of the test assets. This is the F1 test of Kan & Zhou (2012).
 #'
-#' @param R1 A numeric matrix of benchmark asset returns (T x K).
-#' @param R2 A numeric matrix of test asset returns (T x N).
+#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times K}.
+#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times N}.
 #'
-#' @return A list with the following components:
+#' @return A named list with components:
 #' \describe{
-#'   \item{\code{pval}}{The associated p-value.}
-#'   \item{\code{stat}}{The F1 test statistic.}
-#'   \item{\code{H0}}{The null hypothesis tested: \code{"alpha = 0"}.}
+#'   \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+#'   \item{\code{stat}}{F1 \eqn{F}-statistic.}
+#'   \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 #' }
 #'
+#' @details
+#' Under standard assumptions (i.i.d. returns, full-rank covariances), the
+#' reference distribution is \eqn{F_{N,\ T-K-N}}. Finite-sample feasibility
+#' requires \eqn{T-K-N \ge 1}.
+#'
 #' @references
-#' Huberman, G., & Kandel, S. (1987). "Mean-Variance Spanning." \emph{The Journal of Finance}, 42(4), 873–888. \cr
-#' Kan, R., & Zhou, G. (2012). "Tests of Mean-Variance Spanning." \emph{Annals of Economics and Finance}, 13(1), 145–193.
+#' \insertRef{KanZhou2012}{spantest}
 #'
 #' @examples
 #' set.seed(123)
-#' R1 <- matrix(rnorm(300), 100, 3)  # Benchmark returns
-#' R2 <- matrix(rnorm(200), 100, 2)  # Test asset returns
-#' result <- span_f1(R1, R2)
-#' result$stat
-#' result$pval
-#' result$H0
+#' R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+#' R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, N=2
+#' out <- span_f1(R1, R2)
+#' out$stat; out$pval; out$H0
 #'
+#' @family Alpha Spanning Tests
+#'
+#' @importFrom stats pf cov
 #' @export
 span_f1 <- function(R1, R2) {
   R <- cbind(R1, R2)
