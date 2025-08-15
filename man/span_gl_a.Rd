@@ -13,21 +13,21 @@ span_gl_a(R1, R2, control = list())
 
 \item{control}{List of options:
 \describe{
-\item{\code{seed}}{Integer seed for reproducibility (default \code{1}).}
-\item{\code{totsim}}{Number of MC simulations (default \code{500}).}
-\item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
-\item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
+  \item{\code{seed}}{Integer seed for reproducibility (default \code{1}).}
+  \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
+  \item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
+  \item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
 }}
 }
 \value{
 A list with components:
 \describe{
-\item{\code{pval_LMC}}{Least-Favorable MC p-value.}
-\item{\code{pval_BMC}}{Balanced MC p-value.}
-\item{\code{stat}}{Observed \eqn{F_{\max}} statistic.}
-\item{\code{Decisions}}{Decision code: \code{1} = Accept, \code{0} = Reject, \code{NA} = Inconclusive.}
-\item{\code{Decisions_string}}{Text label: \code{"Accept"}, \code{"Reject"}, or \code{"Inconclusive"}.}
-\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
+  \item{\code{pval_LMC}}{Least-Favorable MC p-value.}
+  \item{\code{pval_BMC}}{Balanced MC p-value.}
+  \item{\code{stat}}{Observed \eqn{F_{\max}} statistic.}
+  \item{\code{Decisions}}{Decision code: \code{1} = Accept, \code{0} = Reject, \code{NA} = Inconclusive.}
+  \item{\code{Decisions_string}}{Text label: \code{"Accept"}, \code{"Reject"}, or \code{"Inconclusive"}.}
+  \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 }
 }
 \description{

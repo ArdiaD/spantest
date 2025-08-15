@@ -14,9 +14,9 @@ span_f2(R1, R2)
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
-\item{\code{stat}}{F2 \eqn{F}-statistic.}
-\item{\code{H0}}{Null hypothesis description, \code{"delta = 0"}.}
+  \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+  \item{\code{stat}}{F2 \eqn{F}-statistic.}
+  \item{\code{H0}}{Null hypothesis description, \code{"delta = 0"}.}
 }
 }
 \description{

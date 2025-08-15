@@ -14,9 +14,9 @@ span_py(R1, R2)
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value under the standard normal reference distribution.}
-\item{\code{stat}}{Standardized test statistic.}
-\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
+  \item{\code{pval}}{P-value under the standard normal reference distribution.}
+  \item{\code{stat}}{Standardized test statistic.}
+  \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 }
 }
 \description{

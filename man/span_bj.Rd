@@ -14,9 +14,9 @@ span_bj(R1, R2)
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
-\item{\code{stat}}{Britten–Jones \eqn{F}-statistic.}
-\item{\code{H0}}{Null hypothesis description, \code{"tangency portfolio spanned by benchmark"}.}
+  \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+  \item{\code{stat}}{Britten–Jones \eqn{F}-statistic.}
+  \item{\code{H0}}{Null hypothesis description, \code{"tangency portfolio spanned by benchmark"}.}
 }
 }
 \description{

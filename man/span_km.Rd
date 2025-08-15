@@ -14,9 +14,9 @@ span_km(R1, R2)
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value for the F-statistic under the null.}
-\item{\code{stat}}{F-statistic value.}
-\item{\code{H0}}{Null hypothesis description, \code{"GMVP(bmk) = GMVP(full)"}.}
+  \item{\code{pval}}{P-value for the F-statistic under the null.}
+  \item{\code{stat}}{F-statistic value.}
+  \item{\code{H0}}{Null hypothesis description, \code{"GMVP(bmk) = GMVP(full)"}.}
 }
 }
 \description{

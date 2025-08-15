@@ -13,16 +13,16 @@ span_as(bench, test, control = list())
 
 \item{control}{Optional list passed to internal computation:
 \describe{
-\item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
-\item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
+  \item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
+  \item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
 }}
 }
 \value{
 A named list of global (combined) p-values. Names encode hypothesis and settings:
 \itemize{
-\item \code{CCTd_L{L}_k{i}} — variance (slope) spanning, \eqn{\delta = 0};
-\item \code{CCTa_L{L}_k{i}} — alpha spanning, \eqn{\alpha = 0};
-\item \code{CCTad_L{L}_k{i}} — joint mean–variance spanning, \eqn{\alpha = 0,\ \delta = 0}.
+  \item \code{CCTd_L{L}_k{i}} — variance (slope) spanning, \eqn{\delta = 0};
+  \item \code{CCTa_L{L}_k{i}} — alpha spanning, \eqn{\alpha = 0};
+  \item \code{CCTad_L{L}_k{i}} — joint mean–variance spanning, \eqn{\alpha = 0,\ \delta = 0}.
 }
 }
 \description{

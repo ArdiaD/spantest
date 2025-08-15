@@ -1,17 +1,17 @@
 Package: spantest
-Title: Mean-Variance Spanning Tests
-Depends: R (>= 4.1.0)
+Title: Mean-Variance Spanning Tests in R
 Version: 1.1-0
-Authors@R: c(
-  person("David", "Ardia", email = "david.ardia.ch@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-2823-782X")),
-  person("Benjamin", "Seguin", role = "aut"),
-  person("Rosnel", "Sessinou", role = "ctb"),
-  person("Richard", "Luger", role = "ctb"))
-Description: Implements a comprehensive suite of mean-variance spanning tests, including classical methods by Huberman and Kandel (1987), Gibbons, Ross, and Shanken (1989), Kempf and Memmel (2006), Pesaran and Yamagata (2023), and Gungor and Luger (2016), alongside the recent residual-based subseries tests developed by Ardia and Sessinou (2024).
+Authors@R: c(person("David", "Ardia", role = c("aut", "cre"), 
+             email = "david.ardia.ch@gmail.com", 
+             comment = c(ORCID = "0000-0003-2823-782X")),
+             person("Benjamin", "Seguin", role = "aut"),
+             person("Rosnel", "Sessinou", role = "ctb"),
+             person("Richard", "Luger", role = "ctb"))
+Description: Implements a comprehensive suite of mean-variance spanning tests.
 License: GPL-3
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)

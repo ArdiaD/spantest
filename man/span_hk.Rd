@@ -14,9 +14,9 @@ span_hk(R1, R2)
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
-\item{\code{stat}}{\eqn{F}-statistic value.}
-\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0 and delta = 0"}.}
+  \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+  \item{\code{stat}}{\eqn{F}-statistic value.}
+  \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0 and delta = 0"}.}
 }
 }
 \description{

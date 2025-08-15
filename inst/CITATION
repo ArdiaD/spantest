@@ -7,9 +7,7 @@ author = c(person("David","Ardia"),
   year   = "2025",
   note   = "R package version 1.1-0",
   organization = "CRAN",
-  url    = "https://CRAN.R-project.org/package=spantest",
   textVersion = paste("Ardia, D., Seguin, B. (2025).",
     "spantest: Mean-Variance Spanning Tests in R.",
-    "R package version 1.1-0.",
-    "Retrieved from https://CRAN.R-project.org/package=spantest")
+    "R package version 1.1-0.")
 )

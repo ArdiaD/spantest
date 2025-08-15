@@ -14,9 +14,9 @@ span_grs(R1, R2)
 \value{
 A named list with components:
 \describe{
-\item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
-\item{\code{stat}}{GRS \eqn{F}-statistic.}
-\item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
+  \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
+  \item{\code{stat}}{GRS \eqn{F}-statistic.}
+  \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 }
 }
 \description{
