@@ -12,6 +12,8 @@ License: GPL-3
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
+URL: https://github.com/ArdiaD/spantest
+BugReports: https://github.com/ArdiaD/spantest/issues
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)
