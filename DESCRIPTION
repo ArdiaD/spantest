@@ -2,7 +2,6 @@ Package: spantest
 Title: Mean-Variance Spanning Tests
 Depends: R (>= 4.1.0)
 Version: 1.1-0
-Maintainer: David Ardia <david.ardia.ch@gmail.com>
 Authors@R: c(
   person("David", "Ardia", email = "david.ardia.ch@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-2823-782X")),
   person("Benjamin", "Seguin", role = "aut"),
