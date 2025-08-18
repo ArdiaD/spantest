@@ -28,7 +28,7 @@
 #' residual-based oracle approximations that remain valid when K increases with T.
 #'
 #' @references
-#' Ardia, D., & Sessinou, M. (2024) "Robust Inference in Large Panels and Markowitz Portfolios" \emph{working paper}
+#' \insertRef{ArdiaSessinou2025}{spantest} \cr
 #'
 #' @importFrom stats cov na.omit pf pnorm pt qnorm rnorm runif sd t.test
 #' @importFrom utils head

@@ -22,14 +22,14 @@
 #' Visit the package website for articles and examples.
 #'
 #' @references
-#' \insertRef{HubermanKandel1987}{spantest} \cr
+#' \insertRef{ArdiaSessinou2025}{spantest} \cr
+#' \insertRef{BrittenJones1999}{spantest} \cr
 #' \insertRef{GRS1989}{spantest} \cr
+#' \insertRef{GungorLuger2016}{spantest} \cr
+#' \insertRef{HubermanKandel1987}{spantest} \cr
+#' \insertRef{KanZhou2012}{spantest} \cr
 #' \insertRef{KempfMemmel2006}{spantest} \cr
 #' \insertRef{PesaranYamagata2023}{spantest} \cr
-#' \insertRef{KanZhou2012}{spantest} \cr
-#' \insertRef{BrittenJones1999}{spantest} \cr
-#' \insertRef{GungorLuger2016}{spantest} \cr
-#' \insertRef{ArdiaSessinou2025}{spantest} \cr
 #'
 #' @author David Ardia, Benjamin Seguin
 #'

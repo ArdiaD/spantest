@@ -21,7 +21,7 @@
 #' \eqn{T-K-N+1 \ge 1}.
 #'
 #' @references
-#' \insertRef{HubermanKandel1987}{spantest}
+#' \insertRef{KanZhou2012}{spantest}
 #'
 #' @examples
 #' set.seed(123)
