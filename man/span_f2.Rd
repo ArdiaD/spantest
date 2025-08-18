@@ -39,7 +39,7 @@ out$stat; out$pval; out$H0
 
 }
 \references{
-\insertRef{HubermanKandel1987}{spantest}
+\insertRef{KanZhou2012}{spantest}
 }
 \seealso{
 Other Variance Spanning Tests: 

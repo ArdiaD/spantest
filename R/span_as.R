@@ -38,94 +38,9 @@
 #' @noRd
 #'
 f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
-  one <- rep(1, nrow(x))
-  y <- u - x[, 1]
 
-  if (ncol(x) == 1) {
-    x_centered <- matrix(nrow = nrow(x), ncol = 0)  # empty
-    x_augmented <- x  # only one column
-  } else {
-    x_centered <- sweep(x[, -1, drop = FALSE], 1, x[, 1], "-")
-    x_augmented <- cbind(x[, 1], x_centered)
-  }
-
-  x <- x_augmented
-
-  X_main <- cbind(1, x)
-  qr_main <- qr(X_main)
-  res <- qr.resid(qr_main, y)
-
-  xy_centered <- cbind(y, x_centered)
-
-  f_compute_resid <- function(X, y) {
-    qr <- qr(X)
-    qr.resid(qr, y)
-  }
-
-  ew <- f_compute_resid(cbind(1, xy_centered), x[, 1])
-  ew1 <- f_compute_resid(cbind(y, x), one)
-  ew3 <- f_compute_resid(xy_centered, x[, 1])
-
-  res_ew <- res * ew
-  score <- score2 <- matrix(res_ew, ncol = 1)
-
-  X_reg3 <- x
-  qr_reg3 <- qr(X_reg3)
-  res3 <- qr.resid(qr_reg3, y)
-  score3 <- matrix(res3 * ew3, ncol = 1)
-
-  # Score processing function
-  process_scores <- function(score_mat, sn) {
-    scoreb <- score_mat * f_prods(score_mat, sn)
-    vapply(ks, function(k) f_testbm(scoreb, k = k)[1], numeric(1))
-  }
-
-  # Delta=0
-  test1 <- lapply(L, function(sn_value) {
-    process_scores(score, sn = sn_value)
-  })
-
-  # Delta=alpha=0
-  score_combo <- cbind(score2, res * ew1)
-  test2 <- lapply(L, function(sn_value) {
-    process_scores(score_combo, sn = sn_value)
-  })
-
-  # Delta=0/alpha=0
-  test3 <- lapply(L, function(sn_value) {
-    process_scores(score3, sn = sn_value)
-  })
-
-  # Alpha=0
-  score_alpha <- matrix(res * ew1, ncol = 1)
-  test4 <- lapply(L, function(sn_value) {
-    process_scores(score_alpha, sn = sn_value)
-  })
-
-  result <- unlist(c(test1, test2, test4))
-
-  # Dynamic naming
-  f_ksuffix <- function(ks) {
-    paste0("_k", seq_along(ks))
-  }
-
-  suffixes <- f_ksuffix(ks)
-  test_names <- paste0(
-    # Test types (CCTd, CCTad, CCTa)
-    rep(c("CCTd", "CCTad", "CCTa"),
-        each = length(L) * length(ks)),
-
-    # L values
-    "_L", rep(L,
-              each = length(ks),
-              times = length(c("CCTd", "CCTad", "CCTa"))),
-
-    # k indices
-    "_k", rep(seq_along(ks),
-              times = length(L) * length(c("CCTd", "CCTad", "CCTa")))
-  )
-
-  names(result) <- test_names
+  stop("span_as NOT YET AVAILABLE")
+  result <- NA
   return(result)
 }
 
@@ -178,43 +93,9 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 #' @noRd
 #'
 span_as <- function(bench, test, control = list()) {
-  # Set control parameters
-  con <- list(ks = c(1/3), L = c(0, 2))
-  con[names(control)] <- control
-  k_values <- con$ks
-  l_values <- con$L
 
-  # Generate explicit template names
-  test_types <- c("CCTd", "CCTad", "CCTa")
-  template_names <- paste0(
-    rep(test_types, each = length(l_values) * length(k_values)),
-    "_L", rep(l_values, each = length(k_values), times = length(test_types)),
-    "_k", rep(seq_along(k_values), times = length(l_values) * length(test_types))
-  )
-
-  # Preallocate matrix with proper dimensions
-  pval_matrix <- matrix(NA,
-                        nrow = length(template_names),
-                        ncol = ncol(test),
-                        dimnames = list(template_names, NULL))
-
-  # Populate matrix with p-values
-  for (i in seq_len(ncol(test))) {
-    pvals <- f_getpv(test[, i], bench, ks = k_values, L = l_values)
-
-    # Validate dimensions
-    if (!identical(names(pvals), template_names)) {
-      stop(paste("Name mismatch in column", i,
-                 "\nExpected:", paste(head(template_names), collapse = " "),
-                 "\nGot:", paste(head(names(pvals)), collapse = " ")))
-    }
-
-    pval_matrix[, i] <- unlist(pvals)
-  }
-
-  # Combine p-values
-  f <- function(x) f_cauchypv(na.omit(x))
-  combined_results <- apply(pval_matrix, 1, f)
+  stop("span_as NOT YET AVAILABLE")
+  combined_results <- NA
 
   return(as.list(combined_results))
 }
