@@ -44,7 +44,6 @@ out$stat; out$pval; out$H0
 }
 \seealso{
 Other Joint Mean-Variance Spanning Tests: 
-\code{\link{span_as}()},
 \code{\link{span_gl_ad}()}
 }
 \concept{Joint Mean-Variance Spanning Tests}

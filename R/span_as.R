@@ -173,7 +173,10 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 #'
 #' @importFrom stats na.omit
 #' @importFrom utils head
-#' @export
+#' @keywords internal
+#'
+#' @noRd
+#'
 span_as <- function(bench, test, control = list()) {
   # Set control parameters
   con <- list(ks = c(1/3), L = c(0, 2))

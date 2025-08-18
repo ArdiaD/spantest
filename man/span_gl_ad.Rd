@@ -59,7 +59,6 @@ out$Decisions_string; out$pval_LMC; out$pval_BMC
 }
 \seealso{
 Other Joint Mean-Variance Spanning Tests: 
-\code{\link{span_as}()},
 \code{\link{span_hk}()}
 }
 \concept{Joint Mean-Variance Spanning Tests}

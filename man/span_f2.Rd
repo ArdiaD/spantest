@@ -43,7 +43,6 @@ out$stat; out$pval; out$H0
 }
 \seealso{
 Other Variance Spanning Tests: 
-\code{\link{span_as}()},
 \code{\link{span_km}()}
 }
 \concept{Variance Spanning Tests}

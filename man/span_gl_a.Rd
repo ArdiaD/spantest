@@ -57,7 +57,6 @@ out$Decisions_string; out$pval_LMC; out$pval_BMC
 }
 \seealso{
 Other Alpha Spanning Tests: 
-\code{\link{span_as}()},
 \code{\link{span_bj}()},
 \code{\link{span_f1}()},
 \code{\link{span_grs}()},

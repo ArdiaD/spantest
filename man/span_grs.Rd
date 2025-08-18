@@ -43,7 +43,6 @@ out$stat; out$pval; out$H0
 }
 \seealso{
 Other Alpha Spanning Tests: 
-\code{\link{span_as}()},
 \code{\link{span_bj}()},
 \code{\link{span_f1}()},
 \code{\link{span_gl_a}()},

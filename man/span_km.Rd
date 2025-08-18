@@ -45,7 +45,6 @@ ans$pval; ans$stat; ans$H0
 }
 \seealso{
 Other Variance Spanning Tests: 
-\code{\link{span_as}()},
 \code{\link{span_f2}()}
 }
 \concept{Variance Spanning Tests}
