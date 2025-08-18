@@ -5,7 +5,7 @@
 #' The package includes Huberman–Kandel (1987), Gibbons–Ross–Shanken (1989),
 #' Kempf–Memmel (2006), Pesaran–Yamagata (2023), Kan–Zhou (2012),
 #' Britten-Jones (1999), and recent robust/high-dimensional tests such as
-#' Gungor–Luger (2016) and Ardia–Sessinou (2024/2025).
+#' Gungor–Luger (2016) and Ardia–Sessinou (2025) (NOT YET AVAILABLE!).
 #'
 #' @section Main functions:
 #' - Alpha spanning: [span_grs()], [span_py()], [span_bj()], [span_f1()], [span_gl_a()], [span_as()]
