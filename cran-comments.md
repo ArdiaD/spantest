@@ -3,7 +3,7 @@
 * Checked on Windows (on win-builder) R devel and R release
 
 ## R CMD check results
-0 errors | 0 warnings | 1 notes
+0 errors | 0 warnings | 2 notes
 
 ## Notes
 * New submission
