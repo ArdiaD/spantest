@@ -35,30 +35,31 @@
 #'
 #' @importFrom stats pf
 #' @export
-
 span_bj <- function(R1, R2) {
   Rbig <- cbind(R1, R2)  # Combine benchmark (R1) and test (R2)
   t <- nrow(Rbig)
   K <- ncol(R1)          # K = benchmark assets
   N <- ncol(R2)          # N = test assets
 
+  # DF restriction
   if ((t - K - N) < 1) {
-    return(list(pval = NA_real_, stat = NA_real_, H0 = "delta = 0"))
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
   }
 
-  y <- rep(1, t)
+  # Alpha = 0 form: dependent = first asset, INCLUDE intercept
+  y <- Rbig[, 1]
 
-  # Take differences between first column and others
+  # Differences between first column and others
   Diff <- sweep(Rbig[, -1, drop = FALSE], 1, Rbig[, 1], FUN = function(x, y) y - x)
 
-  X <- Diff
+  X <- cbind(1, Diff)  # intercept
   XtXi <- crossprod(X)
   XtXi_inv <- solve(XtXi)
   coef <- XtXi_inv %*% crossprod(X, y)
   resid <- y - X %*% coef
   sigma2 <- drop(crossprod(resid) / (t - ncol(X)))
 
-  offset <- (K - 1)
+  offset <- 1 + (K - 1)  # intercept + (K-1) benchmark diffs
   C <- cbind(matrix(0, N, offset), diag(N))
   num <- as.numeric(
     crossprod(C %*% coef, solve(C %*% XtXi_inv %*% t(C)) %*% (C %*% coef)) / N
@@ -67,6 +68,6 @@ span_bj <- function(R1, R2) {
   stat <- num / sigma2
   pval <- pf(stat, N, t - ncol(X), lower.tail = FALSE)
 
-  list(pval = as.numeric(pval), stat = as.numeric(stat), H0 = "delta = 0")
+  list(pval = as.numeric(pval), stat = as.numeric(stat), H0 = "alpha = 0")
 }
 

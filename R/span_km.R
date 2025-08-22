@@ -43,6 +43,12 @@ span_km <- function(R1, R2) {
   p <- ncol(R1)
   p2 <- ncol(R2)
 
+  # DF restriction
+  if ((TT - p - p2) < 1) {
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "delta = 0"))
+  }
+
+  # Tangency form for delta = 0: dependent = ones, NO intercept
   y <- rep(1, TT)
 
   Diff <- sweep(R[, -1, drop = FALSE], 1, R[, 1], FUN = function(x, y) y - x)
@@ -72,3 +78,4 @@ span_km <- function(R1, R2) {
 
   return(list(pval = p_val, stat = F_stat, H0 = "delta = 0"))
 }
+
