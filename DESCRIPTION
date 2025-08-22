@@ -1,13 +1,17 @@
 Package: spantest
-Title: Mean-Variance Spanning Tests in R
-Version: 1.1-1
+Title: Mean-Variance Spanning Tests
+Version: 1.1-2
 Authors@R: c(person("David", "Ardia", role = c("aut", "cre"), 
              email = "david.ardia.ch@gmail.com", 
              comment = c(ORCID = "0000-0003-2823-782X")),
              person("Benjamin", "Seguin", role = "aut"),
              person("Rosnel", "Sessinou", role = "ctb"),
              person("Richard", "Luger", role = "ctb"))
-Description: Implements a comprehensive suite of mean-variance spanning tests.
+Description: Provides a comprehensive suite of portfolio spanning tests for asset 
+             pricing, such as Huberman and Kandel (1987) <doi:10.1111/j.1540-6261.1987.tb03917.x>, 
+             Gibbons et al. (1989) <doi:10.2307/191362>, Kempf and Memmel (2006) <doi:10.1007/BF03396737>, 
+             Pesaran and Yamagata (2023) <doi:10.1093/jjfinec/nbad002>, and Gungor and 
+             Luger (2016) <doi:10.1080/07350015.2015.1019510>.
 License: GPL-3
 RoxygenNote: 7.3.2
 Encoding: UTF-8
