@@ -9,5 +9,5 @@ test_that("span_bj returns expected structure and values", {
   expect_named(result, c("pval", "stat", "H0"))
   expect_true(is.numeric(result$stat) && length(result$stat) == 1)
   expect_true(is.numeric(result$pval) && result$pval >= 0 && result$pval <= 1)
-  expect_equal(result$H0, "delta = 0")  # Matches function output
+  expect_equal(result$H0, "alpha = 0")
 })

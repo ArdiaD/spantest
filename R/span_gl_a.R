@@ -8,9 +8,9 @@
 #'
 #' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times N}.
 #' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times K}.
+#' @param seed Integer(1). Seed used to initialize R’s RNG via \code{set.seed}. If \code{NULL} (default), 123456 is used; otherwise the supplied value is used.
 #' @param control List of options:
 #' \describe{
-#'   \item{\code{seed}}{Integer seed for reproducibility (default \code{1}).}
 #'   \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
 #'   \item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
 #'   \item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
@@ -37,21 +37,27 @@
 #' \insertRef{GungorLuger2016}{spantest} \cr
 #'
 #' @examples
-#' set.seed(123)
+#' seed <- 123
 #' R1 <- matrix(rnorm(300), 100, 3)
 #' R2 <- matrix(rnorm(200), 100, 2)
-#' out <- span_gl_a(R1, R2, control = list(totsim = 100, do_trace = FALSE))
+#' out <- span_gl_a(R1, R2, seed, control = list(totsim = 100, do_trace = FALSE))
 #' out$Decisions_string; out$pval_LMC; out$pval_BMC
 #'
 #' @family Alpha Spanning Tests
 #'
 #' @importFrom stats rnorm runif
 #' @export
-span_gl_a <- function(R1, R2, control = list()) {
+span_gl_a <- function(R1, R2, seed = NULL, control = list()) {
 
-  con <- list(seed = 1, totsim = 500, do_trace = TRUE, pval_thresh = 0.05)
+  con <- list(totsim = 500, do_trace = TRUE, pval_thresh = 0.05)
   con[names(control)] <- control
   thresh <- con$pval_thresh
+
+  if (is.null(seed)){
+    set.seed(123456)
+  } else {
+    set.seed(seed)
+  }
 
   X <- R1
   Y <- R2
@@ -96,8 +102,6 @@ span_gl_a <- function(R1, R2, control = list()) {
 
   premult <- Xtemp %*% t(H) %*% HXtHt_inv
   Xtemp_XX <- Xtemp %*% t(XX)
-
-  set.seed(123456 * con$seed)
 
   sim_count <- totsim - 1
   sign_mat <- matrix(sign(rnorm(TT * sim_count)), TT, sim_count)
