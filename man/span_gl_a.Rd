@@ -4,17 +4,16 @@
 \alias{span_gl_a}
 \title{Gungor–Luger Alpha-Only Spanning Test (2016)}
 \usage{
-span_gl_a(R1, R2, seed = NULL, control = list())
+span_gl_a(R1, R2, control = list())
 }
 \arguments{
 \item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times N}.}
 
 \item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times K}.}
 
-\item{seed}{Integer(1). Seed used to initialize R’s RNG via \code{set.seed}. If \code{NULL} (default), 123456 is used; otherwise the supplied value is used.}
-
 \item{control}{List of options:
 \describe{
+  \item{\code{seed}}{Seed used to initialize R’s RNG via \code{set.seed}. If \code{NULL} (default), 123456 is used; otherwise the supplied value is used}
   \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
   \item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
   \item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
@@ -49,7 +48,7 @@ suffer from size distortions.
 seed <- 123
 R1 <- matrix(rnorm(300), 100, 3)
 R2 <- matrix(rnorm(200), 100, 2)
-out <- span_gl_a(R1, R2, seed, control = list(totsim = 100, do_trace = FALSE))
+out <- span_gl_a(R1, R2, control = list(seed = seed, totsim = 100, do_trace = FALSE))
 out$Decisions_string; out$pval_LMC; out$pval_BMC
 
 }
