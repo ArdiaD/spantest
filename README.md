@@ -43,7 +43,7 @@ Kempf, A., & Memmel, C. (2006).\
 [Estimating the Global Minimum Variance Portfolio](https://doi.org/10.1007/BF03396737).\
 *Schmalenbach Business Review*, 58, 332-348.
 
-Pesaran, M. H., & Yamagata, T. (2023).\
+Pesaran, M. H., & Yamagata, T. (2024).\
 [Testing for alpha in linear factor pricing models with a large number of securities.](https://doi.org/10.1093/jjfinec/nbad002).\
 *Journal of Financial Econometrics*, 22(2), 407-460.
 

@@ -9,8 +9,8 @@ Authors@R: c(person("David", "Ardia", role = c("aut", "cre"),
              person("Richard", "Luger", role = "ctb"))
 Description: Provides a comprehensive suite of portfolio spanning tests for asset 
              pricing, such as Huberman and Kandel (1987) <doi:10.1111/j.1540-6261.1987.tb03917.x>, 
-             Gibbons et al. (1989) <doi:10.2307/191362>, Kempf and Memmel (2006) <doi:10.1007/BF03396737>, 
-             Pesaran and Yamagata (2023) <doi:10.1093/jjfinec/nbad002>, and Gungor and 
+             Gibbons et al. (1989) <doi:10.2307/1913625>, Kempf and Memmel (2006) <doi:10.1007/BF03396737>, 
+             Pesaran and Yamagata (2024) <doi:10.1093/jjfinec/nbad002>, and Gungor and 
              Luger (2016) <doi:10.1080/07350015.2015.1019510>.
 License: GPL-3
 RoxygenNote: 7.3.2

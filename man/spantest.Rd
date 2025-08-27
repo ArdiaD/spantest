@@ -9,7 +9,7 @@
 `spantest` implements classical and modern methods to test whether a set of
 benchmark assets spans the mean–variance frontier of a larger asset universe.
 The package includes Huberman–Kandel (1987), Gibbons–Ross–Shanken (1989),
-Kempf–Memmel (2006), Pesaran–Yamagata (2023), Kan–Zhou (2012),
+Kempf–Memmel (2006), Pesaran–Yamagata (2024), Kan–Zhou (2012),
 Britten-Jones (1999), and recent robust/high-dimensional tests such as
 Gungor–Luger (2016) and Ardia–Sessinou (2025) (NOT YET AVAILABLE!).
 }
@@ -35,7 +35,7 @@ Gungor–Luger (2016) and Ardia–Sessinou (2025) (NOT YET AVAILABLE!).
 \insertRef{HubermanKandel1987}{spantest} \cr
 \insertRef{KanZhou2012}{spantest} \cr
 \insertRef{KempfMemmel2006}{spantest} \cr
-\insertRef{PesaranYamagata2023}{spantest} \cr
+\insertRef{PesaranYamagata2024}{spantest} \cr
 }
 \seealso{
 Related functions are grouped via `@family` tags for easy navigation.

@@ -1,4 +1,4 @@
-#' Pesaran–Yamagata Alpha Spanning Test (2023)
+#' Pesaran–Yamagata Alpha Spanning Test (2024)
 #'
 #' Implements the Pesaran–Yamagata test for the joint null that all intercepts
 #' are zero in a multi-factor spanning regression with possible cross-sectional
@@ -22,7 +22,7 @@
 #' safeguards require \eqn{T-K-1 > 4}.
 #'
 #' @references
-#' \insertRef{PesaranYamagata2023}{spantest}
+#' \insertRef{PesaranYamagata2024}{spantest}
 #'
 #' @examples
 #' set.seed(123)

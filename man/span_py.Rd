@@ -2,7 +2,7 @@
 % Please edit documentation in R/span_py.R
 \name{span_py}
 \alias{span_py}
-\title{Pesaran–Yamagata Alpha Spanning Test (2023)}
+\title{Pesaran–Yamagata Alpha Spanning Test (2024)}
 \usage{
 span_py(R1, R2)
 }
@@ -40,7 +40,7 @@ out$pval; out$stat; out$H0
 
 }
 \references{
-\insertRef{PesaranYamagata2023}{spantest}
+\insertRef{PesaranYamagata2024}{spantest}
 }
 \seealso{
 Other Alpha Spanning Tests: 
