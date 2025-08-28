@@ -3,7 +3,7 @@
 `spantest` is an R package providing a comprehensive suite of portfolio spanning tests for asset pricing. 
 In particular, it implements classical tests by [Huberman and Kandel (1987)](https://doi.org/10.1111/j.1540-6261.1987.tb03917.x), 
 [Gibbons, Ross, and Shanken (1989)](https://doi.org/10.2307/1913625), [Kempf and Memmel (2006)](https://doi.org/10.1007/BF03396737), 
-[Pesaran and Yamagata (2023)](https://doi.org/10.1093/jjfinec/nbad002), and [Gungor and Luger (2016)](https://doi.org/10.1080/07350015.2015.1019510), 
+[Pesaran and Yamagata (2024)](https://doi.org/10.1093/jjfinec/nbad002), and [Gungor and Luger (2016)](https://doi.org/10.1080/07350015.2015.1019510), 
 alongside the recent residual-based subseries spanning tests developed by [Ardia and Sessinou (2025)](https://arxiv.org/pdf/2403.17127) (NOT YET AVAILABLE!).
 
 `spantest` is useful for researchers and practitioners aiming to test portfolio spanning hypotheses accounting for complex dependence structures.
