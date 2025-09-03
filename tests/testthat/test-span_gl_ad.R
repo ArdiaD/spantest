@@ -1,5 +1,5 @@
 test_that("span_gl_ad returns correct structure and decision output", {
-  set.seed(123)
+  set.seed(1234)
   R1 <- matrix(rnorm(300), 100, 3)
   R2 <- matrix(rnorm(200), 100, 2)
 

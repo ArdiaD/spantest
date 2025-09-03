@@ -1,3 +1,6 @@
+# Changes in Version 1.1-3 (DA)
+- seed is finally removed from GL functions
+
 # Changes in Version 1.1-2 (BS)
 - DESCRIPTION modified according to CRAN guidelines
 - seed is now an input for GL functions

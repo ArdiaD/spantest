@@ -12,7 +12,6 @@
 #' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times K}.
 #' @param control List of options:
 #' \describe{
-#'   \item{\code{seed}}{Seed used to initialize R’s RNG via \code{set.seed}. If \code{NULL} (default), 123456 is used; otherwise the supplied value is used.}
 #'   \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
 #'   \item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
 #'   \item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
@@ -39,10 +38,10 @@
 #' \insertRef{GungorLuger2016}{spantest} \cr
 #'
 #' @examples
-#' seed <- 123
+#' set.seed(123)
 #' R1 <- matrix(rnorm(300), 100, 3)
 #' R2 <- matrix(rnorm(200), 100, 2)
-#' out <- span_gl_ad(R1, R2, control = list(seed = seed, totsim = 100, do_trace = FALSE))
+#' out <- span_gl_ad(R1, R2, control = list(totsim = 100, do_trace = FALSE))
 #' out$Decisions_string; out$pval_LMC; out$pval_BMC
 #'
 #' @family Joint Mean-Variance Spanning Tests
@@ -51,15 +50,9 @@
 #' @export
 span_gl_ad <- function(R1, R2, control = list()) {
 
-  con <- list(seed = NULL, totsim = 500, pval_thresh = 0.05, do_trace = TRUE)
+  con <- list(totsim = 500, pval_thresh = 0.05, do_trace = TRUE)
   con[names(control)] <- control
   thresh <- con$pval_thresh
-
-  if (is.null(con$seed)) {
-    set.seed(123456)
-  } else {
-    set.seed(con$seed)
-  }
 
   X <- R1
   Y <- R2

@@ -13,7 +13,6 @@ span_gl_ad(R1, R2, control = list())
 
 \item{control}{List of options:
 \describe{
-  \item{\code{seed}}{Seed used to initialize R’s RNG via \code{set.seed}. If \code{NULL} (default), 123456 is used; otherwise the supplied value is used.}
   \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
   \item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
   \item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
@@ -47,10 +46,10 @@ high-dimensional and time-varying volatility settings where classical joint
 spanning tests can be unreliable.
 }
 \examples{
-seed <- 123
+set.seed(123)
 R1 <- matrix(rnorm(300), 100, 3)
 R2 <- matrix(rnorm(200), 100, 2)
-out <- span_gl_ad(R1, R2, control = list(seed = seed, totsim = 100, do_trace = FALSE))
+out <- span_gl_ad(R1, R2, control = list(totsim = 100, do_trace = FALSE))
 out$Decisions_string; out$pval_LMC; out$pval_BMC
 
 }
