@@ -1,3 +1,15 @@
+# Changes in Version 1.3-0 (DA)
+- span_gl_a() and span_gl_ad() now run their sign-flip Monte Carlo simulations
+  in C++ (via Rcpp / RcppArmadillo). The random signs and the tie-breaking
+  uniforms are still drawn in R, so the RNG stream -- and hence every p-value and
+  decision -- is unchanged (verified identical to 1.2-1 across dimensions,
+  totsim, and seeds); only the per-simulation SSR / F_max computation moved to a
+  streaming C++ kernel that never forms the large T x (N*totsim) intermediates.
+  About 3x faster than the 1.2-1 R implementation at large K and N, with much
+  lower memory use, which also improves the parallel scaling of simulation
+  studies. Installing from source now requires a C++ compiler (Rcpp and
+  RcppArmadillo were added as build dependencies).
+
 # Changes in Version 1.2-1 (DA)
 - span_as() is now vectorized across the test cross-section: benchmark-only QR
   decompositions are formed once and the swap regressions are obtained by

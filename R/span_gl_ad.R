@@ -107,33 +107,17 @@ span_gl_ad <- function(R1, R2, control = list()) {
   Xtemp_XX <- Xtemp %*% t(XX)
   premult <- Xtemp %*% t(H) %*% HXtHt_inv
 
-  # Vectorized simulation block. Build the T x (N*nsim) sign-flipped residual
-  # and pseudo-return matrices directly (recycle Ehat0/XXBhat0 across sims,
-  # gather sign columns) instead of forming a T x N x nsim array and aperm-ing
-  # it -- same values, but avoids a large transpose-copy.
+  # Sign-flip simulations. The random signs are drawn in R (so the RNG stream is
+  # unchanged); the per-simulation restricted/unrestricted SSR and F-max are
+  # computed in C++ (gl_sim_stats), streaming one simulation at a time to avoid
+  # the large T x (N*nsim) intermediates. The balanced-MC restricted SSR is
+  # constant across sign-flips (esim^2 == Ehat0^2), so it is passed once.
   nsim <- totsim - 1
   sign_matrix <- matrix(sign(rnorm(TT * nsim)), TT, nsim)
-  col_sim <- rep.int(seq_len(nsim), rep.int(N, nsim))  # simulation index per column
-  esim_mat <- matrix(Ehat0data, TT, N * nsim) * sign_matrix[, col_sim]
-  Ysim_mat <- matrix(XX %*% Bhat0data, TT, N * nsim) + esim_mat
-  Bhat1_mat <- Xtemp_XX %*% Ysim_mat
-  Ehat1_mat <- Ysim_mat - XX %*% Bhat1_mat
-  SSRu_vec <- colSums(Ehat1_mat^2)
-
-  # Constrained estimates (the array()/matrix() reshapes cancel to plain matmuls)
-  Bhat0_mat <- Bhat1_mat - premult %*% (H %*% Bhat1_mat - c(C))
-  Ehat0_mat <- Ysim_mat - XX %*% Bhat0_mat
-  SSRr_LMC_vec <- colSums(Ehat0_mat^2)
-
-  # Test statistics
-  temp_LMC <- (SSRr_LMC_vec - SSRu_vec) / SSRu_vec
-  LMCstats[1:(totsim - 1)] <- matrix(temp_LMC, ncol = N, byrow = TRUE) |> apply(1, max)
-
-  # BMC statistics: sign-flips leave the raw restricted SSR unchanged
-  # (esim^2 == Ehat0^2 exactly), so it is constant across simulations.
-  SSRr_BMC_vec <- rep.int(colSums(Ehat0data^2), totsim - 1)
-  temp_BMC <- (SSRr_BMC_vec - SSRu_vec) / SSRu_vec
-  BMCstats[1:(totsim - 1)] <- matrix(temp_BMC, ncol = N, byrow = TRUE) |> apply(1, max)
+  sim <- gl_sim_stats(XX, Xtemp_XX, XX %*% Bhat0data, Ehat0data,
+                      H, C, premult, sign_matrix, colSums(Ehat0data^2))
+  LMCstats[1:nsim] <- sim$LMC
+  BMCstats[1:nsim] <- sim$BMC
 
   # Optimized p-value calculation
   uu <- runif(totsim)

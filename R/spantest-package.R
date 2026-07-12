@@ -35,5 +35,7 @@
 #'
 #' @name spantest
 #' @keywords internal
+#' @useDynLib spantest, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
 #' @importFrom Rdpack reprompt
 "_PACKAGE"

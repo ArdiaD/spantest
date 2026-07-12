@@ -95,32 +95,17 @@ span_gl_a <- function(R1, R2, control = list()) {
   premult <- Xtemp %*% t(H) %*% HXtHt_inv
   Xtemp_XX <- Xtemp %*% t(XX)
 
-  # Build the T x (N*sim_count) sign-flipped residual and pseudo-return matrices
-  # directly (recycle Ehat0/XXBhat0 across sims, gather sign columns) instead of
-  # forming a T x N x sim_count array and aperm-ing it -- same values, no large
-  # transpose-copy.
+  # Sign-flip simulations. The random signs are drawn in R (so the RNG stream is
+  # unchanged); the per-simulation restricted/unrestricted SSR and F-max are
+  # computed in C++ (gl_sim_stats), streaming one simulation at a time to avoid
+  # the large T x (N*nsim) intermediates. The balanced-MC restricted SSR is
+  # constant across sign-flips (esim^2 == Ehat0^2), so it is passed once.
   sim_count <- totsim - 1
   sign_mat <- matrix(sign(rnorm(TT * sim_count)), TT, sim_count)
-  col_sim <- rep.int(seq_len(sim_count), rep.int(N, sim_count))  # sim index per column
-  esim_mat <- matrix(Ehat0, TT, N * sim_count) * sign_mat[, col_sim]
-  Ysim_mat <- matrix(XX %*% Bhat0, TT, N * sim_count) + esim_mat
-  Bhat1_mat <- Xtemp_XX %*% Ysim_mat
-  Ehat1_mat <- Ysim_mat - XX %*% Bhat1_mat
-  SSRu_vec <- colSums(Ehat1_mat^2)
-
-  # Constrained estimates (the array()/matrix() reshapes cancel to plain matmuls)
-  Bhat0_mat <- Bhat1_mat - premult %*% (H %*% Bhat1_mat - c(C))
-  Ehat0_mat <- Ysim_mat - XX %*% Bhat0_mat
-  SSRr_LMC_vec <- colSums(Ehat0_mat^2)
-
-  temp_LMC <- (SSRr_LMC_vec - SSRu_vec) / SSRu_vec
-  LMCstats[1:sim_count] <- matrix(temp_LMC, ncol = N, byrow = TRUE) |> apply(1, max)
-
-  # BMC statistics: sign-flips leave the raw restricted SSR unchanged
-  # (esim^2 == Ehat0^2 exactly), so it is constant across simulations.
-  SSRr_BMC_vec <- rep.int(colSums(Ehat0^2), sim_count)
-  temp_BMC <- (SSRr_BMC_vec - SSRu_vec) / SSRu_vec
-  BMCstats[1:sim_count] <- matrix(temp_BMC, ncol = N, byrow = TRUE) |> apply(1, max)
+  sim <- gl_sim_stats(XX, Xtemp_XX, XX %*% Bhat0, Ehat0,
+                      H, C, premult, sign_mat, colSums(Ehat0^2))
+  LMCstats[1:sim_count] <- sim$LMC
+  BMCstats[1:sim_count] <- sim$BMC
 
   uu <- runif(totsim)
   GL_pval_LMC <- (totsim - f_ranklex(LMCstats, uu) + 1) / totsim
