@@ -3,7 +3,7 @@ test_that("f_getpv returns named vector of p-values", {
   x <- matrix(rnorm(300), nrow = 100, ncol = 3)
   u <- rnorm(100)
 
-  pvals <- f_getpv(u, x, ks = c(1/3), L = c(0, 2))
+  pvals <- spantest:::f_getpv(u, x, ks = c(1/3), L = c(0, 2))
 
   expect_type(pvals, "double")
   expect_true(all(pvals >= 0 & pvals <= 1))

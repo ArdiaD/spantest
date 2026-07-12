@@ -139,6 +139,9 @@ span_simulate <- function(n, K, N, ncp = 0,
         garch[["alpha"]] + garch[["beta"]] < 1
     )
   }
+  if (dynamics %in% c("ar", "ar-garch")) {
+    stopifnot("AR(1) must be stationary: abs(ar) < 1" = abs(ar) < 1)
+  }
 
   om <- garch[["omega"]]; al <- garch[["alpha"]]; be <- garch[["beta"]]
 

@@ -13,10 +13,9 @@ main ones are:
   their results are unchanged (verified numerically). `span_as()` was also made
   faster through vectorised internal computations.
 
-Because of the compiled code, the package now imports 'Rcpp', links to
-'RcppArmadillo' (LinkingTo), and suggests 'fGarch' (used only by
-`span_simulate()` for skew-t innovations). No user-facing function was removed
-and no existing signature changed.
+Because of the compiled code, the package now imports 'Rcpp' and links to
+'RcppArmadillo' (LinkingTo). No user-facing function was removed and no
+existing signature changed.
 
 ## Test environments
 
