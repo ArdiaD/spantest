@@ -72,7 +72,6 @@ span_gl_ad <- function(R1, R2, control = list()) {
 
   Ehat1 <- Y - XX %*% Bhat1         # Unrestricted
   SSRu <- crossprod(Ehat1)
-  SigmaU <- SSRu / TT
 
 
   H <- matrix(0, 2, K + 1)
@@ -90,7 +89,6 @@ span_gl_ad <- function(R1, R2, control = list()) {
   Bhat0 <- Bhat1 - XtH %*% HXtHt_inv %*% (H %*% Bhat1 - C) # Restricted
   Ehat0 <- Y - XX %*% Bhat0
   SSRr <- crossprod(Ehat0)
-  SigmaR <- SSRr / TT
 
   # MC tests optimization
   diag_SSRr <- diag(SSRr)
@@ -122,20 +120,18 @@ span_gl_ad <- function(R1, R2, control = list()) {
   Ehat1_mat <- Ysim_mat - XX %*% Bhat1_mat
   SSRu_vec <- colSums(Ehat1_mat^2)
 
-  # Constrained estimates
-  HB_C <- array(H %*% Bhat1_mat - c(C), dim = c(nrow(H), N, totsim - 1))
-  Bhat0_array <- array(Bhat1_mat, dim = c(nrow(Bhat1_mat), N, totsim - 1)) -
-    array(premult %*% matrix(HB_C, nrow(H)), dim = c(nrow(Bhat1_mat), N, totsim - 1))
-
-  Ehat0_mat <- Ysim_mat - XX %*% matrix(Bhat0_array, nrow(Bhat0_array))
+  # Constrained estimates (the array()/matrix() reshapes cancel to plain matmuls)
+  Bhat0_mat <- Bhat1_mat - premult %*% (H %*% Bhat1_mat - c(C))
+  Ehat0_mat <- Ysim_mat - XX %*% Bhat0_mat
   SSRr_LMC_vec <- colSums(Ehat0_mat^2)
 
   # Test statistics
   temp_LMC <- (SSRr_LMC_vec - SSRu_vec) / SSRu_vec
   LMCstats[1:(totsim - 1)] <- matrix(temp_LMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
-  # BMC statistics
-  SSRr_BMC_vec <- colSums(matrix(esim_array^2, TT, N * (totsim - 1)))
+  # BMC statistics: sign-flips leave the raw restricted SSR unchanged
+  # (esim^2 == Ehat0^2 exactly), so it is constant across simulations.
+  SSRr_BMC_vec <- rep.int(colSums(Ehat0data^2), totsim - 1)
   temp_BMC <- (SSRr_BMC_vec - SSRu_vec) / SSRu_vec
   BMCstats[1:(totsim - 1)] <- matrix(temp_BMC, ncol = N, byrow = TRUE) |> apply(1, max)
 

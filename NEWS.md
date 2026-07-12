@@ -4,6 +4,12 @@
   Frisch-Waugh partialling, replacing the per-asset loop of full QR
   factorizations. Output is numerically identical to 1.2-0 (verified); span_as
   is roughly 12-15x faster for moderate-to-large test sets.
+- span_gl_a() and span_gl_ad() streamlined: the balanced-MC restricted SSR is
+  constant across sign-flips (it equals the raw restricted SSR, since squaring
+  removes the flipped sign), so it is now computed once instead of over a full
+  T x N x totsim array; redundant array/matrix reshapes in the constrained-
+  estimate step were collapsed to matrix products and unused Sigma allocations
+  removed. Output is bit-for-bit identical to 1.2-0 (verified via identical()).
 
 # Changes in Version 1.2-0 (DA)
 - NEW: span_as(), the Ardia-Sessinou subseries-based Cauchy Combination Test (CCT)

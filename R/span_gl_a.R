@@ -69,7 +69,6 @@ span_gl_a <- function(R1, R2, control = list()) {
 
   Ehat1 <- Y - XX %*% Bhat1
   SSRu <- crossprod(Ehat1)
-  SigmaU <- SSRu / TT
 
   H <- matrix(0, 1, K + 1)
   H[1, 1] <- 1
@@ -107,16 +106,17 @@ span_gl_a <- function(R1, R2, control = list()) {
   Ehat1_mat <- Ysim_mat - XX %*% Bhat1_mat
   SSRu_vec <- colSums(Ehat1_mat^2)
 
-  HB_C <- array(H %*% Bhat1_mat - c(C), dim = c(nrow(H), N, sim_count))
-  Bhat0_array <- array(Bhat1_mat, dim = c(nrow(Bhat1_mat), N, sim_count)) -
-    array(premult %*% matrix(HB_C, nrow(H)), dim = c(nrow(Bhat1_mat), N, sim_count))
-  Ehat0_mat <- Ysim_mat - XX %*% matrix(Bhat0_array, nrow(Bhat0_array))
+  # Constrained estimates (the array()/matrix() reshapes cancel to plain matmuls)
+  Bhat0_mat <- Bhat1_mat - premult %*% (H %*% Bhat1_mat - c(C))
+  Ehat0_mat <- Ysim_mat - XX %*% Bhat0_mat
   SSRr_LMC_vec <- colSums(Ehat0_mat^2)
 
   temp_LMC <- (SSRr_LMC_vec - SSRu_vec) / SSRu_vec
   LMCstats[1:sim_count] <- matrix(temp_LMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
-  SSRr_BMC_vec <- colSums(matrix(esim_array^2, TT, N * sim_count))
+  # BMC statistics: sign-flips leave the raw restricted SSR unchanged
+  # (esim^2 == Ehat0^2 exactly), so it is constant across simulations.
+  SSRr_BMC_vec <- rep.int(colSums(Ehat0^2), sim_count)
   temp_BMC <- (SSRr_BMC_vec - SSRu_vec) / SSRu_vec
   BMCstats[1:sim_count] <- matrix(temp_BMC, ncol = N, byrow = TRUE) |> apply(1, max)
 
