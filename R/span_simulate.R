@@ -136,9 +136,9 @@ span_simulate <- function(n, K, N, ncp = 0,
       })
     s <- switch(dynamics,
       "iid"      = z,
-      "garch"    = f_garch_filter(z, om, al, be),
+      "garch"    = garch_filter(z, om, al, be),
       "ar"       = as.numeric(stats::filter(z, ar, method = "recursive")),
-      "ar-garch" = as.numeric(stats::filter(f_garch_filter(z, om, al, be), ar, method = "recursive")))
+      "ar-garch" = as.numeric(stats::filter(garch_filter(z, om, al, be), ar, method = "recursive")))
     s[(burnin + 1L):m]
   }
 
@@ -156,28 +156,4 @@ span_simulate <- function(n, K, N, ncp = 0,
   x <- cbind(z[, 1], z[, -1, drop = FALSE] + z[, 1])   # benchmark construction
 
   list(R1 = x, R2 = y)
-}
-
-#' GARCH(1,1) residual recursion
-#'
-#' Applies \eqn{\varepsilon_t = \sigma_t z_t},
-#' \eqn{\sigma^2_{t+1} = \omega + \alpha \varepsilon_t^2 + \beta \sigma^2_t},
-#' initialised at the unconditional variance. Internal helper for
-#' \code{span_simulate()}.
-#'
-#' @param z Numeric vector of unit-variance innovations.
-#' @param om,al,be GARCH(1,1) parameters \eqn{\omega, \alpha, \beta}.
-#' @return Numeric vector of GARCH residuals, same length as \code{z}.
-#' @keywords internal
-#' @noRd
-f_garch_filter <- function(z, om, al, be) {
-  n <- length(z)
-  eps <- numeric(n)
-  s2 <- om / (1 - al - be)
-  for (t in seq_len(n)) {
-    e <- sqrt(s2) * z[t]
-    eps[t] <- e
-    s2 <- om + al * e * e + be * s2
-  }
-  eps
 }

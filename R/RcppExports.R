@@ -5,3 +5,7 @@ gl_sim_stats <- function(XX, Xtemp_XX, XXB0, Ehat0, H, C, premult, sign_mat, ssr
     .Call(`_spantest_gl_sim_stats`, XX, Xtemp_XX, XXB0, Ehat0, H, C, premult, sign_mat, ssrr_bmc)
 }
 
+garch_filter <- function(z, omega, alpha, beta) {
+    .Call(`_spantest_garch_filter`, z, omega, alpha, beta)
+}
+

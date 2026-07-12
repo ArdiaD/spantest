@@ -30,9 +30,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// garch_filter
+NumericVector garch_filter(NumericVector z, double omega, double alpha, double beta);
+RcppExport SEXP _spantest_garch_filter(SEXP zSEXP, SEXP omegaSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(garch_filter(z, omega, alpha, beta));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spantest_gl_sim_stats", (DL_FUNC) &_spantest_gl_sim_stats, 9},
+    {"_spantest_garch_filter", (DL_FUNC) &_spantest_garch_filter, 4},
     {NULL, NULL, 0}
 };
 

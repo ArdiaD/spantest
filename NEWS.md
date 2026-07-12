@@ -11,7 +11,10 @@
   processes of Ardia and Sessinou (2025). It is a fast, validated drop-in for
   ad-hoc fGarch::garchSim() loops (roughly 30-45x faster for the GARCH DGPs) and
   matches the reference processes in distribution, dynamics, and test size/power.
-  skew-t innovations use fGarch (now a Suggests).
+  skew-t innovations use fGarch (now a Suggests). Its GARCH(1,1) recursion runs
+  in C++ (bit-for-bit identical to the R loop; floating-point contraction is
+  disabled so the fused multiply-add does not alter the roundings), which about
+  halves the data-generation time for the GARCH DGPs.
 - span_gl_a() and span_gl_ad() now run their sign-flip Monte Carlo simulations
   in C++ (via Rcpp / RcppArmadillo). The random signs and the tie-breaking
   uniforms are still drawn in R, so the RNG stream -- and hence every p-value and
