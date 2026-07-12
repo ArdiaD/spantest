@@ -7,9 +7,9 @@
 span_gl_a(R1, R2, control = list())
 }
 \arguments{
-\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times N}.}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times K}.}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 
 \item{control}{List of options:
 \describe{
@@ -55,10 +55,11 @@ out$Decisions_string; out$pval_LMC; out$pval_BMC
 \insertRef{GungorLuger2016}{spantest} \cr
 }
 \seealso{
-Other Alpha Spanning Tests: 
-\code{\link{span_bj}()},
-\code{\link{span_f1}()},
-\code{\link{span_grs}()},
-\code{\link{span_py}()}
+Other Alpha Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_bj]{span_bj()}},
+\code{\link[=span_f1]{span_f1()}},
+\code{\link[=span_grs]{span_grs()}},
+\code{\link[=span_py]{span_py()}}
 }
 \concept{Alpha Spanning Tests}

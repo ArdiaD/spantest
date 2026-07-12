@@ -43,7 +43,8 @@ out$stat; out$pval; out$H0
 \insertRef{HubermanKandel1987}{spantest} \cr
 }
 \seealso{
-Other Joint Mean-Variance Spanning Tests: 
-\code{\link{span_gl_ad}()}
+Other Joint Mean-Variance Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_gl_ad]{span_gl_ad()}}
 }
 \concept{Joint Mean-Variance Spanning Tests}

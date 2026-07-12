@@ -19,7 +19,8 @@
 #' the benchmark assets span the expected returns of the test assets. The statistic
 #' adjusts for cross-sectional dependence via the residual covariance and has an
 #' asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. Finite-sample
-#' safeguards require \eqn{T-K-1 > 4}.
+#' safeguards require \eqn{T-K-1 > 4} and at least two test assets (\eqn{N \ge 2});
+#' otherwise \code{pval} and \code{stat} are returned as \code{NA}.
 #'
 #' @references
 #' \insertRef{PesaranYamagata2024}{spantest}
@@ -42,7 +43,10 @@ span_py <- function(R1, R2) {
   N <- ncol(Y)
   K <- ncol(X)
 
-  if ((t - K - N) < 1 || (t - K - 1) <= 4) {
+  # The PY statistic averages pairwise residual correlations, so it requires
+  # at least two test assets (N >= 2); with N = 1 the pairwise sum is empty
+  # and 0.05 / (N - 1) divides by zero.
+  if (N < 2 || (t - K - N) < 1 || (t - K - 1) <= 4) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
   }
 
@@ -80,7 +84,7 @@ span_py <- function(R1, R2) {
   Jalpha2 <- sum(t2 - v / (v - 2)) / sqrt(N)
   den <- (v / (v - 2)) * sqrt(2 * (v - 1) * (1 + (N - 1) * rhobar) / (v - 4))
   stat <- Jalpha2 / den
-  pval <- 1 - pnorm(stat)
+  pval <- pnorm(stat, lower.tail = FALSE)
 
   list(pval = as.numeric(pval), stat = as.numeric(stat), H0 = "alpha = 0")
 }

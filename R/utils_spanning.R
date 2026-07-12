@@ -54,8 +54,16 @@ f_cauchypv <- function(p) {
 #'
 f_prods <- function(score, k, cseed=123) {
 
-  set.seed(cseed)
   if (k > 0) {
+        # Seed locally for reproducibility, but restore the caller's RNG state on
+        # exit so this helper never leaves a side effect on the global stream.
+        if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+          oldseed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+          on.exit(assign(".Random.seed", oldseed, envir = .GlobalEnv), add = TRUE)
+        } else {
+          on.exit(rm(".Random.seed", envir = .GlobalEnv), add = TRUE)
+        }
+        set.seed(cseed)
         a <- matrix(rnorm(nrow(score) * k, mean = 1, sd = 1), nrow = nrow(score), ncol = k)
         out <- apply(a, 1, prod)
         return(out)

@@ -42,7 +42,8 @@ out$stat; out$pval; out$H0
 \insertRef{KanZhou2012}{spantest}
 }
 \seealso{
-Other Variance Spanning Tests: 
-\code{\link{span_km}()}
+Other Variance Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_km]{span_km()}}
 }
 \concept{Variance Spanning Tests}

@@ -29,7 +29,8 @@ The null hypothesis is that all intercepts are zero (\eqn{\alpha = 0}), meaning
 the benchmark assets span the expected returns of the test assets. The statistic
 adjusts for cross-sectional dependence via the residual covariance and has an
 asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. Finite-sample
-safeguards require \eqn{T-K-1 > 4}.
+safeguards require \eqn{T-K-1 > 4} and at least two test assets (\eqn{N \ge 2});
+otherwise \code{pval} and \code{stat} are returned as \code{NA}.
 }
 \examples{
 set.seed(123)
@@ -43,10 +44,11 @@ out$pval; out$stat; out$H0
 \insertRef{PesaranYamagata2024}{spantest}
 }
 \seealso{
-Other Alpha Spanning Tests: 
-\code{\link{span_bj}()},
-\code{\link{span_f1}()},
-\code{\link{span_gl_a}()},
-\code{\link{span_grs}()}
+Other Alpha Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_bj]{span_bj()}},
+\code{\link[=span_f1]{span_f1()}},
+\code{\link[=span_gl_a]{span_gl_a()}},
+\code{\link[=span_grs]{span_grs()}}
 }
 \concept{Alpha Spanning Tests}
