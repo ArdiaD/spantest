@@ -95,13 +95,15 @@ span_gl_a <- function(R1, R2, control = list()) {
   premult <- Xtemp %*% t(H) %*% HXtHt_inv
   Xtemp_XX <- Xtemp %*% t(XX)
 
+  # Build the T x (N*sim_count) sign-flipped residual and pseudo-return matrices
+  # directly (recycle Ehat0/XXBhat0 across sims, gather sign columns) instead of
+  # forming a T x N x sim_count array and aperm-ing it -- same values, no large
+  # transpose-copy.
   sim_count <- totsim - 1
   sign_mat <- matrix(sign(rnorm(TT * sim_count)), TT, sim_count)
-  esim_array <- array(Ehat0, dim = c(TT, N, sim_count)) *
-    aperm(array(sign_mat, dim = c(TT, sim_count, N)), c(1, 3, 2))
-
-  Ysim_array <- array(XX %*% Bhat0, dim = c(TT, N, sim_count)) + esim_array
-  Ysim_mat <- matrix(Ysim_array, TT, N * sim_count)
+  col_sim <- rep.int(seq_len(sim_count), rep.int(N, sim_count))  # sim index per column
+  esim_mat <- matrix(Ehat0, TT, N * sim_count) * sign_mat[, col_sim]
+  Ysim_mat <- matrix(XX %*% Bhat0, TT, N * sim_count) + esim_mat
   Bhat1_mat <- Xtemp_XX %*% Ysim_mat
   Ehat1_mat <- Ysim_mat - XX %*% Bhat1_mat
   SSRu_vec <- colSums(Ehat1_mat^2)

@@ -4,12 +4,17 @@
   Frisch-Waugh partialling, replacing the per-asset loop of full QR
   factorizations. Output is numerically identical to 1.2-0 (verified); span_as
   is roughly 12-15x faster for moderate-to-large test sets.
-- span_gl_a() and span_gl_ad() streamlined: the balanced-MC restricted SSR is
+- span_gl_a() and span_gl_ad() streamlined. The sign-flip simulations are now
+  assembled directly as T x (N*totsim) matrices (recycling the residuals and
+  fitted values across simulations, gathering the sign columns) instead of
+  building a T x N x totsim array and transposing it with aperm(), which removed
+  the dominant cost at large N. In addition the balanced-MC restricted SSR is
   constant across sign-flips (it equals the raw restricted SSR, since squaring
-  removes the flipped sign), so it is now computed once instead of over a full
-  T x N x totsim array; redundant array/matrix reshapes in the constrained-
-  estimate step were collapsed to matrix products and unused Sigma allocations
-  removed. Output is bit-for-bit identical to 1.2-0 (verified via identical()).
+  removes the flipped sign) so it is computed once; redundant array/matrix
+  reshapes in the constrained-estimate step were collapsed to matrix products;
+  and unused Sigma allocations were removed. Output is bit-for-bit identical to
+  1.2-0 (verified via identical()); GL is roughly 1.5-1.7x faster, most visibly
+  for large test cross-sections (e.g. K = 100, N = 200).
 
 # Changes in Version 1.2-0 (DA)
 - NEW: span_as(), the Ardia-Sessinou subseries-based Cauchy Combination Test (CCT)

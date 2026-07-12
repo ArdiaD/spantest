@@ -107,15 +107,15 @@ span_gl_ad <- function(R1, R2, control = list()) {
   Xtemp_XX <- Xtemp %*% t(XX)
   premult <- Xtemp %*% t(H) %*% HXtHt_inv
 
-  # Vectorized simulation block
-  sign_matrix <- matrix(sign(rnorm(TT * (totsim - 1))), TT, totsim - 1)
-  esim_array <- array(Ehat0data, dim = c(TT, N, totsim - 1)) *
-    aperm(array(sign_matrix, dim = c(TT, totsim - 1, N)), c(1,3,2))
-
-  Ysim_array <- array(XX %*% Bhat0data, dim = c(TT, N, totsim - 1)) + esim_array
-
-  # Reshape for matrix operations
-  Ysim_mat <- matrix(Ysim_array, TT, N * (totsim - 1))
+  # Vectorized simulation block. Build the T x (N*nsim) sign-flipped residual
+  # and pseudo-return matrices directly (recycle Ehat0/XXBhat0 across sims,
+  # gather sign columns) instead of forming a T x N x nsim array and aperm-ing
+  # it -- same values, but avoids a large transpose-copy.
+  nsim <- totsim - 1
+  sign_matrix <- matrix(sign(rnorm(TT * nsim)), TT, nsim)
+  col_sim <- rep.int(seq_len(nsim), rep.int(N, nsim))  # simulation index per column
+  esim_mat <- matrix(Ehat0data, TT, N * nsim) * sign_matrix[, col_sim]
+  Ysim_mat <- matrix(XX %*% Bhat0data, TT, N * nsim) + esim_mat
   Bhat1_mat <- Xtemp_XX %*% Ysim_mat
   Ehat1_mat <- Ysim_mat - XX %*% Bhat1_mat
   SSRu_vec <- colSums(Ehat1_mat^2)
