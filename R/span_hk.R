@@ -37,12 +37,12 @@
 #' @export
 span_hk <- function(R1, R2) {
   R <- cbind(R1, R2)
-  T <- nrow(R)
+  TT <- nrow(R)
   K <- ncol(R1)
   N <- ncol(R2)
 
   df1 <- 2 * N
-  df2 <- 2 * (T - K - N)
+  df2 <- 2 * (TT - K - N)
   if (df2 < 1) return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0 and delta = 0"))
 
   mu <- matrix(colMeans(R), ncol = 1)
@@ -56,16 +56,16 @@ span_hk <- function(R1, R2) {
 
   a <- t(mu) %*% iSigma %*% mu
   b <- t(mu) %*% iSigma %*% rep(1, K + N)
-  c <- t(rep(1, K + N)) %*% iSigma %*% rep(1, K + N)
-  d <- a * c - b^2
+  cc <- t(rep(1, K + N)) %*% iSigma %*% rep(1, K + N)
+  d <- a * cc - b^2
 
   a1 <- t(mu1) %*% iSigma1 %*% mu1
   b1 <- t(mu1) %*% iSigma1 %*% rep(1, K)
   c1 <- t(rep(1, K)) %*% iSigma1 %*% rep(1, K)
   d1 <- a1 * c1 - b1^2
 
-  U <- (c1 + d1) / (c + d)
-  stat <- ((T - K - N) / N) * (1 / sqrt(U) - 1)
+  U <- (c1 + d1) / (cc + d)
+  stat <- ((TT - K - N) / N) * (1 / sqrt(U) - 1)
   pval <- pf(stat, df1, df2, lower.tail = FALSE)
 
   list(pval = as.numeric(pval), stat = as.numeric(stat), H0 = "alpha = 0 and delta = 0")

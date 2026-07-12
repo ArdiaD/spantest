@@ -64,8 +64,8 @@ AR/GARCH transient.}
 }
 \value{
 A list with components \code{R1} (\eqn{n \times K} benchmark returns)
-  and \code{R2} (\eqn{n \times N} test-asset returns), suitable as the
-  \code{R1}/\code{R2} arguments of the spanning tests in this package.
+and \code{R2} (\eqn{n \times N} test-asset returns), suitable as the
+\code{R1}/\code{R2} arguments of the spanning tests in this package.
 }
 \description{
 Generates a panel of benchmark returns \eqn{R_1} (\eqn{n \times K}) and
@@ -94,26 +94,28 @@ asset \eqn{j} receives \eqn{\alpha_j}.
 Each innovation series is defined by \code{innovation} (marginal law) and
 \code{dynamics} (serial structure): \code{"iid"}, an AR(1) with coefficient
 \code{ar}, a GARCH(1,1) with parameters \code{garch}, or their
-\code{"ar-garch"} combination. Student-\eqn{t} and skew-\eqn{t} innovations
-are standardised to unit variance when \code{standardize = TRUE}.
+\code{"ar-garch"} combination. Student-\eqn{t} innovations are standardised to
+unit variance when \code{standardize = TRUE}; skew-\eqn{t} innovations (drawn
+with \code{fGarch::rsstd}) are always unit-variance, so \code{standardize}
+has no effect on them.
 
 \code{dgp} is a convenience argument selecting one of the twelve processes of
 Ardia and Sessinou (2025); when supplied it overrides \code{innovation},
 \code{dynamics}, \code{df}, \code{xi} and \code{standardize}:
 \tabular{rlrl}{
-  1 \tab normal, iid                \tab 7  \tab normal, AR-GARCH \cr
-  2 \tab Student-t(5), iid (raw)     \tab 8  \tab Student-t(4), AR-GARCH \cr
-  3 \tab skew-t(4, 0.9), iid         \tab 9  \tab skew-t(4, 0.9), AR-GARCH \cr
-  4 \tab normal, GARCH               \tab 10 \tab normal, AR \cr
-  5 \tab Student-t(4), GARCH         \tab 11 \tab Student-t(5), AR (raw) \cr
-  6 \tab skew-t(4, 0.9), GARCH       \tab 12 \tab skew-t(4, 0.9), AR
+1 \tab normal, iid                \tab 7  \tab normal, AR-GARCH \cr
+2 \tab Student-t(5), iid (raw)     \tab 8  \tab Student-t(4), AR-GARCH \cr
+3 \tab skew-t(4, 0.9), iid         \tab 9  \tab skew-t(4, 0.9), AR-GARCH \cr
+4 \tab normal, GARCH               \tab 10 \tab normal, AR \cr
+5 \tab Student-t(4), GARCH         \tab 11 \tab Student-t(5), AR (raw) \cr
+6 \tab skew-t(4, 0.9), GARCH       \tab 12 \tab skew-t(4, 0.9), AR
 }
 DGPs 2 and 11 use \emph{raw} (non-standardised) \eqn{t_5} innovations, as in
 the original study; all other heavy-tailed processes are standardised.
 }
 \note{
 \code{innovation = "skew-t"} requires the \pkg{fGarch} package. Set the
-  RNG state with \code{\link{set.seed}} beforehand for reproducibility.
+RNG state with \code{\link{set.seed}} beforehand for reproducibility.
 }
 \examples{
 set.seed(1)
@@ -129,5 +131,5 @@ span_grs(sim2$R1, sim2$R2)$pval
 \insertRef{GungorLuger2016}{spantest} \cr
 }
 \seealso{
-[span_grs()], [span_gl_ad()], [span_as()]
+\code{\link[=span_grs]{span_grs()}}, \code{\link[=span_gl_ad]{span_gl_ad()}}, \code{\link[=span_as]{span_as()}}
 }

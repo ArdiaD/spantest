@@ -51,14 +51,18 @@ span_py <- function(R1, R2) {
   }
 
   XX <- cbind(1, X)
-  Bhat1 <- solve(crossprod(XX)) %*% crossprod(XX, Y)
+  XtX_inv <- tryCatch(solve(crossprod(XX)), error = function(e) NULL)
+  X_crossprod_inv <- tryCatch(solve(crossprod(X)), error = function(e) NULL)
+  if (is.null(XtX_inv) || is.null(X_crossprod_inv)) {
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
+  }
+
+  Bhat1 <- XtX_inv %*% crossprod(XX, Y)
   Ehat1 <- Y - XX %*% Bhat1
   SigmaU <- crossprod(Ehat1) / t
 
   v <- t - K - 1
   ones <- matrix(1, t, 1)
-  X_crossprod <- crossprod(X)
-  X_crossprod_inv <- solve(X_crossprod)
   X_ones <- X %*% X_crossprod_inv %*% crossprod(X, ones)
   MX_ones <- ones - X_ones
 

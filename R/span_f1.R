@@ -35,12 +35,12 @@
 #' @export
 span_f1 <- function(R1, R2) {
   R <- cbind(R1, R2)
-  T <- nrow(R)
+  TT <- nrow(R)
   K <- ncol(R1)
   N <- ncol(R2)
 
   df1 <- N
-  df2 <- T - K - N
+  df2 <- TT - K - N
   if (df2 < 1) return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
 
   mu_full <- matrix(colMeans(R), ncol = 1)

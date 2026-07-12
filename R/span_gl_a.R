@@ -12,7 +12,7 @@
 #' \describe{
 #'   \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
 #'   \item{\code{pval_thresh}}{Significance level for decisions (default \code{0.05}).}
-#'   \item{\code{do_trace}}{Logical; print progress (default \code{TRUE}).}
+#'   \item{\code{do_trace}}{Logical; print progress (default \code{FALSE}).}
 #' }
 #'
 #' @return A list with components:
@@ -48,7 +48,7 @@
 #' @export
 span_gl_a <- function(R1, R2, control = list()) {
 
-  con <- list(totsim = 500, do_trace = TRUE, pval_thresh = 0.05)
+  con <- list(totsim = 500, do_trace = FALSE, pval_thresh = 0.05)
   con[names(control)] <- control
   thresh <- con$pval_thresh
 

@@ -30,8 +30,7 @@
 #' @references
 #' \insertRef{ArdiaSessinou2025}{spantest} \cr
 #'
-#' @importFrom stats cov na.omit pf pnorm pt qnorm rnorm runif sd t.test
-#' @importFrom utils head
+#' @importFrom stats cov na.omit pf pnorm pt qnorm rnorm runif
 #'
 #' @keywords internal
 #'
@@ -232,7 +231,6 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
 #' @family Joint Mean-Variance Spanning Tests
 #'
 #' @importFrom stats na.omit
-#' @importFrom utils head
 #' @export
 span_as <- function(bench, test, control = list()) {
 

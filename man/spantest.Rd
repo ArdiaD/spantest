@@ -6,7 +6,7 @@
 \alias{spantest}
 \title{spantest: Mean–Variance Spanning Tests in R}
 \description{
-`spantest` implements classical and modern methods to test whether a set of
+\code{spantest} implements classical and modern methods to test whether a set of
 benchmark assets spans the mean–variance frontier of a larger asset universe.
 The package includes Huberman–Kandel (1987), Gibbons–Ross–Shanken (1989),
 Kempf–Memmel (2006), Pesaran–Yamagata (2024), Kan–Zhou (2012),
@@ -15,16 +15,20 @@ Gungor–Luger (2016) and Ardia–Sessinou (2025).
 }
 \section{Main functions}{
 
-- Alpha spanning: [span_grs()], [span_py()], [span_bj()], [span_f1()], [span_gl_a()], [span_as()]
-- Variance spanning: [span_km()], [span_f2()], [span_as()]
-- Joint mean–variance: [span_hk()], [span_gl_ad()], [span_as()]
+\itemize{
+\item Alpha spanning: \code{\link[=span_grs]{span_grs()}}, \code{\link[=span_py]{span_py()}}, \code{\link[=span_bj]{span_bj()}}, \code{\link[=span_f1]{span_f1()}}, \code{\link[=span_gl_a]{span_gl_a()}}, \code{\link[=span_as]{span_as()}}
+\item Variance spanning: \code{\link[=span_km]{span_km()}}, \code{\link[=span_f2]{span_f2()}}, \code{\link[=span_as]{span_as()}}
+\item Joint mean–variance: \code{\link[=span_hk]{span_hk()}}, \code{\link[=span_gl_ad]{span_gl_ad()}}, \code{\link[=span_as]{span_as()}}
+}
 }
 
 \section{Documentation}{
 
-- Quick start: see the package README.
-- Formal reference: the R Journal article (see `citation("spantest")` for the bib entry).
-- Additional details and examples: function help pages and the README.
+\itemize{
+\item Quick start: see the package README.
+\item Formal reference: the R Journal article (see \code{citation("spantest")} for the bib entry).
+\item Additional details and examples: function help pages and the README.
+}
 }
 
 \references{
@@ -38,7 +42,7 @@ Gungor–Luger (2016) and Ardia–Sessinou (2025).
 \insertRef{PesaranYamagata2024}{spantest} \cr
 }
 \seealso{
-Related functions are grouped via `@family` tags for easy navigation.
+Related functions are grouped via \verb{@family} tags for easy navigation.
 Visit the package website for articles and examples.
 }
 \author{

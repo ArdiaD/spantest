@@ -3,7 +3,7 @@ test_that("span_gl_ad returns correct structure and decision output", {
   R1 <- matrix(rnorm(300), 100, 3)
   R2 <- matrix(rnorm(200), 100, 2)
 
-  res <- span_gl_ad(R1, R2, control = list(totsim = 100, seed = 1, do_trace = FALSE))
+  res <- span_gl_ad(R1, R2, control = list(totsim = 100, do_trace = FALSE))
 
   expect_type(res, "list")
   expect_named(res, c("pval_LMC", "pval_BMC", "stat", "Decisions", "Decisions_string", "H0"))

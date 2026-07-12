@@ -13,7 +13,8 @@
 #' \describe{
 #'   \item{\code{pval}}{P-value for the \eqn{F}-statistic under the null.}
 #'   \item{\code{stat}}{Britten–Jones \eqn{F}-statistic.}
-#'   \item{\code{H0}}{Null hypothesis description, \code{"tangency portfolio spanned by benchmark"}.}
+#'   \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"} (the test
+#'   assets do not expand the tangency portfolio spanned by the benchmarks).}
 #' }
 #'
 #' @details

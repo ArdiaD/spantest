@@ -26,8 +26,10 @@
 #' Each innovation series is defined by \code{innovation} (marginal law) and
 #' \code{dynamics} (serial structure): \code{"iid"}, an AR(1) with coefficient
 #' \code{ar}, a GARCH(1,1) with parameters \code{garch}, or their
-#' \code{"ar-garch"} combination. Student-\eqn{t} and skew-\eqn{t} innovations
-#' are standardised to unit variance when \code{standardize = TRUE}.
+#' \code{"ar-garch"} combination. Student-\eqn{t} innovations are standardised to
+#' unit variance when \code{standardize = TRUE}; skew-\eqn{t} innovations (drawn
+#' with \code{fGarch::rsstd}) are always unit-variance, so \code{standardize}
+#' has no effect on them.
 #'
 #' \code{dgp} is a convenience argument selecting one of the twelve processes of
 #' Ardia and Sessinou (2025); when supplied it overrides \code{innovation},
@@ -119,6 +121,23 @@ span_simulate <- function(n, K, N, ncp = 0,
     df          <- as.numeric(p[3])
     standardize <- as.logical(p[4])
     xi          <- 0.9
+  }
+
+  stopifnot(
+    "n, K and N must be positive" = n >= 1 && K >= 1 && N >= 1,
+    "rho_factor and rho_error must be in [0, 1)" =
+      rho_factor >= 0 && rho_factor < 1 && rho_error >= 0 && rho_error < 1,
+    "df must be greater than 2" = df > 2,
+    "xi must be positive" = xi > 0
+  )
+  if (dynamics %in% c("garch", "ar-garch")) {
+    stopifnot(
+      "garch must be a named vector c(omega, alpha, beta), omega > 0, alpha, beta >= 0" =
+        all(c("omega", "alpha", "beta") %in% names(garch)) &&
+        garch[["omega"]] > 0 && garch[["alpha"]] >= 0 && garch[["beta"]] >= 0,
+      "GARCH must be stationary: alpha + beta < 1" =
+        garch[["alpha"]] + garch[["beta"]] < 1
+    )
   }
 
   om <- garch[["omega"]]; al <- garch[["alpha"]]; be <- garch[["beta"]]

@@ -1,4 +1,11 @@
 # Changes in Version 1.3-0 (DA)
+- span_gl_a() and span_gl_ad() now default to do_trace = FALSE (no console
+  output unless requested).
+- span_grs(), span_f2() and span_py() now return NA (like the other tests)
+  instead of raising an error when a covariance/design matrix is singular
+  (e.g. collinear benchmarks).
+- span_simulate() validates its arguments (dimensions, correlation ranges,
+  degrees of freedom, GARCH stationarity).
 - span_as() is faster: the internal subseries t-test (f_ttest) no longer calls
   stats::t.test() once per column (whose input-checking dominated the runtime).
   The one-sample two-sided p-values are now computed directly and vectorised

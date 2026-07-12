@@ -14,9 +14,9 @@ span_km(R1, R2)
 \value{
 A named list with components:
 \describe{
-  \item{\code{pval}}{P-value for the F-statistic under the null.}
-  \item{\code{stat}}{F-statistic value.}
-  \item{\code{H0}}{Null hypothesis description, \code{"GMVP(bmk) = GMVP(full)"}.}
+\item{\code{pval}}{P-value for the F-statistic under the null.}
+\item{\code{stat}}{F-statistic value.}
+\item{\code{H0}}{Null hypothesis description, \code{"GMVP(bmk) = GMVP(full)"}.}
 }
 }
 \description{
@@ -34,8 +34,8 @@ equivalent regression representation, yielding an \eqn{F}-statistic.
 }
 \examples{
 set.seed(123)
-R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, N=3
-R2 <- matrix(rnorm(200), 100, 2)  # tests:      T=100, K=2
+R1 <- matrix(rnorm(300), 100, 3)  # benchmarks: T=100, K=3
+R2 <- matrix(rnorm(200), 100, 2)  # test assets: T=100, N=2
 ans <- span_km(R1, R2)
 ans$pval; ans$stat; ans$H0
 

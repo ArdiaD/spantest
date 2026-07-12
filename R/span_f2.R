@@ -49,18 +49,22 @@ span_f2 <- function(R1, R2) {
 
   mu  <- matrix(colMeans(R), ncol = 1)
   V   <- cov(R)
-  iV  <- solve(V)
+  iV  <- tryCatch(solve(V), error = function(e) NULL)
   one <- matrix(1, K + N, 1)
+
+  mu1  <- matrix(colMeans(R1), ncol = 1)
+  V1   <- cov(R1)
+  iV1  <- tryCatch(solve(V1), error = function(e) NULL)
+  one1 <- matrix(1, K, 1)
+
+  if (is.null(iV) || is.null(iV1)) {
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "delta = 0"))
+  }
 
   a  <- t(mu) %*% iV %*% mu
   b  <- t(mu) %*% iV %*% one
   c_ <- t(one) %*% iV %*% one
   d  <- a * c_ - b^2
-
-  mu1  <- matrix(colMeans(R1), ncol = 1)
-  V1   <- cov(R1)
-  iV1  <- solve(V1)
-  one1 <- matrix(1, K, 1)
 
   a1 <- t(mu1) %*% iV1 %*% mu1
   b1 <- t(mu1) %*% iV1 %*% one1

@@ -49,19 +49,26 @@ span_grs <- function(R1, R2) {
 
   ones <- matrix(1, t, 1)
   XX <- cbind(ones, X)
-  Bhat1 <- solve(crossprod(XX)) %*% crossprod(XX, Y)
-  SSRu <- crossprod(Y - XX %*% Bhat1)
-  SigmaU <- SSRu / t
 
-  ahat <- Bhat1[1, ]
-  mufactor <- matrix(colMeans(X), K, 1)
-  ssqm <- crossprod(scale(X, center = TRUE, scale = FALSE)) / t
-  mufactor_ssqm <- solve(ssqm, mufactor)
+  # Return NA (rather than error) if any inverse is singular, as the other tests do.
+  stat <- tryCatch({
+    Bhat1 <- solve(crossprod(XX)) %*% crossprod(XX, Y)
+    SSRu <- crossprod(Y - XX %*% Bhat1)
+    SigmaU <- SSRu / t
 
-  denom <- 1 + crossprod(mufactor, mufactor_ssqm)
-  num <- ((t - N - K) / N) * crossprod(ahat, solve(SigmaU, ahat))
+    ahat <- Bhat1[1, ]
+    mufactor <- matrix(colMeans(X), K, 1)
+    ssqm <- crossprod(scale(X, center = TRUE, scale = FALSE)) / t
+    mufactor_ssqm <- solve(ssqm, mufactor)
 
-  stat <- as.numeric(num / denom)
+    denom <- 1 + crossprod(mufactor, mufactor_ssqm)
+    num <- ((t - N - K) / N) * crossprod(ahat, solve(SigmaU, ahat))
+    as.numeric(num / denom)
+  }, error = function(e) NA_real_)
+
+  if (is.na(stat)) {
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
+  }
   pval <- pf(stat, N, t - N - K, lower.tail = FALSE)
 
   list(pval = pval, stat = stat, H0 = "alpha = 0")
