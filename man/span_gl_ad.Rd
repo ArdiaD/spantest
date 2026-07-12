@@ -7,9 +7,9 @@
 span_gl_ad(R1, R2, control = list())
 }
 \arguments{
-\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times N}.}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times K}.}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 
 \item{control}{List of options:
 \describe{
@@ -57,7 +57,8 @@ out$Decisions_string; out$pval_LMC; out$pval_BMC
 \insertRef{GungorLuger2016}{spantest} \cr
 }
 \seealso{
-Other Joint Mean-Variance Spanning Tests: 
-\code{\link{span_hk}()}
+Other Joint Mean-Variance Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_hk]{span_hk()}}
 }
 \concept{Joint Mean-Variance Spanning Tests}

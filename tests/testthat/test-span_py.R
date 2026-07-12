@@ -27,3 +27,14 @@ test_that("span_py handles different dimensions correctly", {
   expect_true(length(result$pval) == 1)
 })
 
+test_that("span_py returns NA for a single test asset (N = 1)", {
+  set.seed(1)
+  R1 <- matrix(rnorm(300), 100, 3)
+  R2 <- matrix(rnorm(100), 100, 1)
+
+  result <- span_py(R1, R2)
+
+  expect_true(is.na(result$pval))
+  expect_true(is.na(result$stat))
+})
+

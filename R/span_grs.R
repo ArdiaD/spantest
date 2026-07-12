@@ -62,7 +62,7 @@ span_grs <- function(R1, R2) {
   num <- ((t - N - K) / N) * crossprod(ahat, solve(SigmaU, ahat))
 
   stat <- as.numeric(num / denom)
-  pval <- 1 - pf(stat, N, t - N - K)
+  pval <- pf(stat, N, t - N - K, lower.tail = FALSE)
 
   list(pval = pval, stat = stat, H0 = "alpha = 0")
 }

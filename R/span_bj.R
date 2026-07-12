@@ -17,9 +17,13 @@
 #' }
 #'
 #' @details
-#' With \code{X} formed from pairwise differences, the reference distribution is
-#' \eqn{F_{N,\ T - ncol(X)}}; here \code{ncol(X)} = \eqn{K + N - 1}.
-#' Finite-sample feasibility requires \code{T - (K + N - 1) >= 1}.
+#' Following Britten–Jones (1999), the (unnormalized) tangency-portfolio weights
+#' are obtained by regressing a vector of ones on the raw asset returns without an
+#' intercept. The null that the benchmarks span the tangency portfolio is the
+#' restriction that the test assets carry zero weight, tested by comparing the
+#' residual sums of squares of the full and benchmark-only regressions. The
+#' statistic has an \eqn{F_{N,\ T-K-N}} reference distribution; finite-sample
+#' feasibility requires \eqn{T-K-N \ge 1}.
 #'
 #' @references
 #' \insertRef{BrittenJones1999}{spantest} \cr
@@ -36,8 +40,8 @@
 #' @importFrom stats pf
 #' @export
 span_bj <- function(R1, R2) {
-  Rbig <- cbind(R1, R2)  # Combine benchmark (R1) and test (R2)
-  t <- nrow(Rbig)
+  R <- cbind(R1, R2)     # Combine benchmark (R1) and test (R2)
+  t <- nrow(R)
   K <- ncol(R1)          # K = benchmark assets
   N <- ncol(R2)          # N = test assets
 
@@ -46,27 +50,29 @@ span_bj <- function(R1, R2) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
   }
 
-  # Alpha = 0 form: dependent = first asset, INCLUDE intercept
-  y <- Rbig[, 1]
+  ones <- rep(1, t)
 
-  # Differences between first column and others
-  Diff <- sweep(Rbig[, -1, drop = FALSE], 1, Rbig[, 1], FUN = function(x, y) y - x)
+  # Unrestricted regression of a constant on ALL asset returns (no intercept):
+  # the OLS coefficients are proportional to the combined tangency-portfolio
+  # weights (Britten-Jones, 1999).
+  XtX_inv <- tryCatch(solve(crossprod(R)), error = function(e) NULL)
+  if (is.null(XtX_inv)) {
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
+  }
+  bU   <- XtX_inv %*% crossprod(R, ones)
+  rssU <- sum((ones - R %*% bU)^2)
 
-  X <- cbind(1, Diff)  # intercept
-  XtXi <- crossprod(X)
-  XtXi_inv <- solve(XtXi)
-  coef <- XtXi_inv %*% crossprod(X, y)
-  resid <- y - X %*% coef
-  sigma2 <- drop(crossprod(resid) / (t - ncol(X)))
+  # Restricted regression: only the benchmark assets carry weight
+  # (test-asset weights constrained to zero).
+  XtX1_inv <- tryCatch(solve(crossprod(R1)), error = function(e) NULL)
+  if (is.null(XtX1_inv)) {
+    return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
+  }
+  bR   <- XtX1_inv %*% crossprod(R1, ones)
+  rssR <- sum((ones - R1 %*% bR)^2)
 
-  offset <- 1 + (K - 1)  # intercept + (K-1) benchmark diffs
-  C <- cbind(matrix(0, N, offset), diag(N))
-  num <- as.numeric(
-    crossprod(C %*% coef, solve(C %*% XtXi_inv %*% t(C)) %*% (C %*% coef)) / N
-  )
-
-  stat <- num / sigma2
-  pval <- pf(stat, N, t - ncol(X), lower.tail = FALSE)
+  stat <- ((rssR - rssU) / N) / (rssU / (t - K - N))
+  pval <- pf(stat, N, t - K - N, lower.tail = FALSE)
 
   list(pval = as.numeric(pval), stat = as.numeric(stat), H0 = "alpha = 0")
 }

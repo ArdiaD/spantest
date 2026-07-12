@@ -42,10 +42,11 @@ out$stat; out$pval; out$H0
 \insertRef{GRS1989}{spantest} \cr
 }
 \seealso{
-Other Alpha Spanning Tests: 
-\code{\link{span_bj}()},
-\code{\link{span_f1}()},
-\code{\link{span_gl_a}()},
-\code{\link{span_py}()}
+Other Alpha Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_bj]{span_bj()}},
+\code{\link[=span_f1]{span_f1()}},
+\code{\link[=span_gl_a]{span_gl_a()}},
+\code{\link[=span_py]{span_py()}}
 }
 \concept{Alpha Spanning Tests}

@@ -8,8 +8,8 @@
 #' yielding Least-Favorable (LMC) and Balanced (BMC) MC p-values and a
 #' three-way decision rule.
 #'
-#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times N}.
-#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times K}.
+#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times K}.
+#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times N}.
 #' @param control List of options:
 #' \describe{
 #'   \item{\code{totsim}}{Number of MC simulations (default \code{500}).}
@@ -166,7 +166,7 @@ span_gl_ad <- function(R1, R2, control = list()) {
     cat('F-Max:', Fmax_actual,
         '\nLMC p-value:', GL_pval_LMC,
         '\nBMC p-value:', GL_pval_BMC,
-        '\nDecision:', Decisions, '\n')
+        '\nDecision:', Decisions_string, '\n')
   }
 
   out <- list(pval_LMC = GL_pval_LMC, pval_BMC = GL_pval_BMC,

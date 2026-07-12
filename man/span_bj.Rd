@@ -27,9 +27,13 @@ regression of a constant on return differences and yields an \eqn{F}
 test of the tangency-spanning restriction.
 }
 \details{
-With \code{X} formed from pairwise differences, the reference distribution is
-\eqn{F_{N,\ T - ncol(X)}}; here \code{ncol(X)} = \eqn{K + N - 1}.
-Finite-sample feasibility requires \code{T - (K + N - 1) >= 1}.
+Following Britten–Jones (1999), the (unnormalized) tangency-portfolio weights
+are obtained by regressing a vector of ones on the raw asset returns without an
+intercept. The null that the benchmarks span the tangency portfolio is the
+restriction that the test assets carry zero weight, tested by comparing the
+residual sums of squares of the full and benchmark-only regressions. The
+statistic has an \eqn{F_{N,\ T-K-N}} reference distribution; finite-sample
+feasibility requires \eqn{T-K-N \ge 1}.
 }
 \examples{
 set.seed(321)
@@ -43,10 +47,11 @@ out$stat; out$pval; out$H0
 \insertRef{BrittenJones1999}{spantest} \cr
 }
 \seealso{
-Other Alpha Spanning Tests: 
-\code{\link{span_f1}()},
-\code{\link{span_gl_a}()},
-\code{\link{span_grs}()},
-\code{\link{span_py}()}
+Other Alpha Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_f1]{span_f1()}},
+\code{\link[=span_gl_a]{span_gl_a()}},
+\code{\link[=span_grs]{span_grs()}},
+\code{\link[=span_py]{span_py()}}
 }
 \concept{Alpha Spanning Tests}

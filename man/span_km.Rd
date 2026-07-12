@@ -7,9 +7,9 @@
 span_km(R1, R2)
 }
 \arguments{
-\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times N}.}
+\item{R1}{Numeric matrix of benchmark returns, dimension \eqn{T \times K}.}
 
-\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times K}.}
+\item{R2}{Numeric matrix of test-asset returns, dimension \eqn{T \times N}.}
 }
 \value{
 A named list with components:
@@ -44,7 +44,8 @@ ans$pval; ans$stat; ans$H0
 \insertRef{KempfMemmel2006}{spantest} \cr
 }
 \seealso{
-Other Variance Spanning Tests: 
-\code{\link{span_f2}()}
+Other Variance Spanning Tests:
+\code{\link[=span_as]{span_as()}},
+\code{\link[=span_f2]{span_f2()}}
 }
 \concept{Variance Spanning Tests}

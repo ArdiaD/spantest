@@ -5,8 +5,8 @@
 #' Following Kempf & Memmel (2006), the null assesses whether adding new assets
 #' improves the minimum-variance frontier.
 #'
-#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times N}.
-#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times K}.
+#' @param R1 Numeric matrix of benchmark returns, dimension \eqn{T \times K}.
+#' @param R2 Numeric matrix of test-asset returns, dimension \eqn{T \times N}.
 #'
 #' @return A named list with components:
 #' \describe{
