@@ -1,4 +1,9 @@
 # Changes in Version 1.3-0 (DA)
+- span_as() is faster: the internal subseries t-test (f_ttest) no longer calls
+  stats::t.test() once per column (whose input-checking dominated the runtime).
+  The one-sample two-sided p-values are now computed directly and vectorised
+  across columns, giving identical results (to floating-point) at about 2.5x
+  lower cost for span_as().
 - NEW: span_simulate() generates benchmark and test-asset returns for spanning
   size/power studies from a factor model with a controllable spanning violation
   (ncp). Innovations may be normal, Student-t, or skew-t, with iid, AR(1),

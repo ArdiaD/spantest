@@ -95,17 +95,26 @@ f_prods <- function(score, k, cseed=123) {
 f_ttest <- function(eps, func = colMeans, k = 1/1.5) {
 
   eps <- as.matrix(eps)
-  k <- floor(nrow(eps)^k)
-  folds <- cut(seq_len(nrow(eps)), k, labels = FALSE)
+  n <- nrow(eps)
+  k <- floor(n^k)
+  folds <- cut(seq_len(n), k, labels = FALSE)
 
-  # Precompute fold means in a vectorized way
-  estvar <- matrix(NA, nrow = k, ncol = ncol(eps))
+  # Fold-wise summaries (k x ncol); func defaults to colMeans
+  estvar <- matrix(NA_real_, nrow = k, ncol = ncol(eps))
   for (i in seq_len(k)) {
-        estvar[i, ] <- func(eps[folds == i, , drop = FALSE])
+    estvar[i, ] <- func(eps[folds == i, , drop = FALSE])
   }
 
-  student <- apply(estvar, 2, function(u) t.test(u)$p.value)
-  normal <- 2 * pnorm(-abs(colMeans(eps) / apply(estvar, 2, sd)))
+  # One-sample two-sided t-test p-value per column, computed directly and
+  # vectorised across columns (identical to apply(estvar, 2, t.test)$p.value but
+  # without the per-column t.test() overhead): t = mean / (sd / sqrt(k)),
+  # df = k - 1, with sd the standard deviation of the k fold summaries.
+  m     <- colMeans(estvar)
+  sdcol <- sqrt(colSums((estvar - rep(m, each = k))^2) / (k - 1))
+  tstat <- m / (sdcol / sqrt(k))
+  student <- 2 * stats::pt(-abs(tstat), df = k - 1)
+
+  normal <- 2 * pnorm(-abs(colMeans(eps) / sdcol))
 
   out <- list(student = student,
               normal = normal)
