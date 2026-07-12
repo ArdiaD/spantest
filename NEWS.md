@@ -1,3 +1,10 @@
+# Changes in Version 1.2-1 (DA)
+- span_as() is now vectorized across the test cross-section: benchmark-only QR
+  decompositions are formed once and the swap regressions are obtained by
+  Frisch-Waugh partialling, replacing the per-asset loop of full QR
+  factorizations. Output is numerically identical to 1.2-0 (verified); span_as
+  is roughly 12-15x faster for moderate-to-large test sets.
+
 # Changes in Version 1.2-0 (DA)
 - NEW: span_as(), the Ardia-Sessinou subseries-based Cauchy Combination Test (CCT)
   for high-dimensional spanning, is now available and exported. It returns combined

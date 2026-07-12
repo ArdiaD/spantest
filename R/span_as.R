@@ -119,6 +119,87 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
   return(result)
 }
 
+#' Vectorized per-asset CCT p-values (batch over the test cross-section)
+#'
+#' Computes the same per-asset subseries CCT p-values as \code{f_getpv()} but for
+#' all \eqn{N} test assets at once. Because every test asset shares the same
+#' benchmark design, the benchmark-only QR decompositions are formed once and the
+#' three swap regressions are obtained by Frisch--Waugh partialling, turning the
+#' original \eqn{O(N)} loop of full QR factorizations into a handful of shared
+#' factorizations plus vectorized arithmetic. It is numerically equivalent to
+#' looping \code{f_getpv()} over the columns of \code{test}.
+#'
+#' @param bench Numeric \eqn{T \times K} matrix of benchmark returns.
+#' @param test  Numeric \eqn{T \times N} matrix of test-asset returns.
+#' @param ks,L  As in \code{f_getpv()}.
+#'
+#' @return A named list; each element is a length-\eqn{N} vector of per-asset
+#' p-values, named as \code{CCT{d,ad,a}_L{L}_k{i}}.
+#'
+#' @keywords internal
+#'
+#' @noRd
+#'
+f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
+  x  <- bench
+  Tn <- nrow(x)
+  K  <- ncol(x)
+  N  <- ncol(test)
+  x1 <- x[, 1]
+  one <- rep(1, Tn)
+  Y  <- test - x1                                   # T x N: y_j = test_j - x1
+
+  if (K == 1) {
+    xc   <- matrix(nrow = Tn, ncol = 0)
+    xaug <- x
+  } else {
+    xc   <- sweep(x[, -1, drop = FALSE], 1, x1, "-")
+    xaug <- cbind(x1, xc)
+  }
+
+  # Benchmark-only QR factorizations (shared across all test assets)
+  qr_main <- qr(cbind(1, xaug))   # residualize on [1, x]
+  qr_bd   <- qr(cbind(1, xc))     # FWL base for ew  (add y as the extra column)
+  qr_ba   <- qr(xaug)             # FWL base for ew1 (add y as the extra column)
+
+  # res_j = residual of y_j on [1, x]  (batched over all assets)
+  res <- qr.resid(qr_main, Y)
+
+  # ew_j  = residual of x1 on [1, xc, y_j]  via Frisch-Waugh on base [1, xc]
+  x1_p <- qr.resid(qr_bd, x1)
+  yp1  <- qr.resid(qr_bd, Y)
+  b1   <- colSums(yp1 * x1_p) / colSums(yp1 * yp1)
+  ew   <- x1_p - sweep(yp1, 2, b1, "*")
+
+  # ew1_j = residual of 1 on [x, y_j]  via Frisch-Waugh on base x
+  one_p <- qr.resid(qr_ba, one)
+  yp2   <- qr.resid(qr_ba, Y)
+  b2    <- colSums(yp2 * one_p) / colSums(yp2 * yp2)
+  ew1   <- one_p - sweep(yp2, 2, b2, "*")
+
+  D <- res * ew    # delta scores, T x N
+  A <- res * ew1   # alpha scores, T x N
+
+  # For each (L, k): student p-values for every asset via one f_ttest per score
+  # matrix (columns are independent), then Cauchy-combine the two for CCTad.
+  out <- list()
+  for (sn in L) {
+    w  <- f_prods(matrix(0, Tn, 1), sn)  # perturbation weights (shared across assets)
+    Dw <- D * w
+    Aw <- A * w
+    for (ki in seq_along(ks)) {
+      sD  <- f_ttest(Dw, k = ks[ki])$student
+      sA  <- f_ttest(Aw, k = ks[ki])$student
+      sAD <- vapply(seq_len(N),
+                    function(j) f_cauchypv(c(sD[j], sA[j])), numeric(1))
+      out[[paste0("CCTd_L",  sn, "_k", ki)]] <- sD
+      out[[paste0("CCTa_L",  sn, "_k", ki)]] <- sA
+      out[[paste0("CCTad_L", sn, "_k", ki)]] <- sAD
+    }
+  }
+  out
+}
+
 #' Ardia and Sessinou (2025) Subseries-Based Cauchy Combination Test (SCT) for Spanning
 #'
 #' Computes robust p-values for linear spanning restrictions using a residual-based
@@ -180,29 +261,13 @@ span_as <- function(bench, test, control = list()) {
     "_k", rep(seq_along(k_values), times = length(l_values) * length(test_types))
   )
 
-  # Preallocate matrix with proper dimensions
-  pval_matrix <- matrix(NA,
-                        nrow = length(template_names),
-                        ncol = ncol(test),
-                        dimnames = list(template_names, NULL))
+  # Per-asset p-values for the whole cross-section, computed in batch.
+  pv <- f_getpv_batch(bench, test, ks = k_values, L = l_values)
 
-  # Populate matrix with per-asset p-values
-  for (i in seq_len(ncol(test))) {
-    pvals <- f_getpv(test[, i], bench, ks = k_values, L = l_values)
-
-    # Validate dimensions
-    if (!identical(names(pvals), template_names)) {
-      stop(paste("Name mismatch in column", i,
-                 "\nExpected:", paste(head(template_names), collapse = " "),
-                 "\nGot:", paste(head(names(pvals)), collapse = " ")))
-    }
-
-    pval_matrix[, i] <- unlist(pvals)
-  }
-
-  # Combine per-asset p-values across the cross-section via the Cauchy method
-  f <- function(x) f_cauchypv(na.omit(x))
-  combined_results <- apply(pval_matrix, 1, f)
+  # Combine per-asset p-values across the cross-section via the Cauchy method.
+  combined_results <- vapply(template_names,
+                             function(nm) f_cauchypv(na.omit(pv[[nm]])),
+                             numeric(1))
 
   return(as.list(combined_results))
 }
