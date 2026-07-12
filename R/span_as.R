@@ -64,15 +64,9 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 
   ew <- f_compute_resid(cbind(1, xy_centered), x[, 1])
   ew1 <- f_compute_resid(cbind(y, x), one)
-  ew3 <- f_compute_resid(xy_centered, x[, 1])
 
   res_ew <- res * ew
   score <- score2 <- matrix(res_ew, ncol = 1)
-
-  X_reg3 <- x
-  qr_reg3 <- qr(X_reg3)
-  res3 <- qr.resid(qr_reg3, y)
-  score3 <- matrix(res3 * ew3, ncol = 1)
 
   # Score processing: randomized perturbation then subseries Cauchy p-value
   f_process_scores <- function(score_mat, sn) {
@@ -89,11 +83,6 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
   score_combo <- cbind(score2, res * ew1)
   test2 <- lapply(L, function(sn_value) {
     f_process_scores(score_combo, sn = sn_value)
-  })
-
-  # Delta = 0 / alpha = 0 (alternative construction; computed but not returned)
-  test3 <- lapply(L, function(sn_value) {
-    f_process_scores(score3, sn = sn_value)
   })
 
   # Alpha = 0
