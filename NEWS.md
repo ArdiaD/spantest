@@ -1,4 +1,12 @@
 # Changes in Version 1.3-0 (DA)
+- NEW: span_simulate() generates benchmark and test-asset returns for spanning
+  size/power studies from a factor model with a controllable spanning violation
+  (ncp). Innovations may be normal, Student-t, or skew-t, with iid, AR(1),
+  GARCH(1,1), or AR-GARCH dynamics; the `dgp` argument selects the twelve
+  processes of Ardia and Sessinou (2025). It is a fast, validated drop-in for
+  ad-hoc fGarch::garchSim() loops (roughly 30-45x faster for the GARCH DGPs) and
+  matches the reference processes in distribution, dynamics, and test size/power.
+  skew-t innovations use fGarch (now a Suggests).
 - span_gl_a() and span_gl_ad() now run their sign-flip Monte Carlo simulations
   in C++ (via Rcpp / RcppArmadillo). The random signs and the tie-breaking
   uniforms are still drawn in R, so the RNG stream -- and hence every p-value and

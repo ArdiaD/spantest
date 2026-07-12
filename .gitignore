@@ -60,12 +60,7 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-# File that is not used and is superceded
-R/npsurv.R
-R/parametric_backup.R
-tests
 inst/doc
-aucun
 /doc/
 /Meta/
 TODO
