@@ -18,7 +18,9 @@
   processes of Ardia and Sessinou (2025). It is a fast, validated drop-in for
   ad-hoc fGarch::garchSim() loops (roughly 30-45x faster for the GARCH DGPs) and
   matches the reference processes in distribution, dynamics, and test size/power.
-  skew-t innovations use fGarch (now a Suggests). Its GARCH(1,1) recursion runs
+  The skew-t innovations use a base-R re-implementation of the Fernandez-Steel
+  standardised skew-t (identical draws to fGarch::rsstd given the same RNG
+  state), so the package has no external simulation dependency. Its GARCH(1,1) recursion runs
   in C++ (bit-for-bit identical to the R loop; floating-point contraction is
   disabled so the fused multiply-add does not alter the roundings), which about
   halves the data-generation time for the GARCH DGPs.

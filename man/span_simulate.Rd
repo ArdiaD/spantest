@@ -95,9 +95,9 @@ Each innovation series is defined by \code{innovation} (marginal law) and
 \code{dynamics} (serial structure): \code{"iid"}, an AR(1) with coefficient
 \code{ar}, a GARCH(1,1) with parameters \code{garch}, or their
 \code{"ar-garch"} combination. Student-\eqn{t} innovations are standardised to
-unit variance when \code{standardize = TRUE}; skew-\eqn{t} innovations (drawn
-with \code{fGarch::rsstd}) are always unit-variance, so \code{standardize}
-has no effect on them.
+unit variance when \code{standardize = TRUE}; skew-\eqn{t} innovations
+(standardised Fernandez-Steel skew-\eqn{t}) are always unit-variance, so
+\code{standardize} has no effect on them.
 
 \code{dgp} is a convenience argument selecting one of the twelve processes of
 Ardia and Sessinou (2025); when supplied it overrides \code{innovation},
@@ -114,8 +114,8 @@ DGPs 2 and 11 use \emph{raw} (non-standardised) \eqn{t_5} innovations, as in
 the original study; all other heavy-tailed processes are standardised.
 }
 \note{
-\code{innovation = "skew-t"} requires the \pkg{fGarch} package. Set the
-RNG state with \code{\link{set.seed}} beforehand for reproducibility.
+Set the RNG state with \code{\link{set.seed}} beforehand for
+reproducibility.
 }
 \examples{
 set.seed(1)

@@ -27,9 +27,9 @@
 #' \code{dynamics} (serial structure): \code{"iid"}, an AR(1) with coefficient
 #' \code{ar}, a GARCH(1,1) with parameters \code{garch}, or their
 #' \code{"ar-garch"} combination. Student-\eqn{t} innovations are standardised to
-#' unit variance when \code{standardize = TRUE}; skew-\eqn{t} innovations (drawn
-#' with \code{fGarch::rsstd}) are always unit-variance, so \code{standardize}
-#' has no effect on them.
+#' unit variance when \code{standardize = TRUE}; skew-\eqn{t} innovations
+#' (standardised Fernandez-Steel skew-\eqn{t}) are always unit-variance, so
+#' \code{standardize} has no effect on them.
 #'
 #' \code{dgp} is a convenience argument selecting one of the twelve processes of
 #' Ardia and Sessinou (2025); when supplied it overrides \code{innovation},
@@ -73,8 +73,8 @@
 #'   and \code{R2} (\eqn{n \times N} test-asset returns), suitable as the
 #'   \code{R1}/\code{R2} arguments of the spanning tests in this package.
 #'
-#' @note \code{innovation = "skew-t"} requires the \pkg{fGarch} package. Set the
-#'   RNG state with \code{\link{set.seed}} beforehand for reproducibility.
+#' @note Set the RNG state with \code{\link{set.seed}} beforehand for
+#'   reproducibility.
 #'
 #' @references
 #' \insertRef{ArdiaSessinou2025}{spantest} \cr
@@ -90,7 +90,7 @@
 #'
 #' @seealso [span_grs()], [span_gl_ad()], [span_as()]
 #'
-#' @importFrom stats rnorm rt filter toeplitz
+#' @importFrom stats rnorm rt runif filter toeplitz
 #' @export
 span_simulate <- function(n, K, N, ncp = 0,
                           rho_factor = 0.8, rho_error = 0.5,
@@ -147,12 +147,7 @@ span_simulate <- function(n, K, N, ncp = 0,
     z <- switch(innovation,
       "normal" = stats::rnorm(m),
       "t"      = { r <- stats::rt(m, df); if (standardize) r / sqrt(df / (df - 2)) else r },
-      "skew-t" = {
-        if (!requireNamespace("fGarch", quietly = TRUE)) {
-          stop("innovation = 'skew-t' requires the 'fGarch' package.", call. = FALSE)
-        }
-        fGarch::rsstd(m, nu = df, xi = xi)
-      })
+      "skew-t" = f_rsstd(m, df, xi))
     s <- switch(dynamics,
       "iid"      = z,
       "garch"    = garch_filter(z, om, al, be),
@@ -175,4 +170,28 @@ span_simulate <- function(n, K, N, ncp = 0,
   x <- cbind(z[, 1], z[, -1, drop = FALSE] + z[, 1])   # benchmark construction
 
   list(R1 = x, R2 = y)
+}
+
+#' Standardised skew-Student-t random draws (Fernandez-Steel)
+#'
+#' Zero-mean, unit-variance skewed Student-t innovations, a base-R re-
+#' implementation of \code{fGarch::rsstd(n, nu, xi)} (identical draws given the
+#' same RNG state), used so the package does not depend on \pkg{fGarch}.
+#'
+#' @param n Integer, number of draws.
+#' @param nu Degrees of freedom (\code{> 2}).
+#' @param xi Skewness parameter (\code{> 0}; 1 = symmetric).
+#' @return Numeric vector of length \code{n}.
+#' @keywords internal
+#' @noRd
+f_rsstd <- function(n, nu, xi) {
+  weight <- xi / (xi + 1 / xi)
+  z  <- stats::runif(n, -weight, 1 - weight)
+  Xi <- xi ^ sign(z)
+  rt_std <- stats::rt(n, df = nu) / sqrt(nu / (nu - 2))   # standardised Student-t
+  rnd <- -abs(rt_std) / Xi * sign(z)
+  m1 <- 2 * sqrt(nu - 2) / (nu - 1) / beta(1 / 2, nu / 2)
+  mu <- m1 * (xi - 1 / xi)
+  sigma <- sqrt((1 - m1^2) * (xi^2 + 1 / xi^2) + 2 * m1^2 - 1)
+  (rnd - mu) / sigma
 }

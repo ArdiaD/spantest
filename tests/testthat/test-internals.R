@@ -34,6 +34,18 @@ test_that("f_cauchypv returns the common value when all p-values are equal", {
   expect_equal(spantest:::f_cauchypv(rep(0.8, 3)), 0.8, tolerance = 1e-8)
 })
 
+test_that("f_rsstd is zero-mean, unit-variance, and skews with xi", {
+  set.seed(1)
+  x <- spantest:::f_rsstd(2e5, nu = 6, xi = 0.9)   # xi < 1 => left-skewed
+  expect_lt(abs(mean(x)), 0.02)
+  expect_lt(abs(var(x) - 1), 0.05)
+  skew <- function(u) mean((u - mean(u))^3) / mean((u - mean(u))^2)^1.5
+  expect_lt(skew(x), 0)
+  set.seed(2)
+  s <- spantest:::f_rsstd(2e5, nu = 6, xi = 1)      # symmetric
+  expect_lt(abs(skew(s)), 0.05)
+})
+
 test_that("f_ranklex ranks the last element with the documented convention", {
   uu <- c(0.1, 0.2, 0.3)
   expect_identical(spantest:::f_ranklex(c(1, 2, 3), uu), 3)  # last is largest

@@ -16,8 +16,6 @@ test_that("span_simulate is reproducible given the RNG seed", {
 
 test_that("all DGP presets 1:12 run and return finite returns", {
   for (d in 1:12) {
-    skewt <- d %in% c(3, 6, 9, 12)
-    if (skewt && !requireNamespace("fGarch", quietly = TRUE)) next
     set.seed(d)
     sim <- span_simulate(150, 3, 6, ncp = 0, dgp = d)
     expect_equal(dim(sim$R2), c(150L, 6L), info = paste("dgp", d))
@@ -48,8 +46,7 @@ test_that("ncp = 0 gives near-nominal GRS size (spanning null holds)", {
   expect_lt(abs(mean(p < 0.05) - 0.05), 0.03)
 })
 
-test_that("skew-t innovation path works when fGarch is available", {
-  skip_if_not_installed("fGarch")
+test_that("skew-t innovation path works", {
   set.seed(1)
   sim <- span_simulate(120, 2, 4, innovation = "skew-t", dynamics = "iid",
                        df = 4, xi = 0.9)
