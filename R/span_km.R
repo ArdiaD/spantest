@@ -12,7 +12,8 @@
 #' \describe{
 #'   \item{\code{pval}}{P-value for the F-statistic under the null.}
 #'   \item{\code{stat}}{F-statistic value.}
-#'   \item{\code{H0}}{Null hypothesis description, \code{"GMVP(bmk) = GMVP(full)"}.}
+#'   \item{\code{H0}}{Null hypothesis description, \code{"delta = 0"} (equivalently,
+#'   GMVP of the benchmark set equals GMVP of the full universe).}
 #' }
 #'
 #' @details
