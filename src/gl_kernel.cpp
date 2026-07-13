@@ -31,6 +31,11 @@ Rcpp::List gl_sim_stats(const arma::mat& XX,
                         const arma::rowvec& ssrr_bmc) {
   const uword nsim = sign_mat.n_cols;
   vec LMC(nsim), BMC(nsim);
+  // Precompute XX * premult (T x nH) once. Then the restricted residuals are
+  //   Ehat0s = Ysim - XX*Bhat0s = Ehat1 + (XX*premult)*(H*Bhat1 - C),
+  // which replaces the per-simulation T x (K+1) x N matmul XX*Bhat0s by a cheap
+  // T x nH x N update (nH = 1 or 2). Same restricted SSR, up to floating point.
+  const mat XXpremult = XX * premult;              // T x nH  (once)
   for (uword s = 0; s < nsim; ++s) {
     mat esim = Ehat0;
     esim.each_col() %= sign_mat.col(s);             // esim[t,n] = Ehat0[t,n]*sign[t,s]
@@ -38,8 +43,7 @@ Rcpp::List gl_sim_stats(const arma::mat& XX,
     mat Bhat1 = Xtemp_XX * Ysim;                     // (K+1) x N  (unrestricted)
     mat Ehat1 = Ysim - XX * Bhat1;                   // T x N
     rowvec SSRu = sum(Ehat1 % Ehat1, 0);             // 1 x N
-    mat Bhat0s = Bhat1 - premult * (H * Bhat1 - C);  // (K+1) x N  (restricted)
-    mat Ehat0s = Ysim - XX * Bhat0s;                 // T x N
+    mat Ehat0s = Ehat1 + XXpremult * (H * Bhat1 - C);// T x N  (restricted; cheap update)
     rowvec SSRr = sum(Ehat0s % Ehat0s, 0);           // 1 x N
     LMC[s] = ((SSRr     - SSRu) / SSRu).max();
     BMC[s] = ((ssrr_bmc - SSRu) / SSRu).max();

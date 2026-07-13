@@ -1,4 +1,8 @@
 # Changes in Version 1.3-0 (DA)
+- span_gl_a() / span_gl_ad(): the C++ sign-flip kernel now forms the restricted
+  residuals via Ehat0s = Ehat1 + (XX %*% premult) %*% (H %*% Bhat1 - C), avoiding
+  the per-simulation T x (K+1) x N restricted-least-squares matmul. About twice
+  as fast, with bit-identical p-values.
 - span_gl_a() and span_gl_ad() now default to do_trace = FALSE (no console
   output unless requested).
 - span_grs(), span_f2() and span_py() now return NA (like the other tests)
