@@ -48,3 +48,25 @@ test_that("seed is honoured and B is validated", {
   expect_error(span_as(x, y, control = list(B = 0)))
   expect_error(span_as(x, y, control = list(B = NA)))
 })
+
+test_that("control validation rejects non-integer B and seed", {
+  set.seed(12)
+  x <- matrix(rnorm(120 * 2), 120, 2); y <- matrix(rnorm(120 * 3), 120, 3)
+  expect_error(span_as(x, y, control = list(B = 1.9)))      # would silently truncate to 1
+  expect_error(span_as(x, y, control = list(seed = 1.5)))
+  expect_error(span_as(x, y, control = list(B = c(1, 2))))
+  expect_silent(span_as(x, y, control = list(B = 3L, seed = -7L)))
+})
+
+test_that("degenerate inputs return NA rather than NaN or an error", {
+  expect_true(is.na(spantest:::f_cauchypv(numeric(0))))     # every asset missing
+  expect_false(is.nan(spantest:::f_cauchypv(numeric(0))))
+  # singular benchmark: GL now matches the package's NA convention
+  set.seed(13)
+  x <- matrix(rnorm(100), 100, 1); x <- cbind(x, x)         # collinear
+  y <- matrix(rnorm(300), 100, 3)
+  expect_true(is.na(span_gl_a(x, y, control = list(totsim = 20))$pval_LMC))
+  expect_true(is.na(span_gl_ad(x, y, control = list(totsim = 20))$pval_LMC))
+  # too-short sample fails loudly instead of returning NaN
+  expect_error(spantest:::f_ttest(matrix(rnorm(6), 6, 1), k = 1/3), "subseries")
+})

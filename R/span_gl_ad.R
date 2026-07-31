@@ -67,7 +67,13 @@ span_gl_ad <- function(R1, R2, control = list()) {
   XX <- matrix(cbind(ones, X), TT, (K + 1))
 
   XX_crossprod <- crossprod(XX)
-  Xtemp <- solve(XX_crossprod)
+  # Collinear benchmarks make the design singular. The other tests in the
+  # package return NA rather than raising in that case (see span_grs); match it.
+  Xtemp <- tryCatch(solve(XX_crossprod), error = function(e) NULL)
+  if (is.null(Xtemp))
+    return(list(pval_LMC = NA_real_, pval_BMC = NA_real_, stat = NA_real_,
+                Decisions = NA, Decisions_string = NA_character_,
+                H0 = "alpha = 0 and delta = 0"))
   Bhat1 <- Xtemp %*% crossprod(XX, Y)
 
   Ehat1 <- Y - XX %*% Bhat1         # Unrestricted

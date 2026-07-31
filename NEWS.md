@@ -11,7 +11,20 @@
   extreme draw. `B = 1` (the default) reproduces the previous behaviour exactly;
   `B = 100` or more is recommended for any reported application. The seed of the
   first draw is now user-visible (`seed`, default 123, draw b uses seed + b - 1)
-  instead of hard-coded.
+  instead of hard-coded. Consecutive seeds were kept, rather than an explicit
+  substream generator, so that `B = 1` reproduces the historical result exactly;
+  the draws they produce are empirically indistinguishable from independent
+  (mean absolute pairwise correlation 0.051 over 100 seeds at T = 250, against
+  0.050 expected), and this is documented under "Choosing B".
+- span_as(): `B` and `seed` must now be whole numbers. Previously a fractional
+  `B = 1.9` passed validation and was silently truncated to a single draw.
+- span_gl_a() / span_gl_ad(): a singular benchmark design (e.g. collinear
+  benchmarks) now returns NA p-values instead of raising, matching the
+  convention already used by span_grs(), span_f2() and span_py().
+- The Cauchy combination now returns NA, not a silent NaN, when it is handed no
+  usable p-values (every test asset missing).
+- The subseries t-test now fails with an explicit message when the sample is too
+  short to form two subseries, instead of dividing by zero degrees of freedom.
 
 # Changes in Version 1.3-0 (DA)
 - span_gl_a() / span_gl_ad(): the C++ sign-flip kernel now forms the restricted

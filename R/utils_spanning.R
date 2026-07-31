@@ -31,7 +31,18 @@ f_ranklex <- function(x, uu) {
 }
 
 
+# Cauchy combination of p-values, valid under arbitrary dependence.
+#
+# Note on extremes: p = 0 and p = 1 do NOT produce +/-Inf here, because pi/2 is
+# not exactly representable in double precision -- tan((0.5 - 0) * pi) is
+# 1.63e16, finite. The combination therefore saturates rather than overflowing,
+# and a mixed 0/1 input returns 0.5 rather than NaN.
+#
+# Empty input is reachable: callers pass na.omit(<per-asset p-values>), which is
+# length zero when every asset is missing. mean(numeric(0)) is NaN, so without
+# the guard the function would return a silent NaN where NA is meant.
 f_cauchypv <- function(p) {
+  if (!length(p)) return(NA_real_)
   out <- 0.5 - atan(mean(tan((0.5 - p) * pi))) / pi
   return(out)
 }
@@ -97,6 +108,12 @@ f_ttest <- function(eps, func = colMeans, k = 1/1.5) {
   eps <- as.matrix(eps)
   n <- nrow(eps)
   k <- floor(n^k)
+  # The t-statistic below has df = k - 1 and divides by it, so a single fold
+  # would give 0/0. This needs an absurdly short sample (T < 8 at the default
+  # exponent), but fail loudly rather than return NaN.
+  if (k < 2L)
+    stop("sample too short for the subseries test: it yields ", k,
+         " subseries; at least 2 are required.")
   folds <- cut(seq_len(n), k, labels = FALSE)
 
   # Fold-wise summaries (k x ncol); func defaults to colMeans
