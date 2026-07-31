@@ -15,6 +15,8 @@ span_as(bench, test, control = list())
 \describe{
 \item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
 \item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
+\item{\code{B}}{Number of independent perturbation draws to merge when \code{L > 0}; default \code{1}. See \sQuote{Choosing B}.}
+\item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}.}
 }}
 }
 \value{
@@ -37,6 +39,23 @@ Residual perturbations controlled by \code{L} generate test statistics robust to
 cross-sectional dependence and conditional heteroskedasticity. Resulting sub-p-values are aggregated
 by the Cauchy Combination Test (CCT), which remains valid under dependence and retains power in high dimensions.
 }
+\section{Choosing B}{
+
+When \code{L > 0} the score is multiplied by a random weight vector. That
+vector is shared by every test asset, so a single draw is a single realisation
+of the test and its effect does \emph{not} average out across the
+cross-section. The test is valid for any fixed draw --- its size is correct ---
+but the p-value it returns on one data set can vary substantially from draw to
+draw, especially when \code{T} is short (few subseries) or \code{N} is large.
+\code{B > 1} draws \code{B} independent weight vectors and merges the
+resulting p-values per asset with the Cauchy rule, which is valid under
+arbitrary dependence and is not carried by a single extreme draw. The default
+\code{B = 1} reproduces the historical single-draw behaviour exactly; for
+applications, and for any result that will be reported, \code{B = 100} or more
+is recommended. Cost is modest: the expensive residual construction is done
+once and only the subseries statistic is recomputed per draw.
+}
+
 \examples{
 set.seed(123)
 bench <- matrix(rnorm(300), 100, 3)

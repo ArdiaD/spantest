@@ -1,3 +1,18 @@
+# Changes in Version 1.4-0 (DA)
+- span_as(): new control parameters `B` and `seed`, de-randomising the L > 0
+  test. For L > 0 the score is multiplied by a random weight vector that is
+  SHARED by every test asset, so its effect does not average out across the
+  cross-section: a single draw is a single realisation of the test. The test is
+  valid for any fixed draw (its size is correct), but the p-value returned on one
+  data set can move by orders of magnitude from draw to draw -- most visibly when
+  T is short, where floor(T^(1/3)) leaves few subseries. `B > 1` draws B
+  independent weight vectors and merges the per-asset p-values with the Cauchy
+  rule, which is valid under arbitrary dependence and is not carried by a single
+  extreme draw. `B = 1` (the default) reproduces the previous behaviour exactly;
+  `B = 100` or more is recommended for any reported application. The seed of the
+  first draw is now user-visible (`seed`, default 123, draw b uses seed + b - 1)
+  instead of hard-coded.
+
 # Changes in Version 1.3-0 (DA)
 - span_gl_a() / span_gl_ad(): the C++ sign-flip kernel now forms the restricted
   residuals via Ehat0s = Ehat1 + (XX %*% premult) %*% (H %*% Bhat1 - C), avoiding

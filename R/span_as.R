@@ -36,7 +36,7 @@
 #'
 #' @noRd
 #'
-f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
+f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2), B = 1L, seed = 123L) {
   one <- rep(1, nrow(x))
   y <- u - x[, 1]
 
@@ -67,10 +67,22 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
   res_ew <- res * ew
   score <- score2 <- matrix(res_ew, ncol = 1)
 
-  # Score processing: randomized perturbation then subseries Cauchy p-value
+  # Score processing: randomized perturbation then subseries Cauchy p-value.
+  # With B > 1 the perturbation is drawn B times and the resulting p-values are
+  # Cauchy-merged, so the reported value does not hinge on one arbitrary draw
+  # (see the note in f_getpv_batch). B = 1 is the single-draw behaviour.
   f_process_scores <- function(score_mat, sn) {
-    scoreb <- score_mat * f_prods(score_mat, sn)
-    vapply(ks, function(k) f_testbm(scoreb, k = k)[1], numeric(1))
+    nB <- if (sn > 0L) max(1L, as.integer(B)) else 1L
+    M  <- matrix(NA_real_, length(ks), nB)
+    for (b in seq_len(nB)) {
+      scoreb <- score_mat * f_prods(score_mat, sn, cseed = seed + b - 1L)
+      M[, b] <- vapply(ks, function(k) f_testbm(scoreb, k = k)[1], numeric(1))
+    }
+    if (nB == 1L) return(M[, 1L])
+    apply(M, 1L, function(p) {
+      p <- stats::na.omit(p)
+      if (!length(p)) NA_real_ else f_cauchypv(p)
+    })
   }
 
   # Delta = 0
@@ -120,6 +132,9 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 #' @param bench Numeric \eqn{T \times K} matrix of benchmark returns.
 #' @param test  Numeric \eqn{T \times N} matrix of test-asset returns.
 #' @param ks,L  As in \code{f_getpv()}.
+#' @param B     Number of independent perturbation draws merged per asset when
+#'   \code{L > 0} (Cauchy rule). \code{B = 1} is the single-draw behaviour.
+#' @param seed  Seed of the first draw; draw \eqn{b} uses \code{seed + b - 1}.
 #'
 #' @return A named list; each element is a length-\eqn{N} vector of per-asset
 #' p-values, named as \code{CCT{d,ad,a}_L{L}_k{i}}.
@@ -128,7 +143,8 @@ f_getpv <- function(u, x, ks = c(1/3), L = c(0, 2)) {
 #'
 #' @noRd
 #'
-f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
+f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2),
+                          B = 1L, seed = 123L) {
   x  <- bench
   Tn <- nrow(x)
   K  <- ncol(x)
@@ -170,19 +186,48 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
 
   # For each (L, k): student p-values for every asset via one f_ttest per score
   # matrix (columns are independent), then Cauchy-combine the two for CCTad.
+  #
+  # DE-RANDOMISATION (B). For L > 0 the score is multiplied by a random weight
+  # vector w. That vector is SHARED by every test asset, so its effect does not
+  # average out across the cross-section: a single draw is a single realisation
+  # of the test, and with few subseries (short T) the resulting p-value can swing
+  # over orders of magnitude from one draw to the next. With B > 1 we draw B
+  # independent weight vectors and merge the B p-values per asset with the Cauchy
+  # rule -- valid under arbitrary dependence, and self-correcting in that one
+  # lucky draw among B does not carry the merged value. B = 1 reproduces the
+  # single-draw behaviour exactly.
   out <- list()
   for (sn in L) {
-    w  <- f_prods(matrix(0, Tn, 1), sn)  # perturbation weights (shared across assets)
-    Dw <- D * w
-    Aw <- A * w
+    nB <- if (sn > 0L) max(1L, as.integer(B)) else 1L   # L = 0: nothing to average
+    accD <- accA <- accAD <- vector("list", length(ks))
+    for (ki in seq_along(ks))
+      accD[[ki]] <- accA[[ki]] <- accAD[[ki]] <- matrix(NA_real_, N, nB)
+
+    for (b in seq_len(nB)) {
+      w  <- f_prods(matrix(0, Tn, 1), sn, cseed = seed + b - 1L)
+      Dw <- D * w
+      Aw <- A * w
+      for (ki in seq_along(ks)) {
+        sD  <- f_ttest(Dw, k = ks[ki])$student
+        sA  <- f_ttest(Aw, k = ks[ki])$student
+        accD[[ki]][, b]  <- sD
+        accA[[ki]][, b]  <- sA
+        accAD[[ki]][, b] <- vapply(seq_len(N),
+                                   function(j) f_cauchypv(c(sD[j], sA[j])), numeric(1))
+      }
+    }
+
+    merge_draws <- function(M) {
+      if (ncol(M) == 1L) return(M[, 1L])
+      apply(M, 1L, function(p) {
+        p <- stats::na.omit(p)
+        if (!length(p)) NA_real_ else f_cauchypv(p)
+      })
+    }
     for (ki in seq_along(ks)) {
-      sD  <- f_ttest(Dw, k = ks[ki])$student
-      sA  <- f_ttest(Aw, k = ks[ki])$student
-      sAD <- vapply(seq_len(N),
-                    function(j) f_cauchypv(c(sD[j], sA[j])), numeric(1))
-      out[[paste0("CCTd_L",  sn, "_k", ki)]] <- sD
-      out[[paste0("CCTa_L",  sn, "_k", ki)]] <- sA
-      out[[paste0("CCTad_L", sn, "_k", ki)]] <- sAD
+      out[[paste0("CCTd_L",  sn, "_k", ki)]] <- merge_draws(accD[[ki]])
+      out[[paste0("CCTa_L",  sn, "_k", ki)]] <- merge_draws(accA[[ki]])
+      out[[paste0("CCTad_L", sn, "_k", ki)]] <- merge_draws(accAD[[ki]])
     }
   }
   out
@@ -201,6 +246,8 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
 #' \describe{
 #'   \item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
 #'   \item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
+#'   \item{\code{B}}{Number of independent perturbation draws to merge when \code{L > 0}; default \code{1}. See \sQuote{Choosing B}.}
+#'   \item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}.}
 #' }
 #'
 #' @return A named list of global (combined) p-values. Names encode hypothesis and settings:
@@ -215,6 +262,21 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
 #' Residual perturbations controlled by \code{L} generate test statistics robust to serial and
 #' cross-sectional dependence and conditional heteroskedasticity. Resulting sub-p-values are aggregated
 #' by the Cauchy Combination Test (CCT), which remains valid under dependence and retains power in high dimensions.
+#'
+#' @section Choosing B:
+#' When \code{L > 0} the score is multiplied by a random weight vector. That
+#' vector is shared by every test asset, so a single draw is a single realisation
+#' of the test and its effect does \emph{not} average out across the
+#' cross-section. The test is valid for any fixed draw --- its size is correct ---
+#' but the p-value it returns on one data set can vary substantially from draw to
+#' draw, especially when \code{T} is short (few subseries) or \code{N} is large.
+#' \code{B > 1} draws \code{B} independent weight vectors and merges the
+#' resulting p-values per asset with the Cauchy rule, which is valid under
+#' arbitrary dependence and is not carried by a single extreme draw. The default
+#' \code{B = 1} reproduces the historical single-draw behaviour exactly; for
+#' applications, and for any result that will be reported, \code{B = 100} or more
+#' is recommended. Cost is modest: the expensive residual construction is done
+#' once and only the subseries statistic is recomputed per draw.
 #'
 #' @references
 #' \insertRef{ArdiaSessinou2025}{spantest} \cr
@@ -235,10 +297,12 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2)) {
 span_as <- function(bench, test, control = list()) {
 
   # Set control parameters
-  con <- list(ks = c(1/3), L = c(0, 2))
+  con <- list(ks = c(1/3), L = c(0, 2), B = 1L, seed = 123L)
   con[names(control)] <- control
   k_values <- con$ks
   l_values <- con$L
+  stopifnot(length(con$B) == 1L, is.finite(con$B), con$B >= 1,
+            length(con$seed) == 1L, is.finite(con$seed))
 
   # Generate explicit template names
   test_types <- c("CCTd", "CCTad", "CCTa")
@@ -249,7 +313,8 @@ span_as <- function(bench, test, control = list()) {
   )
 
   # Per-asset p-values for the whole cross-section, computed in batch.
-  pv <- f_getpv_batch(bench, test, ks = k_values, L = l_values)
+  pv <- f_getpv_batch(bench, test, ks = k_values, L = l_values,
+                      B = as.integer(con$B), seed = as.integer(con$seed))
 
   # Combine per-asset p-values across the cross-section via the Cauchy method.
   combined_results <- vapply(template_names,
