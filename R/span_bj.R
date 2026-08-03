@@ -26,6 +26,14 @@
 #' statistic has an \eqn{F_{N,\ T-K-N}} reference distribution; finite-sample
 #' feasibility requires \eqn{T-K-N \ge 1}.
 #'
+#' \strong{Equivalence with [span_grs()].} Although derived from a regression of
+#' ones on raw returns rather than from intercepts, this statistic is
+#' numerically identical to the Gibbons--Ross--Shanken statistic returned by
+#' [span_grs()], to machine precision and for every \eqn{(T, K, N)}. The two are
+#' the same test of \eqn{\alpha = 0} computed by different routes; agreement
+#' between them validates the implementation but is not independent evidence.
+#' [span_f1()] is close but genuinely distinct.
+#'
 #' @references
 #' \insertRef{BrittenJones1999}{spantest} \cr
 #'

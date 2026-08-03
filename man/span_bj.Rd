@@ -35,6 +35,14 @@ restriction that the test assets carry zero weight, tested by comparing the
 residual sums of squares of the full and benchmark-only regressions. The
 statistic has an \eqn{F_{N,\ T-K-N}} reference distribution; finite-sample
 feasibility requires \eqn{T-K-N \ge 1}.
+
+\strong{Equivalence with \code{\link[=span_grs]{span_grs()}}.} Although derived from a regression of
+ones on raw returns rather than from intercepts, this statistic is
+numerically identical to the Gibbons--Ross--Shanken statistic returned by
+\code{\link[=span_grs]{span_grs()}}, to machine precision and for every \eqn{(T, K, N)}. The two are
+the same test of \eqn{\alpha = 0} computed by different routes; agreement
+between them validates the implementation but is not independent evidence.
+\code{\link[=span_f1]{span_f1()}} is close but genuinely distinct.
 }
 \examples{
 set.seed(321)

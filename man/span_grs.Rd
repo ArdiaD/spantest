@@ -29,6 +29,18 @@ to \eqn{K} (benchmarks) and \eqn{N} (test assets).
 \details{
 Under standard conditions, the reference distribution is
 \eqn{F_{N,\ T-N-K}}. Finite-sample feasibility requires \eqn{T-N-K \ge 1}.
+
+The residual covariance enters in its maximum-likelihood form (divisor
+\eqn{T}), which is what pairs with the \eqn{(T-N-K)/N} scaling to give an
+exact \eqn{F} test.
+
+\strong{Equivalence with \code{\link[=span_bj]{span_bj()}}.} This statistic is numerically
+identical to the Britten--Jones (1999) statistic returned by \code{\link[=span_bj]{span_bj()}},
+to machine precision and for every \eqn{(T, K, N)}: the two are different
+computational routes to the same test of \eqn{\alpha = 0}, not independent
+procedures. Reporting both is therefore a check on the implementation, not
+corroborating evidence from two tests. \code{\link[=span_f1]{span_f1()}} is close but genuinely
+distinct.
 }
 \examples{
 set.seed(42)

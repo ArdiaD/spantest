@@ -30,8 +30,20 @@ improves the minimum-variance frontier.
 The null hypothesis \eqn{H_0} is that augmenting the benchmark set with the
 test assets does not change the GMVP weights (\eqn{\Delta = 0}), i.e.,
 the GMVP of the full universe coincides with that of the benchmark subset.
-The test is implemented via a linear restriction on coefficients in an
-equivalent regression representation, yielding an \eqn{F}-statistic.
+The test uses the Kempf--Memmel regression
+\deqn{r_{1t} = \alpha + \sum_{j>1} \beta_j (r_{1t} - r_{jt}) + \varepsilon_t,}
+whose slopes are the global-minimum-variance portfolio weights
+(\eqn{w_j = \beta_j} for \eqn{j>1} and \eqn{w_1 = 1 - \sum_{j>1}\beta_j}).
+The test assets leave the GMVP unimproved exactly when their \eqn{\beta}
+block is zero, so \eqn{H_0} is an \eqn{N}-dimensional linear restriction,
+tested by an \eqn{F} statistic with reference distribution
+\eqn{F_{N,\ T-K-N}}. Finite-sample feasibility requires \eqn{T-K-N \ge 1}.
+
+Note that regressing a vector of ones on the returns instead---the
+Britten--Jones tangency construction used by \code{\link[=span_bj]{span_bj()}}---produces a test of
+\eqn{\alpha = 0}, not of \eqn{\Delta = 0}. The two are easily confused: they
+share the difference-of-returns design matrix and differ only in the
+dependent variable and the intercept.
 }
 \examples{
 set.seed(123)
