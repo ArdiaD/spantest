@@ -55,8 +55,16 @@ GARCH(1,1) variance recursion.}
 
 \item{standardize}{Logical; standardise \eqn{t} innovations to unit variance.}
 
-\item{dgp}{Optional integer in \code{1:12}; selects a preset process (see
-Details) and overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
+\item{dgp}{Optional preset process, given either as a \strong{name} --- one of
+\code{"iid-N"}, \code{"iid-ST"}, \code{"iid-SKST"}, \code{"GARCH-N"},
+\code{"GARCH-ST"}, \code{"GARCH-SKST"}, \code{"AR-N"}, \code{"AR-ST"},
+\code{"AR-SKST"}, \code{"AR-GARCH-N"}, \code{"AR-GARCH-ST"},
+\code{"AR-GARCH-SKST"} (case-insensitive) --- or as an integer in
+\code{1:12}. Names are preferred: they say which cell of the
+innovation-by-dynamics grid is meant, whereas the number must be looked up.
+Numbers remain accepted so existing scripts and stored results keep working;
+see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
+overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
 \code{standardize}.}
 
 \item{burnin}{Integer, number of initial observations discarded to remove the

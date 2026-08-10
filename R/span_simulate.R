@@ -63,8 +63,16 @@
 #' @param garch Named numeric vector \code{c(omega, alpha, beta)} for the
 #'   GARCH(1,1) variance recursion.
 #' @param standardize Logical; standardise \eqn{t} innovations to unit variance.
-#' @param dgp Optional integer in \code{1:12}; selects a preset process (see
-#'   Details) and overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
+#' @param dgp Optional preset process, given either as a \strong{name} --- one of
+#'   \code{"iid-N"}, \code{"iid-ST"}, \code{"iid-SKST"}, \code{"GARCH-N"},
+#'   \code{"GARCH-ST"}, \code{"GARCH-SKST"}, \code{"AR-N"}, \code{"AR-ST"},
+#'   \code{"AR-SKST"}, \code{"AR-GARCH-N"}, \code{"AR-GARCH-ST"},
+#'   \code{"AR-GARCH-SKST"} (case-insensitive) --- or as an integer in
+#'   \code{1:12}. Names are preferred: they say which cell of the
+#'   innovation-by-dynamics grid is meant, whereas the number must be looked up.
+#'   Numbers remain accepted so existing scripts and stored results keep working;
+#'   see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
+#'   overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
 #'   \code{standardize}.
 #' @param burnin Integer, number of initial observations discarded to remove the
 #'   AR/GARCH transient.
@@ -104,9 +112,24 @@ span_simulate <- function(n, K, N, ncp = 0,
   dynamics   <- match.arg(dynamics)
 
   if (!is.null(dgp)) {
-    dgp <- as.integer(dgp)
-    if (length(dgp) != 1L || is.na(dgp) || dgp < 1L || dgp > 12L) {
-      stop("`dgp` must be a single integer in 1:12.")
+    # `dgp` may be given as a NAME or as a preset number. Names are strongly
+    # preferred: the twelve processes are a 3 x 4 factorial of innovation law by
+    # dynamics, and a name says which cell it is, whereas a number has to be
+    # looked up -- a step that has caused real mix-ups downstream. Numbers stay
+    # accepted so that existing scripts and stored results keep working.
+    if (length(dgp) != 1L) stop("`dgp` must be a single name or preset number.")
+    if (is.character(dgp)) {
+      i <- match(toupper(trimws(dgp)), toupper(DGP_NAMES))
+      if (is.na(i)) {
+        stop("unknown `dgp` name \"", dgp, "\". Use one of: ",
+             paste(DGP_NAMES, collapse = ", "), " (see span_dgp_table()).")
+      }
+      dgp <- i
+    } else {
+      dgp <- suppressWarnings(as.integer(dgp))
+      if (is.na(dgp) || dgp < 1L || dgp > 12L) {
+        stop("`dgp` must be a name (see span_dgp_table()) or an integer in 1:12.")
+      }
     }
     presets <- list(
       c("normal",  "iid",      "5", "TRUE"),  c("t",      "iid",      "5", "FALSE"),

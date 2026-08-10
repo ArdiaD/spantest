@@ -40,6 +40,15 @@
   (e.g. collinear benchmarks).
 - span_simulate() validates its arguments (dimensions, correlation ranges,
   degrees of freedom, GARCH stationarity).
+- span_simulate(): `dgp` now accepts a process NAME as well as a preset number
+  -- "AR-GARCH-SKST" instead of 9 -- and the two are exactly equivalent. The
+  twelve names are exported as `DGP_NAMES` and described by the new
+  `span_dgp_table()`, which lists each preset with its innovation law, dynamics
+  and degrees of freedom. Numbers remain accepted, so existing code is
+  unaffected. The motivation is that a preset number carries no meaning and can
+  be transposed silently: presets 7-9 are the AR-GARCH family and 10-12 the AR
+  family, an ordering that does not match every convention in use. A name
+  cannot be transposed, and a wrong one is an error rather than a wrong process.
 - span_as() is faster: the internal subseries t-test (f_ttest) no longer calls
   stats::t.test() once per column (whose input-checking dominated the runtime).
   The one-sample two-sided p-values are now computed directly and vectorised
