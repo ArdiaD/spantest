@@ -48,4 +48,35 @@ test_that("bad dgp values are rejected with a usable message", {
   expect_error(span_simulate(60, 2, 2, dgp = 13))
   expect_error(span_simulate(60, 2, 2, dgp = 0))
   expect_error(span_simulate(60, 2, 2, dgp = c("iid-N", "GARCH-N")))
+  expect_error(span_simulate(60, 2, 2, dgp = NA))
+  expect_error(span_simulate(60, 2, 2, dgp = NA_character_))
+})
+
+test_that("a preset number given as a string still means that preset", {
+  # It reached as.integer() before names existed, so config files and
+  # command-line arguments that hand over "9" must keep working.
+  for (s in c("9", " 9 ", "12")) {
+    set.seed(3); a <- span_simulate(60, 2, 3, dgp = s)
+    set.seed(3); b <- span_simulate(60, 2, 3, dgp = as.integer(s))
+    expect_identical(a$R2, b$R2, info = s)
+  }
+  expect_error(span_simulate(60, 2, 2, dgp = "13"))
+  expect_error(span_simulate(60, 2, 2, dgp = "9.7"))
+})
+
+test_that("a fractional preset is an error, not a silent truncation", {
+  # as.integer(9.7) is 9, so an unchecked coercion would quietly run AR-GARCH-SKST
+  # for a value that names no preset.
+  expect_error(span_simulate(60, 2, 2, dgp = 9.7), "whole number")
+  expect_error(span_simulate(60, 2, 2, dgp = 0.5), "whole number")
+  # but a whole number stored as a double is fine, and equals the integer
+  set.seed(4); a <- span_simulate(60, 2, 3, dgp = 9)
+  set.seed(4); b <- span_simulate(60, 2, 3, dgp = 9L)
+  expect_identical(a$R2, b$R2)
+})
+
+test_that("name matching is exact, not partial", {
+  # "AR" is a prefix of six of the twelve names; partial matching would pick one.
+  for (s in c("AR", "AR-", "GARCH", "iid", "SKST"))
+    expect_error(span_simulate(60, 2, 2, dgp = s), "unknown", info = s)
 })

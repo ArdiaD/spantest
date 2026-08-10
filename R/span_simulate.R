@@ -67,8 +67,11 @@
 #'   \code{"iid-N"}, \code{"iid-ST"}, \code{"iid-SKST"}, \code{"GARCH-N"},
 #'   \code{"GARCH-ST"}, \code{"GARCH-SKST"}, \code{"AR-N"}, \code{"AR-ST"},
 #'   \code{"AR-SKST"}, \code{"AR-GARCH-N"}, \code{"AR-GARCH-ST"},
-#'   \code{"AR-GARCH-SKST"} (case-insensitive) --- or as an integer in
-#'   \code{1:12}. Names are preferred: they say which cell of the
+#'   \code{"AR-GARCH-SKST"} (case-insensitive, surrounding whitespace ignored)
+#'   --- or as a whole number in \code{1:12}, which may itself be given as a
+#'   string (\code{"9"} and \code{9} select the same preset). Name matching is
+#'   exact rather than partial, since \code{"AR"} is a prefix of six of the
+#'   twelve names. Names are preferred: they say which cell of the
 #'   innovation-by-dynamics grid is meant, whereas the number must be looked up.
 #'   Numbers remain accepted so existing scripts and stored results keep working;
 #'   see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
@@ -119,17 +122,32 @@ span_simulate <- function(n, K, N, ncp = 0,
     # accepted so that existing scripts and stored results keep working.
     if (length(dgp) != 1L) stop("`dgp` must be a single name or preset number.")
     if (is.character(dgp)) {
+      # Name first; matching is exact (after trimming and case-folding) rather
+      # than partial, because "AR" is a prefix of six of the twelve names and
+      # partial matching would silently pick one.
       i <- match(toupper(trimws(dgp)), toupper(DGP_NAMES))
       if (is.na(i)) {
-        stop("unknown `dgp` name \"", dgp, "\". Use one of: ",
-             paste(DGP_NAMES, collapse = ", "), " (see span_dgp_table()).")
+        # A preset number handed over as a string -- from a config file or a
+        # command-line argument -- reached as.integer() before names existed, so
+        # it must keep working; "9" and 9 mean the same preset.
+        num <- suppressWarnings(as.numeric(trimws(dgp)))
+        if (is.na(num)) {
+          stop("unknown `dgp` name \"", dgp, "\". Use one of: ",
+               paste(DGP_NAMES, collapse = ", "), " (see span_dgp_table()).")
+        }
+        dgp <- num
+      } else {
+        dgp <- i
       }
-      dgp <- i
-    } else {
-      dgp <- suppressWarnings(as.integer(dgp))
-      if (is.na(dgp) || dgp < 1L || dgp > 12L) {
-        stop("`dgp` must be a name (see span_dgp_table()) or an integer in 1:12.")
+    }
+    if (!is.character(dgp)) {
+      # Whole numbers only: as.integer(9.7) is 9, so an unchecked coercion would
+      # run preset 9 for an argument that names no preset at all.
+      if (!is.numeric(dgp) || is.na(dgp) || dgp != trunc(dgp) ||
+          dgp < 1 || dgp > 12) {
+        stop("`dgp` must be a name (see span_dgp_table()) or a whole number in 1:12.")
       }
+      dgp <- as.integer(dgp)
     }
     presets <- list(
       c("normal",  "iid",      "5", "TRUE"),  c("t",      "iid",      "5", "FALSE"),

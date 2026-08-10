@@ -16,6 +16,21 @@
   the draws they produce are empirically indistinguishable from independent
   (mean absolute pairwise correlation 0.051 over 100 seeds at T = 250, against
   0.050 expected), and this is documented under "Choosing B".
+- span_simulate(): `dgp` now accepts a process NAME as well as a preset number
+  -- "AR-GARCH-SKST" instead of 9 -- and the two are exactly equivalent. The
+  twelve names are exported as `DGP_NAMES` and described by the new
+  `span_dgp_table()`, which lists each preset with its innovation law, dynamics
+  and degrees of freedom. Numbers remain accepted, so existing code is
+  unaffected -- including a preset handed over as a string, since "9" and 9
+  select the same preset. Name matching is exact after trimming and
+  case-folding, not partial: "AR" is a prefix of six of the twelve names.
+  The motivation is that a preset number carries no meaning and can
+  be transposed silently: presets 7-9 are the AR-GARCH family and 10-12 the AR
+  family, an ordering that does not match every convention in use. A name
+  cannot be transposed, and a wrong one is an error rather than a wrong process.
+- span_simulate(): `dgp` must be a whole number. Previously `dgp = 9.7` passed
+  through as.integer() and silently ran preset 9, a process the argument does
+  not name. Whole numbers stored as doubles (`dgp = 9`) are unaffected.
 - span_as(): `B` and `seed` must now be whole numbers. Previously a fractional
   `B = 1.9` passed validation and was silently truncated to a single draw.
 - span_gl_a() / span_gl_ad(): a singular benchmark design (e.g. collinear
@@ -40,15 +55,6 @@
   (e.g. collinear benchmarks).
 - span_simulate() validates its arguments (dimensions, correlation ranges,
   degrees of freedom, GARCH stationarity).
-- span_simulate(): `dgp` now accepts a process NAME as well as a preset number
-  -- "AR-GARCH-SKST" instead of 9 -- and the two are exactly equivalent. The
-  twelve names are exported as `DGP_NAMES` and described by the new
-  `span_dgp_table()`, which lists each preset with its innovation law, dynamics
-  and degrees of freedom. Numbers remain accepted, so existing code is
-  unaffected. The motivation is that a preset number carries no meaning and can
-  be transposed silently: presets 7-9 are the AR-GARCH family and 10-12 the AR
-  family, an ordering that does not match every convention in use. A name
-  cannot be transposed, and a wrong one is an error rather than a wrong process.
 - span_as() is faster: the internal subseries t-test (f_ttest) no longer calls
   stats::t.test() once per column (whose input-checking dominated the runtime).
   The one-sample two-sided p-values are now computed directly and vectorised

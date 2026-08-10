@@ -59,8 +59,11 @@ GARCH(1,1) variance recursion.}
 \code{"iid-N"}, \code{"iid-ST"}, \code{"iid-SKST"}, \code{"GARCH-N"},
 \code{"GARCH-ST"}, \code{"GARCH-SKST"}, \code{"AR-N"}, \code{"AR-ST"},
 \code{"AR-SKST"}, \code{"AR-GARCH-N"}, \code{"AR-GARCH-ST"},
-\code{"AR-GARCH-SKST"} (case-insensitive) --- or as an integer in
-\code{1:12}. Names are preferred: they say which cell of the
+\code{"AR-GARCH-SKST"} (case-insensitive, surrounding whitespace ignored)
+--- or as a whole number in \code{1:12}, which may itself be given as a
+string (\code{"9"} and \code{9} select the same preset). Name matching is
+exact rather than partial, since \code{"AR"} is a prefix of six of the
+twelve names. Names are preferred: they say which cell of the
 innovation-by-dynamics grid is meant, whereas the number must be looked up.
 Numbers remain accepted so existing scripts and stored results keep working;
 see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
