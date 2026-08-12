@@ -7,10 +7,17 @@
 #'
 #' @param u A numeric vector of outcomes (e.g., returns or residuals) of length \eqn{T}.
 #' @param x A numeric matrix of regressors (T x K), where the first column is used as baseline and others are compared.
-#' @param ks A numeric vector of subseries exponents (e.g., \code{1/3}); each value defines subseries size as \code{floor(T^k)}. Default is \code{c(1/3)}.
+#' @param ks A numeric vector of subseries exponents (e.g., \code{1/3}). Each value
+#'   sets the NUMBER of subseries to \code{floor(T^k)}, so the sample is split into
+#'   that many contiguous blocks of length about \code{T / floor(T^k)}. At
+#'   \code{T = 250}, \code{k = 1/3} gives 6 blocks of about 42 observations and
+#'   \code{k = 2/3} gives 39 blocks of about 6 -- a larger exponent means MORE and
+#'   SHORTER blocks, not longer ones. This matches \eqn{l_T = \lfloor T^\psi \rfloor}
+#'   in Ardia and Sessinou (2025), where \eqn{l_T} indexes the blocks and
+#'   \eqn{l_T b_T = T}. Default is \code{c(1/3)}.
 #' @param L A numeric vector controlling the strength of randomization applied to residual scores. Default is \code{c(0, 2)}.
 #'
-#' @return A named numeric vector of CCT p-values. Each name encodes the test type, L value, and subseries size:
+#' @return A named numeric vector of CCT p-values. Each name encodes the test type, L value, and subseries-exponent index:
 #' \describe{
 #'   \item{CCTd}{Test of \eqn{H_0^\delta}: no directional (slope) deviation.}
 #'   \item{CCTad}{Joint test of \eqn{H_0^{\alpha,\delta}}: no intercept or slope deviation.}
@@ -244,7 +251,7 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2),
 #' @param test  Numeric matrix of test-asset returns, dimension \eqn{T \times N}.
 #' @param control Optional list passed to internal computation:
 #' \describe{
-#'   \item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
+#'   \item{\code{ks}}{Numeric vector of subseries exponents; each sets the NUMBER of blocks to \code{floor(T^k)}, each of length about \code{T / floor(T^k)}; default \code{c(1/3)}.}
 #'   \item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
 #'   \item{\code{B}}{Number of independent perturbation draws to merge when \code{L > 0}; default \code{1}. See \sQuote{Choosing B}.}
 #'   \item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}.}
@@ -258,7 +265,9 @@ f_getpv_batch <- function(bench, test, ks = c(1/3), L = c(0, 2),
 #' }
 #'
 #' @details
-#' For each \code{k} in \code{ks}, data are partitioned into overlapping subseries of length \code{floor(T^k)}.
+#' For each \code{k} in \code{ks}, the sample is partitioned into \code{floor(T^k)}
+#' contiguous, NON-overlapping subseries -- an exact partition of \code{1:T}, not a
+#' moving block.
 #' Residual perturbations controlled by \code{L} generate test statistics robust to serial and
 #' cross-sectional dependence and conditional heteroskedasticity. Resulting sub-p-values are aggregated
 #' by the Cauchy Combination Test (CCT), which remains valid under dependence and retains power in high dimensions.

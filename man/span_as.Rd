@@ -13,7 +13,7 @@ span_as(bench, test, control = list())
 
 \item{control}{Optional list passed to internal computation:
 \describe{
-\item{\code{ks}}{Numeric vector of subseries exponents (block size approximately \code{floor(T^k)}); default \code{c(1/3)}.}
+\item{\code{ks}}{Numeric vector of subseries exponents; each sets the NUMBER of blocks to \code{floor(T^k)}, each of length about \code{T / floor(T^k)}; default \code{c(1/3)}.}
 \item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
 \item{\code{B}}{Number of independent perturbation draws to merge when \code{L > 0}; default \code{1}. See \sQuote{Choosing B}.}
 \item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}.}
@@ -34,7 +34,9 @@ inference for \eqn{H_0^\delta} (variance/spread slopes), \eqn{H_0^\alpha} (inter
 and the joint null \eqn{H_0^{\alpha,\delta}}.
 }
 \details{
-For each \code{k} in \code{ks}, data are partitioned into overlapping subseries of length \code{floor(T^k)}.
+For each \code{k} in \code{ks}, the sample is partitioned into \code{floor(T^k)}
+contiguous, NON-overlapping subseries -- an exact partition of \code{1:T}, not a
+moving block.
 Residual perturbations controlled by \code{L} generate test statistics robust to serial and
 cross-sectional dependence and conditional heteroskedasticity. Resulting sub-p-values are aggregated
 by the Cauchy Combination Test (CCT), which remains valid under dependence and retains power in high dimensions.
