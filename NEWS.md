@@ -1,33 +1,10 @@
-# Changes in Version 1.4-0 (DA)
-- span_as(): new control parameters `B` and `seed`, de-randomising the L > 0
-  test. For L > 0 the score is multiplied by a random weight vector that is
-  SHARED by every test asset, so its effect does not average out across the
-  cross-section: a single draw is a single realisation of the test. The test is
-  valid for any fixed draw (its size is correct), but the p-value returned on one
-  data set can move by orders of magnitude from draw to draw -- most visibly when
-  T is short, where floor(T^(1/3)) leaves few subseries. `B > 1` draws B
-  independent weight vectors and merges the per-asset p-values with the Cauchy
-  rule, which is valid under arbitrary dependence and is not carried by a single
-  extreme draw. `B = 1` (the default) reproduces the previous behaviour exactly;
-  `B = 100` or more is recommended for any reported application. The seed of the
-  first draw is now user-visible (`seed`, default 123, draw b uses seed + b - 1)
-  instead of hard-coded. Consecutive seeds were kept, rather than an explicit
-  substream generator, so that `B = 1` reproduces the historical result exactly;
-  the draws they produce are empirically indistinguishable from independent
-  (mean absolute pairwise correlation 0.051 over 100 seeds at T = 250, against
-  0.050 expected), and this is documented under "Choosing B".
-- span_simulate(): `dgp` now accepts a process NAME as well as a preset number
-  -- "AR-GARCH-SKST" instead of 9 -- and the two are exactly equivalent. The
-  twelve names are exported as `DGP_NAMES` and described by the new
-  `span_dgp_table()`, which lists each preset with its innovation law, dynamics
-  and degrees of freedom. Numbers remain accepted, so existing code is
-  unaffected -- including a preset handed over as a string, since "9" and 9
-  select the same preset. Name matching is exact after trimming and
-  case-folding, not partial: "AR" is a prefix of six of the twelve names.
-  The motivation is that a preset number carries no meaning and can
-  be transposed silently: presets 7-9 are the AR-GARCH family and 10-12 the AR
-  family, an ordering that does not match every convention in use. A name
-  cannot be transposed, and a wrong one is an error rather than a wrong process.
+# Changes in Version 1.4-1 (DA)
+- span_as(): the documentation of `ks` said `floor(T^k)` was the subseries SIZE
+  and that the subseries overlapped. Both were the reverse of the code, which
+  matches the paper: `floor(T^k)` is the NUMBER of blocks, each of length about
+  T / floor(T^k), forming an exact partition of 1:T. No result changes; the
+  inverted reading had however already propagated into the manuscript's own
+  explanation of its sensitivity appendix.
 - span_simulate(): the twelve presets are now a clean 3 x 4 factorial -- one
   innovation law per family (normal; standardised t with 5 df; standardised
   skew-t with 4 df and xi = 0.9) repeated across the four dynamics -- so moving
@@ -72,6 +49,37 @@
   one df and one standardisation across all four dynamics, and that every
   heavy-tailed preset really has unit variance rather than merely being flagged
   as standardised.
+
+# Changes in Version 1.4-0 (DA)
+- span_as(): new control parameters `B` and `seed`, de-randomising the L > 0
+  test. For L > 0 the score is multiplied by a random weight vector that is
+  SHARED by every test asset, so its effect does not average out across the
+  cross-section: a single draw is a single realisation of the test. The test is
+  valid for any fixed draw (its size is correct), but the p-value returned on one
+  data set can move by orders of magnitude from draw to draw -- most visibly when
+  T is short, where floor(T^(1/3)) leaves few subseries. `B > 1` draws B
+  independent weight vectors and merges the per-asset p-values with the Cauchy
+  rule, which is valid under arbitrary dependence and is not carried by a single
+  extreme draw. `B = 1` (the default) reproduces the previous behaviour exactly;
+  `B = 100` or more is recommended for any reported application. The seed of the
+  first draw is now user-visible (`seed`, default 123, draw b uses seed + b - 1)
+  instead of hard-coded. Consecutive seeds were kept, rather than an explicit
+  substream generator, so that `B = 1` reproduces the historical result exactly;
+  the draws they produce are empirically indistinguishable from independent
+  (mean absolute pairwise correlation 0.051 over 100 seeds at T = 250, against
+  0.050 expected), and this is documented under "Choosing B".
+- span_simulate(): `dgp` now accepts a process NAME as well as a preset number
+  -- "AR-GARCH-SKST" instead of 9 -- and the two are exactly equivalent. The
+  twelve names are exported as `DGP_NAMES` and described by the new
+  `span_dgp_table()`, which lists each preset with its innovation law, dynamics
+  and degrees of freedom. Numbers remain accepted, so existing code is
+  unaffected -- including a preset handed over as a string, since "9" and 9
+  select the same preset. Name matching is exact after trimming and
+  case-folding, not partial: "AR" is a prefix of six of the twelve names.
+  The motivation is that a preset number carries no meaning and can
+  be transposed silently: presets 7-9 are the AR-GARCH family and 10-12 the AR
+  family, an ordering that does not match every convention in use. A name
+  cannot be transposed, and a wrong one is an error rather than a wrong process.
 - span_simulate(): `dgp` must be a whole number. Previously `dgp = 9.7` passed
   through as.integer() and silently ran preset 9, a process the argument does
   not name. Whole numbers stored as doubles (`dgp = 9`) are unaffected.

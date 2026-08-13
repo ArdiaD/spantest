@@ -1,7 +1,7 @@
 Package: spantest
 Title: Mean-Variance Spanning Tests
-Version: 1.4-0
-Date: 2026-07-13
+Version: 1.4-1
+Date: 2026-08-12
 Authors@R: c(person("David", "Ardia", role = c("aut", "cre", "cph", "fnd"),
              email = "david.ardia.ch@gmail.com", 
              comment = c(ORCID = "0000-0003-2823-782X")),

@@ -64,11 +64,15 @@ DGP_NAMES <- c(
 #' when reading code or output that refers to a process by number.
 #'
 #' @return A data frame with one row per process and columns `preset` (integer),
-#'   `name` (character), `innovation`, `dynamics`, `df` and `standardize`. The
-#'   last two record the preset's own settings: the Student-t presets `iid-ST`
-#'   Every heavy-tailed preset is standardised to unit variance: the twelve are a
-#'   3 x 4 factorial of innovation law by dynamics, so a column of the table
-#'   varies the dynamics alone.
+#'   `name` (character), `innovation`, `dynamics`, `df`, `standardize` and
+#'   `scale`. Together they are enough to rebuild any preset by hand with
+#'   [span_simulate()]'s explicit arguments; a table that described a process
+#'   only partly is how a discrepancy between the two once went unnoticed.
+#'
+#'   The twelve are a 3 x 4 factorial of innovation law by dynamics, so a column
+#'   varies the dynamics alone: every heavy-tailed preset is standardised, and
+#'   `scale = "process"` gives each one unit unconditional variance whatever its
+#'   dynamics.
 #'
 #' @examples
 #' span_dgp_table()
