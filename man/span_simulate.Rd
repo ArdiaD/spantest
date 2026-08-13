@@ -19,6 +19,7 @@ span_simulate(
   ar = 0.2,
   garch = c(omega = 0.1, alpha = 0.1, beta = 0.8),
   standardize = TRUE,
+  scale = c("innovation", "process"),
   dgp = NULL,
   burnin = 500L
 )
@@ -54,6 +55,17 @@ intercepts (sparse alternative).}
 GARCH(1,1) variance recursion.}
 
 \item{standardize}{Logical; standardise \eqn{t} innovations to unit variance.}
+
+\item{scale}{Where unit variance is imposed. \code{"innovation"} (the default,
+and the textbook parameterisation) gives the innovations unit variance, so an
+AR(1) process carries \eqn{1/(1-\phi^2)}. \code{"process"} divides each
+series by its own unconditional standard deviation, so the process itself has
+unit variance whatever its dynamics. The twelve presets use \code{"process"},
+so that they differ in the shape of the dependence and the thickness of the
+tails and not in how much variance they carry. Rescaling does not change the
+autocorrelation function, so \code{ar} keeps its usual meaning; and it does
+not change any test result under the spanning null, where it rescales the
+whole system and the tests are scale-invariant.}
 
 \item{dgp}{Optional preset process, given either as a \strong{name} --- one of
 \code{"iid-N"}, \code{"iid-ST"}, \code{"iid-SKST"}, \code{"GARCH-N"},

@@ -64,6 +64,16 @@
 #' @param garch Named numeric vector \code{c(omega, alpha, beta)} for the
 #'   GARCH(1,1) variance recursion.
 #' @param standardize Logical; standardise \eqn{t} innovations to unit variance.
+#' @param scale Where unit variance is imposed. \code{"innovation"} (the default,
+#'   and the textbook parameterisation) gives the innovations unit variance, so an
+#'   AR(1) process carries \eqn{1/(1-\phi^2)}. \code{"process"} divides each
+#'   series by its own unconditional standard deviation, so the process itself has
+#'   unit variance whatever its dynamics. The twelve presets use \code{"process"},
+#'   so that they differ in the shape of the dependence and the thickness of the
+#'   tails and not in how much variance they carry. Rescaling does not change the
+#'   autocorrelation function, so \code{ar} keeps its usual meaning; and it does
+#'   not change any test result under the spanning null, where it rescales the
+#'   whole system and the tests are scale-invariant.
 #' @param dgp Optional preset process, given either as a \strong{name} --- one of
 #'   \code{"iid-N"}, \code{"iid-ST"}, \code{"iid-SKST"}, \code{"GARCH-N"},
 #'   \code{"GARCH-ST"}, \code{"GARCH-SKST"}, \code{"AR-N"}, \code{"AR-ST"},
@@ -110,10 +120,12 @@ span_simulate <- function(n, K, N, ncp = 0,
                           dynamics = c("iid", "ar", "garch", "ar-garch"),
                           sparse = FALSE, df = 5, xi = 0.9, ar = 0.2,
                           garch = c(omega = 0.1, alpha = 0.1, beta = 0.8),
-                          standardize = TRUE, dgp = NULL, burnin = 500L) {
+                          standardize = TRUE, scale = c("innovation", "process"),
+                          dgp = NULL, burnin = 500L) {
 
   innovation <- match.arg(innovation)
   dynamics   <- match.arg(dynamics)
+  scale      <- match.arg(scale)
 
   if (!is.null(dgp)) {
     # `dgp` may be given as a NAME or as a preset number. Names are strongly
@@ -158,6 +170,7 @@ span_simulate <- function(n, K, N, ncp = 0,
     dynamics    <- p$dynamics
     df          <- p$df
     standardize <- p$standardize
+    scale       <- p$scale
     if (!is.na(p$xi)) xi <- p$xi
   }
 
@@ -183,6 +196,19 @@ span_simulate <- function(n, K, N, ncp = 0,
 
   om <- garch[["omega"]]; al <- garch[["alpha"]]; be <- garch[["beta"]]
 
+  # scale = "process": divide each series by its own unconditional standard
+  # deviation, so all twelve presets carry variance 1 and differ only in the
+  # shape of the dependence. The GARCH contributes omega/(1 - alpha - beta) and
+  # the AR(1) a further 1/(1 - phi^2); both are known in closed form, so this is
+  # an exact rescaling rather than a sample standardisation, and it leaves the
+  # autocorrelation function -- and hence the meaning of `ar` -- untouched.
+  sd_proc <- 1
+  if (scale == "process") {
+    v <- if (dynamics %in% c("garch", "ar-garch")) om / (1 - al - be) else 1
+    if (dynamics %in% c("ar", "ar-garch")) v <- v / (1 - ar^2)
+    sd_proc <- sqrt(v)
+  }
+
   one_series <- function() {
     m <- n + burnin
     z <- switch(innovation,
@@ -194,7 +220,7 @@ span_simulate <- function(n, K, N, ncp = 0,
       "garch"    = garch_filter(z, om, al, be),
       "ar"       = as.numeric(stats::filter(z, ar, method = "recursive")),
       "ar-garch" = as.numeric(stats::filter(garch_filter(z, om, al, be), ar, method = "recursive")))
-    s[(burnin + 1L):m]
+    s[(burnin + 1L):m] / sd_proc
   }
 
   Z <- matrix(0, n, K); for (j in seq_len(K)) Z[, j] <- one_series()

@@ -42,6 +42,28 @@
   the tests are scale-invariant, verified to 2e-13 across 27 columns and 40 draws.
   GARCH-ST and AR-GARCH-ST do change, because their degrees of freedom move from
   4 to 5; anything computed from those two presets needs regenerating.
+- span_simulate(): new argument `scale`, and the twelve presets now carry unit
+  PROCESS variance rather than merely unit innovations. Standardising the
+  innovations is not enough: an AR(1) with unit innovations has variance
+  1/(1 - phi^2) = 1.042, so the AR and AR-GARCH rows carried 4% more noise than
+  the iid ones, and the twelve differed in level as well as in the shape of the
+  dependence. The GARCH parameters had always been chosen so that
+  omega/(1 - alpha - beta) is exactly 1 -- the design already normalised the
+  process where someone had thought about it -- and this completes that intent.
+  `scale = "innovation"` remains the default outside the presets, so a bare
+  span_simulate(dynamics = "ar", ar = 0.2) is still the textbook object; the
+  presets set `scale = "process"`. Rescaling leaves the autocorrelation function
+  untouched, so `ar` keeps its meaning (measured: 0.202 either way).
+  RESULTS: no size cell changes. At ncp = 0 this rescales the whole system and
+  the tests are scale-invariant -- verified across the six AR/AR-GARCH presets,
+  30 p-value columns and 25 draws, maximum discrepancy 2e-12. Only the
+  signal-to-noise ratio under the alternative moves, by 2.1%, which on an ncp
+  grid stepped by 0.1 is well inside the Monte Carlo error of a 500-replication
+  rejection rate.
+- span_dgp_table() reports `scale` as well, so its columns are enough to rebuild
+  a preset by hand. A table that describes a process only partly is how the
+  previous discrepancy survived: the reconstruction silently took a default the
+  preset does not use.
 - span_simulate(): the preset definitions are no longer written out twice. They
   had been restated as a list inside span_simulate() and again inside
   span_dgp_table(), and the two had drifted -- which is how the discrepancy above

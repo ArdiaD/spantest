@@ -44,6 +44,40 @@ test_that("the twelve presets are one innovation law per family, four dynamics",
   }
 })
 
+test_that("every preset carries unit PROCESS variance, not just unit innovations", {
+  # Standardising the innovations is not enough: an AR(1) with unit innovations
+  # has variance 1/(1 - phi^2) = 1.042, so the AR rows used to carry 4% more
+  # noise than the iid ones and the twelve DGPs differed in level as well as in
+  # shape. The GARCH parameters had always been chosen so that
+  # omega/(1 - alpha - beta) = 1; scale = "process" completes that intent.
+  for (d in seq_len(12)) {
+    set.seed(7)
+    v <- var(as.numeric(span_simulate(1e5, 1, 1, dgp = d)$R1[, 1]))
+    expect_lt(abs(v - 1), 0.05, label = paste0("var(preset ", d, ") = ", round(v, 3)))
+  }
+})
+
+test_that("scale = 'process' rescales without touching the dependence or the null", {
+  # phi keeps its meaning: rescaling leaves the autocorrelation function alone.
+  set.seed(3); a <- span_simulate(5e4, 1, 1, dynamics = "ar")                    # innovation
+  set.seed(3); b <- span_simulate(5e4, 1, 1, dynamics = "ar", scale = "process")
+  expect_lt(abs(stats::acf(a$R1[, 1], 1, plot = FALSE)$acf[2] -
+                stats::acf(b$R1[, 1], 1, plot = FALSE)$acf[2]), 0.01)
+  expect_lt(abs(var(a$R1[, 1]) - 1 / (1 - 0.2^2)), 0.05)   # textbook default
+  expect_lt(abs(var(b$R1[, 1]) - 1), 0.05)
+
+  # and under the spanning null it changes no test result, because it rescales
+  # the whole system and the tests are scale-invariant
+  set.seed(5); x <- span_simulate(250, 2, 8, ncp = 0, dynamics = "ar-garch",
+                                  innovation = "skew-t", df = 4, scale = "innovation")
+  set.seed(5); y <- span_simulate(250, 2, 8, ncp = 0, dynamics = "ar-garch",
+                                  innovation = "skew-t", df = 4, scale = "process")
+  expect_equal(span_hk(x$R1, x$R2)$pval, span_hk(y$R1, y$R2)$pval, tolerance = 1e-8)
+  expect_equal(unlist(span_as(x$R1, x$R2, control = list(ks = 1/3, L = 2L))),
+               unlist(span_as(y$R1, y$R2, control = list(ks = 1/3, L = 2L))),
+               tolerance = 1e-8)
+})
+
 test_that("dgp must be a single integer in 1:12", {
   expect_error(span_simulate(50, 2, 3, dgp = 13))
   expect_error(span_simulate(50, 2, 3, dgp = 0))

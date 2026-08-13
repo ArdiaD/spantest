@@ -29,7 +29,8 @@ test_that("the table's stated process matches what the preset actually sets", {
     set.seed(5)
     b <- span_simulate(80, 2, 3, innovation = tab$innovation[i],
                        dynamics = tab$dynamics[i], df = tab$df[i],
-                       standardize = tab$standardize[i], xi = 0.9)
+                       standardize = tab$standardize[i], scale = tab$scale[i],
+                       xi = 0.9)
     expect_identical(a, b, info = paste0(tab$name[i], " (preset ", i, ")"))
   }
 })

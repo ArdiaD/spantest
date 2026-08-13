@@ -45,6 +45,14 @@ DGP_NAMES <- c(
   df          = rep(c(5, 5, 4), times = 4),        # unused for "normal"
   xi          = rep(c(NA, NA, 0.9), times = 4),    # skew-t only
   standardize = TRUE,
+  # The twelve are meant to differ in the SHAPE of the dependence and the
+  # thickness of the tails, not in how much variance they carry. The GARCH
+  # parameters were already picked so that omega/(1 - alpha - beta) = 1; scale =
+  # "process" does the same for the AR families, which would otherwise carry
+  # 1/(1 - phi^2) = 1.042. It changes no size result -- at ncp = 0 it rescales the
+  # whole system and the tests are scale-invariant -- and moves the
+  # signal-to-noise ratio under the alternative by 2.1%.
+  scale       = "process",
   stringsAsFactors = FALSE
 )
 
@@ -72,5 +80,9 @@ DGP_NAMES <- c(
 #'
 #' @seealso [span_simulate()], [DGP_NAMES]
 #' @export
+# Every column a caller would need to rebuild the preset by hand. A table that
+# describes a process only partly is how the last discrepancy survived: the
+# reconstruction silently picked up a default the preset does not use.
 span_dgp_table <- function() .DGP_PRESETS[, c("preset", "name", "innovation",
-                                              "dynamics", "df", "standardize")]
+                                              "dynamics", "df", "standardize",
+                                              "scale")]
