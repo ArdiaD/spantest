@@ -23,12 +23,25 @@ test_that("all DGP presets 1:12 run and return finite returns", {
   }
 })
 
-test_that("dgp presets encode the documented raw vs standardised t variance", {
-  # DGP 2 (raw t_5): variance ~ 5/3; DGP 5 (standardised t_4 GARCH): variance ~ 1
-  set.seed(1); v_raw <- var(as.numeric(span_simulate(1e5, 1, 1, dgp = 2)$R1[, 1]))
-  set.seed(1); v_std <- var(as.numeric(span_simulate(1e5, 1, 1, dgp = 5)$R1[, 1]))
-  expect_gt(v_raw, 1.4)          # raw t_5 has variance 5/3 ~ 1.67
-  expect_lt(abs(v_std - 1), 0.2) # standardised GARCH innovations ~ unit variance
+test_that("the twelve presets are one innovation law per family, four dynamics", {
+  # The grid is a 3 x 4 factorial: moving down a column must change the DYNAMICS
+  # and nothing else. It did not always -- the two t presets without GARCH were
+  # raw t_5 (variance 5/3) while the two with GARCH were standardised t_4, so the
+  # rows of the manuscript's size tables were not comparable within the Student
+  # family. This test is what stops that returning.
+  tb <- span_dgp_table()
+  for (fam in unique(tb$innovation)) {
+    r <- tb[tb$innovation == fam, ]
+    expect_equal(length(unique(r$df)), 1L, info = paste(fam, "df"))
+    expect_equal(length(unique(r$standardize)), 1L, info = paste(fam, "standardize"))
+    expect_setequal(r$dynamics, c("iid", "garch", "ar-garch", "ar"))
+  }
+  # and every heavy-tailed preset really is unit-variance, not merely flagged so
+  for (d in tb$preset[tb$innovation != "normal"]) {
+    set.seed(1)
+    v <- var(as.numeric(span_simulate(1e5, 1, 1, dgp = d)$R1[, 1]))
+    expect_lt(abs(v - 1), 0.15, label = paste0("var(preset ", d, ") = ", round(v, 3)))
+  }
 })
 
 test_that("dgp must be a single integer in 1:12", {

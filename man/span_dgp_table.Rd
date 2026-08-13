@@ -10,8 +10,9 @@ span_dgp_table()
 A data frame with one row per process and columns \code{preset} (integer),
 \code{name} (character), \code{innovation}, \code{dynamics}, \code{df} and \code{standardize}. The
 last two record the preset's own settings: the Student-t presets \code{iid-ST}
-and \code{AR-ST} use \emph{raw}, non-standardised \eqn{t_5} innovations, so they are
-not reproduced by passing \code{innovation = "t"} with the default arguments.
+Every heavy-tailed preset is standardised to unit variance: the twelve are a
+3 x 4 factorial of innovation law by dynamics, so a column of the table
+varies the dynamics alone.
 }
 \description{
 Returns the correspondence between the names accepted by \code{\link[=span_simulate]{span_simulate()}}'s

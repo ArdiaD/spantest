@@ -28,6 +28,28 @@
   be transposed silently: presets 7-9 are the AR-GARCH family and 10-12 the AR
   family, an ordering that does not match every convention in use. A name
   cannot be transposed, and a wrong one is an error rather than a wrong process.
+- span_simulate(): the twelve presets are now a clean 3 x 4 factorial -- one
+  innovation law per family (normal; standardised t with 5 df; standardised
+  skew-t with 4 df and xi = 0.9) repeated across the four dynamics -- so moving
+  down a column changes the DYNAMICS and nothing else. It did not before: the two
+  Student presets without GARCH were RAW t_5, of variance 5/3, while the two with
+  GARCH were standardised t_4. Standardisation is required for the GARCH
+  recursion, since omega/(1 - alpha - beta) is the unconditional variance only
+  for a unit-variance innovation, and it had been applied where it was needed and
+  omitted where it merely mattered. The consequence was that rows within the
+  Student family of a size table were not comparable with one another.
+  RESULTS: iid-ST and AR-ST are unaffected -- their change is a pure rescaling and
+  the tests are scale-invariant, verified to 2e-13 across 27 columns and 40 draws.
+  GARCH-ST and AR-GARCH-ST do change, because their degrees of freedom move from
+  4 to 5; anything computed from those two presets needs regenerating.
+- span_simulate(): the preset definitions are no longer written out twice. They
+  had been restated as a list inside span_simulate() and again inside
+  span_dgp_table(), and the two had drifted -- which is how the discrepancy above
+  survived. There is now one table, .DGP_PRESETS, and span_simulate() reads it.
+  tests/testthat/test-span_simulate.R checks that each innovation family shares
+  one df and one standardisation across all four dynamics, and that every
+  heavy-tailed preset really has unit variance rather than merely being flagged
+  as standardised.
 - span_simulate(): `dgp` must be a whole number. Previously `dgp = 9.7` passed
   through as.integer() and silently ran preset 9, a process the argument does
   not name. Whole numbers stored as doubles (`dgp = 9`) are unaffected.

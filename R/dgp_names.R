@@ -28,6 +28,27 @@ DGP_NAMES <- c(
   "AR-N",          "AR-ST",          "AR-SKST"          # presets 10-12
 )
 
+# THE definition of the twelve presets. span_simulate() reads this; nothing
+# restates it. It used to be written out twice -- once here and once as a list
+# inside span_simulate() -- and the two drifted: the table said one thing about
+# the Student presets and the simulator did another.
+#
+# The grid is a 3 x 4 factorial, one innovation law per family repeated across
+# the four dynamics, so that moving down a column changes the DYNAMICS and
+# nothing else. Keep it that way: an innovation law that varies with the dynamics
+# makes the rows of the manuscript's size tables incomparable.
+.DGP_PRESETS <- data.frame(
+  preset      = 1:12,
+  name        = DGP_NAMES,
+  innovation  = rep(c("normal", "t", "skew-t"), times = 4),
+  dynamics    = rep(c("iid", "garch", "ar-garch", "ar"), each = 3),
+  df          = rep(c(5, 5, 4), times = 4),        # unused for "normal"
+  xi          = rep(c(NA, NA, 0.9), times = 4),    # skew-t only
+  standardize = TRUE,
+  stringsAsFactors = FALSE
+)
+
+
 #' The simulation processes, by name and preset number
 #'
 #' Returns the correspondence between the names accepted by [span_simulate()]'s
@@ -37,8 +58,9 @@ DGP_NAMES <- c(
 #' @return A data frame with one row per process and columns `preset` (integer),
 #'   `name` (character), `innovation`, `dynamics`, `df` and `standardize`. The
 #'   last two record the preset's own settings: the Student-t presets `iid-ST`
-#'   and `AR-ST` use *raw*, non-standardised \eqn{t_5} innovations, so they are
-#'   not reproduced by passing `innovation = "t"` with the default arguments.
+#'   Every heavy-tailed preset is standardised to unit variance: the twelve are a
+#'   3 x 4 factorial of innovation law by dynamics, so a column of the table
+#'   varies the dynamics alone.
 #'
 #' @examples
 #' span_dgp_table()
@@ -50,17 +72,5 @@ DGP_NAMES <- c(
 #'
 #' @seealso [span_simulate()], [DGP_NAMES]
 #' @export
-span_dgp_table <- function() {
-  data.frame(
-    preset      = 1:12,
-    name        = DGP_NAMES,
-    innovation  = c("normal", "t", "skew-t", "normal", "t", "skew-t",
-                    "normal", "t", "skew-t", "normal", "t", "skew-t"),
-    dynamics    = c("iid", "iid", "iid", "garch", "garch", "garch",
-                    "ar-garch", "ar-garch", "ar-garch", "ar", "ar", "ar"),
-    df          = c(5, 5, 4, 5, 4, 4, 5, 4, 4, 5, 5, 4),
-    standardize = c(TRUE, FALSE, TRUE, TRUE, TRUE, TRUE,
-                    TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
-    stringsAsFactors = FALSE
-  )
-}
+span_dgp_table <- function() .DGP_PRESETS[, c("preset", "name", "innovation",
+                                              "dynamics", "df", "standardize")]

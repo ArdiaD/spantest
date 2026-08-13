@@ -36,14 +36,15 @@
 #' \code{dynamics}, \code{df}, \code{xi} and \code{standardize}:
 #' \tabular{rlrl}{
 #'   1 \tab normal, iid                \tab 7  \tab normal, AR-GARCH \cr
-#'   2 \tab Student-t(5), iid (raw)     \tab 8  \tab Student-t(4), AR-GARCH \cr
+#'   2 \tab Student-t(5), iid          \tab 8  \tab Student-t(5), AR-GARCH \cr
 #'   3 \tab skew-t(4, 0.9), iid         \tab 9  \tab skew-t(4, 0.9), AR-GARCH \cr
 #'   4 \tab normal, GARCH               \tab 10 \tab normal, AR \cr
-#'   5 \tab Student-t(4), GARCH         \tab 11 \tab Student-t(5), AR (raw) \cr
+#'   5 \tab Student-t(5), GARCH        \tab 11 \tab Student-t(5), AR \cr
 #'   6 \tab skew-t(4, 0.9), GARCH       \tab 12 \tab skew-t(4, 0.9), AR
 #' }
-#' DGPs 2 and 11 use \emph{raw} (non-standardised) \eqn{t_5} innovations, as in
-#' the original study; all other heavy-tailed processes are standardised.
+#' The twelve are a 3 x 4 factorial: one innovation law per family --- normal,
+#' standardised \eqn{t_5}, standardised skew-\eqn{t} with 4 df and \eqn{\xi=0.9}
+#' --- repeated across the four dynamics, so a column varies the dynamics alone.
 #'
 #' @param n Integer, number of time periods (sample size).
 #' @param K Integer, number of benchmark assets.
@@ -149,19 +150,15 @@ span_simulate <- function(n, K, N, ncp = 0,
       }
       dgp <- as.integer(dgp)
     }
-    presets <- list(
-      c("normal",  "iid",      "5", "TRUE"),  c("t",      "iid",      "5", "FALSE"),
-      c("skew-t",  "iid",      "4", "TRUE"),  c("normal", "garch",    "5", "TRUE"),
-      c("t",       "garch",    "4", "TRUE"),  c("skew-t", "garch",    "4", "TRUE"),
-      c("normal",  "ar-garch", "5", "TRUE"),  c("t",      "ar-garch", "4", "TRUE"),
-      c("skew-t",  "ar-garch", "4", "TRUE"),  c("normal", "ar",       "5", "TRUE"),
-      c("t",       "ar",       "5", "FALSE"), c("skew-t", "ar",       "4", "TRUE"))
-    p <- presets[[dgp]]
-    innovation  <- p[1]
-    dynamics    <- p[2]
-    df          <- as.numeric(p[3])
-    standardize <- as.logical(p[4])
-    xi          <- 0.9
+    # Read the single definition in dgp_names.R rather than restating it here.
+    # The two copies had already drifted once, which is how two of the four
+    # Student presets came to be raw t_5 while the other two were standardised.
+    p <- .DGP_PRESETS[dgp, ]
+    innovation  <- p$innovation
+    dynamics    <- p$dynamics
+    df          <- p$df
+    standardize <- p$standardize
+    if (!is.na(p$xi)) xi <- p$xi
   }
 
   stopifnot(

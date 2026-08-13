@@ -115,14 +115,15 @@ Ardia and Sessinou (2025); when supplied it overrides \code{innovation},
 \code{dynamics}, \code{df}, \code{xi} and \code{standardize}:
 \tabular{rlrl}{
 1 \tab normal, iid                \tab 7  \tab normal, AR-GARCH \cr
-2 \tab Student-t(5), iid (raw)     \tab 8  \tab Student-t(4), AR-GARCH \cr
+2 \tab Student-t(5), iid          \tab 8  \tab Student-t(5), AR-GARCH \cr
 3 \tab skew-t(4, 0.9), iid         \tab 9  \tab skew-t(4, 0.9), AR-GARCH \cr
 4 \tab normal, GARCH               \tab 10 \tab normal, AR \cr
-5 \tab Student-t(4), GARCH         \tab 11 \tab Student-t(5), AR (raw) \cr
+5 \tab Student-t(5), GARCH        \tab 11 \tab Student-t(5), AR \cr
 6 \tab skew-t(4, 0.9), GARCH       \tab 12 \tab skew-t(4, 0.9), AR
 }
-DGPs 2 and 11 use \emph{raw} (non-standardised) \eqn{t_5} innovations, as in
-the original study; all other heavy-tailed processes are standardised.
+The twelve are a 3 x 4 factorial: one innovation law per family --- normal,
+standardised \eqn{t_5}, standardised skew-\eqn{t} with 4 df and \eqn{\xi=0.9}
+--- repeated across the four dynamics, so a column varies the dynamics alone.
 }
 \note{
 Set the RNG state with \code{\link{set.seed}} beforehand for
