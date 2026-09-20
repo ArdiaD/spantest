@@ -1,3 +1,35 @@
+# Changes in Version 1.4-2 (DA)
+- span_mstv(): new test, the randomized alpha test of Massacci, Sarno, Trapani
+  and Vallarino (2026, forthcoming in JASA). It estimates equation by equation,
+  needs no covariance matrix and allows N to grow faster than T, so it is the
+  natural competitor to span_as() on the alpha side when N >> T. Both their
+  one-shot test (Theorem 3.1, with a p-value from the Gumbel limit) and their
+  derandomized decision rule (Section 3.2) are returned.
+  The derandomized quantity is computed in CLOSED FORM rather than by simulating
+  B perturbations: the draws are independent of each other and of the data, so
+  conditionally on the sample the share of replications that do not reject is
+  exactly prod_i Phi(c_tau - psi_i). That is the B -> infinity limit of their
+  average, so it removes the simulation error and the dependence on the draws
+  while leaving the rule untouched, and it costs one pass over the cross-section
+  instead of B regressions. Accumulated on the log scale, since the product runs
+  over N terms and underflows long before its logarithm stops being informative.
+  Returns NA below N = 10: the reference distribution is the Gumbel limit of the
+  maximum of N normals, and at N = 2 the one-shot test rejects 26% of the time
+  at a nominal 5%.
+  Checked against the authors' own replication code: bit-identical statistics
+  over 300 replications of their data-generating process, and their published
+  rejection frequencies are reproduced (their Table 4.1 power, 93.5% published
+  against 93.3% here).
+- span_simulate(): new `gamma` argument, a pervasive common component in the
+  idiosyncratic terms (eps_it + gamma_i g_t). The existing `rho_error` gives a
+  Toeplitz decay, which is approximately sparse and inside the assumptions of
+  the tests; `gamma` does not die out across the cross-section and is there to
+  leave that regime, which is where the randomized alpha test is designed to
+  operate. NULL (the default) draws no random numbers and the draw is placed
+  after the K + N existing ones, so every earlier result is reproduced bit for
+  bit; a regression test pins this down across four processes and three (K, N)
+  shapes including K = 100, N = 1000.
+
 # Changes in Version 1.4-1 (DA)
 - span_as(): the documentation of `ks` said `floor(T^k)` was the subseries SIZE
   and that the subseries overlapped. Both were the reverse of the code, which

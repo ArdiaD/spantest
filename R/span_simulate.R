@@ -88,6 +88,16 @@
 #'   see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
 #'   overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
 #'   \code{standardize}.
+#' @param gamma Optional pervasive common component in the idiosyncratic terms:
+#'   a single number, or a vector of \eqn{N} loadings, applied as
+#'   \eqn{\varepsilon_{it} + \gamma_i g_t} with \eqn{g_t} drawn from the same
+#'   process as everything else. \code{NULL} (the default) draws nothing and
+#'   leaves the simulation exactly as it was before the argument existed. Unlike
+#'   the Toeplitz decay of \code{rho_error}, this dependence does not die out
+#'   across the cross-section, so it leaves the approximate-sparsity regime the
+#'   spanning tests assume. Pass the loadings explicitly --- for instance
+#'   \code{gamma = runif(N, 0.7, 0.9)} --- so that a replication does not depend
+#'   on the state of the generator inside the function.
 #' @param burnin Integer, number of initial observations discarded to remove the
 #'   AR/GARCH transient.
 #'
@@ -121,7 +131,7 @@ span_simulate <- function(n, K, N, ncp = 0,
                           sparse = FALSE, df = 5, xi = 0.9, ar = 0.2,
                           garch = c(omega = 0.1, alpha = 0.1, beta = 0.8),
                           standardize = TRUE, scale = c("innovation", "process"),
-                          dgp = NULL, burnin = 500L) {
+                          dgp = NULL, gamma = NULL, burnin = 500L) {
 
   innovation <- match.arg(innovation)
   dynamics   <- match.arg(dynamics)
@@ -228,6 +238,23 @@ span_simulate <- function(n, K, N, ncp = 0,
 
   z   <- Z %*% chol(stats::toeplitz(rho_factor ^ (seq_len(K) - 1L)))
   eps <- E %*% chol(stats::toeplitz(rho_error  ^ (seq_len(N) - 1L)))
+
+  # A pervasive common component in the idiosyncratic terms, eps_it + gamma_i g_t.
+  # The Toeplitz structure above is approximately sparse -- the dependence dies
+  # out with |i - j| -- which is what the theory of the tests assumes; this one
+  # does not die out, and is there precisely to leave that assumption. g_t is
+  # drawn by the same one_series(), so a process with gamma differs from the same
+  # process without it in the dependence structure and in nothing else.
+  #
+  # NULL draws no random numbers at all, and the draw is placed after the K + N
+  # draws above, so every result produced before this argument existed is
+  # reproduced bit for bit (tests/testthat/test-span_simulate.R).
+  if (!is.null(gamma)) {
+    gam <- if (length(gamma) == 1L) rep(gamma, N) else gamma
+    stopifnot("gamma must be a single number or a vector of length N" =
+                length(gam) == N && all(is.finite(gam)))
+    eps <- eps + outer(one_series(), gam)
+  }
 
   alpha <- rep(ncp, N)
   if (sparse) alpha[seq_len(floor(N / 2))] <- 0

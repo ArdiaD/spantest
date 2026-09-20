@@ -100,3 +100,82 @@ test_that("skew-t innovation path works", {
   expect_equal(dim(sim$R2), c(120L, 4L))
   expect_true(all(is.finite(sim$R2)))
 })
+
+test_that("gamma = NULL reproduces the simulation as it was before the argument existed", {
+  # The pervasive-factor hook draws one extra series, placed AFTER the K + N
+  # draws that build Z and E. When gamma is NULL it draws nothing at all, so
+  # every cell of the published size/power study must come back unchanged. The
+  # reference here is the generative core transcribed without the hook.
+  f_ref <- function(n, K, N, ncp, dgp, rho_factor, rho_error, burnin = 500L) {
+    p <- spantest:::.DGP_PRESETS[match(toupper(dgp), toupper(spantest:::.DGP_PRESETS$name)), ]
+    om <- 0.1; al <- 0.1; be <- 0.8; ar <- 0.2
+    v <- if (p$dynamics %in% c("garch", "ar-garch")) om / (1 - al - be) else 1
+    if (p$dynamics %in% c("ar", "ar-garch")) v <- v / (1 - ar^2)
+    sd_proc <- sqrt(v)
+    one_series <- function() {
+      m <- n + burnin
+      z <- switch(p$innovation,
+        "normal" = rnorm(m),
+        "t"      = { r <- rt(m, p$df); if (p$standardize) r / sqrt(p$df / (p$df - 2)) else r },
+        "skew-t" = spantest:::f_rsstd(m, p$df, p$xi))
+      s <- switch(p$dynamics,
+        "iid"      = z,
+        "garch"    = spantest:::garch_filter(z, om, al, be),
+        "ar"       = as.numeric(filter(z, ar, method = "recursive")),
+        "ar-garch" = as.numeric(filter(spantest:::garch_filter(z, om, al, be), ar, method = "recursive")))
+      s[(burnin + 1L):m] / sd_proc
+    }
+    Z <- matrix(0, n, K); for (j in seq_len(K)) Z[, j] <- one_series()
+    E <- matrix(0, n, N); for (j in seq_len(N)) E[, j] <- one_series()
+    z   <- Z %*% chol(toeplitz(rho_factor^(seq_len(K) - 1L)))
+    eps <- E %*% chol(toeplitz(rho_error^(seq_len(N) - 1L)))
+    y <- sweep(z %*% matrix(1 + ncp, K, N) + eps, 2, rep(ncp, N), "+")
+    list(R1 = cbind(z[, 1], z[, -1, drop = FALSE] + z[, 1]), R2 = y)
+  }
+
+  for (d in c("iid-N", "GARCH-ST", "AR-SKST", "AR-GARCH-N")) {
+    for (cfg in list(c(n = 250, K = 2, N = 2), c(n = 250, K = 5, N = 100),
+                     c(n = 120, K = 100, N = 300))) {
+      set.seed(11)
+      got <- span_simulate(n = cfg[["n"]], K = cfg[["K"]], N = cfg[["N"]], ncp = 0.2,
+                           dgp = d, rho_factor = 0.8, rho_error = 0.5)
+      set.seed(11)
+      ref <- f_ref(cfg[["n"]], cfg[["K"]], cfg[["N"]], 0.2, d, 0.8, 0.5)
+      expect_identical(got$R1, ref$R1, info = paste(d, cfg[["K"]], cfg[["N"]]))
+      expect_identical(got$R2, ref$R2, info = paste(d, cfg[["K"]], cfg[["N"]]))
+    }
+  }
+})
+
+test_that("gamma adds a common component that does not die out across the cross-section", {
+  n <- 2000L; N <- 50L
+  set.seed(3)
+  a <- span_simulate(n = n, K = 2L, N = N, ncp = 0, dgp = "iid-N",
+                     rho_factor = 0.8, rho_error = 0)
+  set.seed(3)
+  b <- span_simulate(n = n, K = 2L, N = N, ncp = 0, dgp = "iid-N",
+                     rho_factor = 0.8, rho_error = 0, gamma = 1)
+
+  # gamma acts on the idiosyncratic terms, so look at them: the test assets all
+  # load on the same factors and are strongly correlated whatever gamma does.
+  # With rho_error = 0 the residuals are independent across assets; gamma = 1
+  # adds the same unit-variance series to each, taking every pairwise residual
+  # correlation from (almost) zero to (almost) one half -- including between the
+  # first asset and the last, which is what "does not die out" means.
+  f_resid_cor <- function(s) {
+    X <- cbind(1, s$R1)
+    cor(s$R2 - X %*% qr.solve(qr(X), s$R2))
+  }
+  cor_a <- f_resid_cor(a); cor_b <- f_resid_cor(b)
+  off <- upper.tri(cor_a)
+  expect_lt(mean(abs(cor_a[off])), 0.05)
+  expect_gt(min(cor_b[off]), 0.3)
+  expect_equal(mean(cor_b[off]), 0.5, tolerance = 0.05)
+  expect_equal(cor_b[1, N], cor_b[1, 2], tolerance = 0.1)
+
+  # A vector of loadings is accepted, a wrong length is not.
+  set.seed(3)
+  expect_silent(span_simulate(n = 100L, K = 2L, N = N, dgp = "iid-N", gamma = runif(N, 0.7, 0.9)))
+  expect_error(span_simulate(n = 100L, K = 2L, N = N, dgp = "iid-N", gamma = c(0.1, 0.2)),
+               "length N")
+})

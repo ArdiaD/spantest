@@ -21,6 +21,7 @@ span_simulate(
   standardize = TRUE,
   scale = c("innovation", "process"),
   dgp = NULL,
+  gamma = NULL,
   burnin = 500L
 )
 }
@@ -81,6 +82,17 @@ Numbers remain accepted so existing scripts and stored results keep working;
 see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
 overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
 \code{standardize}.}
+
+\item{gamma}{Optional pervasive common component in the idiosyncratic terms:
+a single number, or a vector of \eqn{N} loadings, applied as
+\eqn{\varepsilon_{it} + \gamma_i g_t} with \eqn{g_t} drawn from the same
+process as everything else. \code{NULL} (the default) draws nothing and
+leaves the simulation exactly as it was before the argument existed. Unlike
+the Toeplitz decay of \code{rho_error}, this dependence does not die out
+across the cross-section, so it leaves the approximate-sparsity regime the
+spanning tests assume. Pass the loadings explicitly --- for instance
+\code{gamma = runif(N, 0.7, 0.9)} --- so that a replication does not depend
+on the state of the generator inside the function.}
 
 \item{burnin}{Integer, number of initial observations discarded to remove the
 AR/GARCH transient.}
