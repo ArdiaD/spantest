@@ -29,6 +29,15 @@
   after the K + N existing ones, so every earlier result is reproduced bit for
   bit; a regression test pins this down across four processes and three (K, N)
   shapes including K = 100, N = 1000.
+- span_mstv(), span_as(): new section 'Simulations'. Both tests are randomized
+  and both take a fixed default seed, so a Monte Carlo study that keeps the
+  default measures them conditionally on one draw, shared by every replication.
+  For span_mstv() this is fatal: at small K the one-shot statistic is
+  essentially the maximum of the perturbation vector, and with seed 123 at
+  N = 1000 that maximum is 3.24 against a critical value of 3.98, so the
+  measured size is 0 where a new draw per replication gives about 4%. For
+  span_as() the weights enter through subseries sums and the effect is about one
+  point of size either way. Documentation only; no result of the package changes.
 
 # Changes in Version 1.4-1 (DA)
 - span_as(): the documentation of `ks` said `floor(T^k)` was the subseries SIZE

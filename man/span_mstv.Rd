@@ -21,7 +21,9 @@ default \code{0.05}. It does not affect \code{pval}.}
 for; default \code{floor(log(N)^2)}, their guideline. The replications
 themselves are not simulated (see \sQuote{Details}).}
 \item{\code{seed}}{Seed of the single perturbation draw behind \code{stat}
-and \code{pval}; default \code{123}. The caller's RNG state is restored.}
+and \code{pval}; default \code{123}. The caller's RNG state is restored.
+A simulation must pass a different seed in each replication; see
+\sQuote{Simulations}.}
 }}
 }
 \value{
@@ -79,7 +81,7 @@ instead of \eqn{B} regressions.
 
 The Gumbel limit is an approximation in \eqn{N}, and a poor one when \eqn{N}
 is small: at \eqn{N = 2} the one-shot test rejects about a quarter of the time
-at a nominal 5\\%. The function therefore returns \code{NA} below
+at a nominal 5\%. The function therefore returns \code{NA} below
 \eqn{N = 10}, and \eqn{N} in the hundreds is where the procedure is meant to
 operate.
 }
@@ -92,6 +94,21 @@ a tail-index estimator, or bounded below by testing \eqn{E|y_{i,t}|^{\nu_0}}
 for a candidate \eqn{\nu_0}. The default here is the smallest value the theory
 allows, \eqn{\nu = 4}, which is what the authors recommend when \eqn{T} is too
 short for reliable tail inference; their simulations use \eqn{\nu = 5}.
+}
+
+\section{Simulations}{
+
+The size of the one-shot test is a probability over the data and the
+perturbation together, so a Monte Carlo study must draw a new perturbation in
+each replication, for instance \code{seed = base + r} in replication \code{r}.
+With the same seed in every replication, all replications share one vector
+\eqn{\omega} and the rejection rate measures the test conditionally on that
+draw. Under the null at small \eqn{K} the \eqn{\psi_i} are close to zero and
+the statistic is essentially \eqn{\max_i \omega_i}, so that rate is near 0 or
+near 1 whatever the data: with the default seed and \eqn{N = 1000},
+\eqn{\max_i \omega_i = 3.24} against a critical value of 3.98, and the
+rejection rate is 0 instead of about 4\%. The derandomized rule is computed in
+closed form and does not depend on the seed.
 }
 
 \examples{

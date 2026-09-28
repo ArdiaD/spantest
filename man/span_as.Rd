@@ -16,7 +16,7 @@ span_as(bench, test, control = list())
 \item{\code{ks}}{Numeric vector of subseries exponents; each sets the NUMBER of blocks to \code{floor(T^k)}, each of length about \code{T / floor(T^k)}; default \code{c(1/3)}.}
 \item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
 \item{\code{B}}{Number of independent perturbation draws to merge when \code{L > 0}; default \code{1}. See \sQuote{Choosing B}.}
-\item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}.}
+\item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}. A simulation should pass a different seed in each replication; see \sQuote{Simulations}.}
 }}
 }
 \value{
@@ -65,6 +65,18 @@ independent draws: across 100 consecutive seeds at \eqn{T = 250} the mean
 absolute pairwise correlation is 0.051 and the maximum 0.23, against 0.050 and
 about 0.22 expected under exact independence. Pass an explicit \code{seed} to
 obtain a different, equally valid family of draws.
+}
+
+\section{Simulations}{
+
+A Monte Carlo study should draw new weights in each replication, for instance
+\code{seed = base + r} in replication \code{r}. With the same seed in every
+replication, every cell of the study is computed on one weight vector: the
+results are one realisation of the weights, common to all cells, and the Monte
+Carlo standard errors understate their uncertainty. The weights enter through
+sums over each subseries, so the effect is small but not nil: at
+\eqn{T = 250}, redrawing them per replication moves the size of a cell by about
+one point, in either direction.
 }
 
 \examples{
