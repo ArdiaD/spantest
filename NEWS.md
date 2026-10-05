@@ -58,6 +58,18 @@
 - span_mstv(): the default nu is 5, the value of the authors' simulations,
   instead of 4. The statistic, its pooled scale (divisor N T, as in their code)
   and the critical value are unchanged.
+- span_simulate(): the benchmarks R1 are now the simulated process itself,
+  as in the paper's equation (Toeplitz correlation rho_factor, the AR/GARCH
+  dynamics and the innovation law of the preset), and the test assets load
+  on them with B_1j = (1 + ncp)(2 - K) and B_kj = 1 + ncp for k >= 2, so that
+  alpha_j = ncp and delta_j = -ncp as before. Up to 1.4-2 the benchmarks were
+  [z1, z_{-1} + z1] with loadings 1 + ncp on z: the same loadings on the
+  benchmarks, but benchmarks with correlations of 0.91-0.95 and variances of
+  about 1, 3.6 and 3.3 instead of the Toeplitz structure. The random draws are
+  unchanged. On paired panels the alpha tests return the same p-values (GRS,
+  PY and the SCT of alpha at L = 0 and 2, to 1e-13), while the delta and joint
+  tests change; KM is 1.5-2.5 points more oversized at K <= 10 with the
+  process as benchmarks (David's decision, so that the code is the equation).
 - f_mult() replaces the internal f_prods(). f_getpv() gains wN and wcol so
   that a loop over the columns reproduces f_getpv_batch() (tested at L = 0, 1
   and 2).

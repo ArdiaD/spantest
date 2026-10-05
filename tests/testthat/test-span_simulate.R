@@ -129,8 +129,9 @@ test_that("gamma = NULL reproduces the simulation as it was before the argument 
     E <- matrix(0, n, N); for (j in seq_len(N)) E[, j] <- one_series()
     z   <- Z %*% chol(toeplitz(rho_factor^(seq_len(K) - 1L)))
     eps <- E %*% chol(toeplitz(rho_error^(seq_len(N) - 1L)))
-    y <- sweep(z %*% matrix(1 + ncp, K, N) + eps, 2, rep(ncp, N), "+")
-    list(R1 = cbind(z[, 1], z[, -1, drop = FALSE] + z[, 1]), R2 = y)
+    B <- matrix(1 + ncp, K, N); B[1, ] <- (1 + ncp) * (2 - K)
+    y <- sweep(z %*% B + eps, 2, rep(ncp, N), "+")
+    list(R1 = z, R2 = y)
   }
 
   for (d in c("iid-N", "GARCH-ST", "AR-SKST", "AR-GARCH-N")) {
@@ -178,4 +179,18 @@ test_that("gamma adds a common component that does not die out across the cross-
   expect_silent(span_simulate(n = 100L, K = 2L, N = N, dgp = "iid-N", gamma = runif(N, 0.7, 0.9)))
   expect_error(span_simulate(n = 100L, K = 2L, N = N, dgp = "iid-N", gamma = c(0.1, 0.2)),
                "length N")
+})
+
+test_that("the benchmarks are the process, and ncp moves alpha to ncp and delta to -ncp", {
+  set.seed(21)
+  K <- 4L; N <- 3L
+  sim <- span_simulate(n = 20000, K = K, N = N, ncp = 0.3, dgp = "iid-N")
+  # Toeplitz(0.8) correlations between the benchmarks, as in the paper's equation
+  expect_equal(cor(sim$R1)[1, 2], 0.8, tolerance = 0.02)
+  expect_equal(cor(sim$R1)[1, 3], 0.64, tolerance = 0.02)
+  # the population loadings: intercept ncp, B_1 = (1 + ncp)(2 - K), B_k = 1 + ncp
+  b <- coef(lm(sim$R2[, 1] ~ sim$R1))
+  expect_equal(unname(b[1]), 0.3, tolerance = 0.05)
+  expect_equal(unname(b[2]), 1.3 * (2 - K), tolerance = 0.05)
+  expect_equal(1 - sum(b[-1]), -0.3, tolerance = 0.05)   # delta = -ncp
 })

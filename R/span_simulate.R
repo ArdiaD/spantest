@@ -12,13 +12,18 @@
 #' The latent factors \eqn{z} are \eqn{K} innovation series, cross-sectionally
 #' correlated through the Cholesky factor of a Toeplitz matrix with decay
 #' \code{rho_factor}; the idiosyncratic terms are \eqn{N} innovation series with
-#' Toeplitz decay \code{rho_error}. Test assets are
-#' \deqn{R_2 = \alpha + z B + \varepsilon, \qquad
-#'       B = (1+\text{ncp})\,\mathbf{1}_{K\times N},\quad
+#' Toeplitz decay \code{rho_error}. The benchmarks are these series themselves,
+#' \eqn{R_1 = z}, and the test assets are
+#' \deqn{R_2 = \alpha + R_1 B + \varepsilon, \qquad
+#'       B_{1,j} = (1+\text{ncp})(2-K),\quad B_{k,j} = 1+\text{ncp}\ (k \ge 2),\quad
 #'       \alpha_j = \text{ncp},}
-#' and the benchmarks are \eqn{R_1 = [\,z_1,\; z_{-1}+z_1\,]}. Under
-#' \code{ncp = 0} the benchmarks span the test assets (\eqn{\alpha = 0}); larger
-#' \code{|ncp|} moves the intercepts and loadings away from the spanning null.
+#' so that \eqn{\delta_j = 1 - \sum_k B_{k,j} = -\text{ncp}}. Under \code{ncp = 0}
+#' the benchmarks span the test assets (\eqn{\alpha = 0}, \eqn{\delta = 0}); larger
+#' \code{|ncp|} moves both restrictions away from the null, \eqn{\alpha_j} to
+#' \code{ncp} and \eqn{\delta_j} to \code{-ncp}. Up to version 1.4-2 the benchmarks
+#' were \eqn{[\,z_1,\; z_{-1}+z_1\,]} with loadings \eqn{1+\text{ncp}} on \eqn{z}: the
+#' same loadings on the benchmarks, but benchmarks with correlations near 0.9 and
+#' unequal variances rather than the Toeplitz structure of the process.
 #' With \code{sparse = TRUE} the first \eqn{\lfloor N/2 \rfloor} intercepts are
 #' set to zero (a sparse alternative); \eqn{\alpha} is added column-wise, i.e.
 #' asset \eqn{j} receives \eqn{\alpha_j}.
@@ -258,12 +263,14 @@ span_simulate <- function(n, K, N, ncp = 0,
 
   alpha <- rep(ncp, N)
   if (sparse) alpha[seq_len(floor(N / 2))] <- 0
+  # B_kj = 1 for k >= 2 and B_1j = 2 - K, so that delta_j = 1 - sum_k B_kj = 0 under the null;
+  # the alternative scales the loadings by 1 + ncp, so that delta_j = -ncp
   Beta <- matrix(1 + ncp, nrow = K, ncol = N)
+  Beta[1, ] <- (1 + ncp) * (2 - K)
 
   y <- sweep(z %*% Beta + eps, 2, alpha, "+")          # column-wise intercepts
-  x <- cbind(z[, 1], z[, -1, drop = FALSE] + z[, 1])   # benchmark construction
 
-  list(R1 = x, R2 = y)
+  list(R1 = z, R2 = y)                                 # the benchmarks are the process
 }
 
 #' Standardised skew-Student-t random draws (Fernandez-Steel)
