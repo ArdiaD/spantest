@@ -27,7 +27,11 @@ span the mean of the test assets. This is the F1 test of Kan & Zhou (2012).
 \details{
 Under standard assumptions (i.i.d. returns, full-rank covariances), the
 reference distribution is \eqn{F_{N,\ T-K-N}}. Finite-sample feasibility
-requires \eqn{T-K-N \ge 1}.
+requires \eqn{T-K-N \ge 1}. The covariance matrices are the maximum-likelihood
+ones (divisor \eqn{T}), as in Kan and Zhou (2012); with them F1, the first step
+of their step-down test, is the GRS statistic, so \code{span_f1()} returns the
+same value as \code{span_grs()} and \code{span_bj()}. Up to version 1.4-2 it
+used the divisor \eqn{T-1}.
 }
 \examples{
 set.seed(123)

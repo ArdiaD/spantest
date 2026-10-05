@@ -29,7 +29,9 @@ frontiers with and without the additional assets.
 The test evaluates whether adding the test assets changes the efficient
 frontier implied by the benchmarks. Under standard regularity conditions,
 the statistic has an \eqn{F} reference with \eqn{(2N,\ 2(T-K-N))} degrees of
-freedom. Finite-sample feasibility requires \eqn{T-K-N \ge 1}.
+freedom. Finite-sample feasibility requires \eqn{T-K-N \ge 1}. The covariance
+matrices are the maximum-likelihood ones (divisor \eqn{T}), which makes the
+statistic the likelihood-ratio form; up to version 1.4-2 they used \eqn{T-1}.
 }
 \examples{
 set.seed(123)

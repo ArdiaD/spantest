@@ -47,40 +47,66 @@ f_cauchypv <- function(p) {
   return(out)
 }
 
-#' Generate Product of Random Normal Weights for Perturbation
+#' Maximum-Likelihood Covariance Matrix
 #'
-#' Generates a perturbation vector by computing the product of random normal values for each row,
-#' often used in sensitivity analysis or randomized weighting schemes.
+#' The covariance with divisor \eqn{T} rather than \eqn{T-1}, as in the
+#' likelihood-ratio forms of the spanning tests.
 #'
-#' @param score A matrix or data frame with rows corresponding to observations. Only the number of rows is used.
-#' @param k An integer specifying the number of random normal values to generate per row. If \code{k <= 0}, returns 1.
-#' @param cseed An integer seed for reproducibility (default is 123).
+#' @param X Numeric \eqn{T \times p} matrix.
 #'
-#' @return A numeric vector of length equal to \code{nrow(score)}, where each entry is the product of \code{k}
-#' independent normal random variables. Returns 1 if \code{k <= 0}.
+#' @return The \eqn{p \times p} matrix \eqn{T^{-1} \sum_t (x_t - \bar x)(x_t - \bar x)'}.
 #'
 #' @keywords internal
 #'
 #' @noRd
 #'
-f_prods <- function(score, k, cseed=123) {
+f_cov_ml <- function(X) {
+  Xc <- scale(X, center = TRUE, scale = FALSE)
+  out <- crossprod(Xc) / nrow(X)
+  return(out)
+}
 
-  if (k > 0) {
-        # Seed locally for reproducibility, but restore the caller's RNG state on
-        # exit so this helper never leaves a side effect on the global stream.
-        if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
-          oldseed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
-          on.exit(assign(".Random.seed", oldseed, envir = .GlobalEnv), add = TRUE)
-        } else {
-          on.exit(rm(".Random.seed", envir = .GlobalEnv), add = TRUE)
-        }
-        set.seed(cseed)
-        a <- matrix(rnorm(nrow(score) * k, mean = 1, sd = 1), nrow = nrow(score), ncol = k)
-        out <- apply(a, 1, prod)
-        return(out)
-  }else{
-        return(1)
+#' Multiplier Weights of the SCT, One Draw per Statistic
+#'
+#' Draws the weights \eqn{\kappa_{i,t} = \prod_{l=1}^{k} \kappa_{l,i,t}}, with
+#' \eqn{\kappa_{l,i,t} \sim N(1, 1)} independent across factors \eqn{l}, dates
+#' \eqn{t} and statistics \eqn{i}: one \eqn{T \times N} matrix for the alpha scores
+#' and an independent one for the delta scores.
+#'
+#' @param Tn Number of observations \eqn{T}.
+#' @param N Number of test assets.
+#' @param k Number of multiplier factors \eqn{L}. If \code{k <= 0}, the weights are 1.
+#' @param cseed Seed of the draw (default 123). The alpha factors are drawn first,
+#'   then the delta factors.
+#'
+#' @return A list with the \eqn{T \times N} matrices \code{A} (alpha scores) and
+#'   \code{D} (delta scores); both are the scalar 1 if \code{k <= 0}.
+#'
+#' @keywords internal
+#'
+#' @noRd
+#'
+f_mult <- function(Tn, N, k, cseed = 123) {
+
+  if (k <= 0) return(list(A = 1, D = 1))
+  # Seed locally for reproducibility, but restore the caller's RNG state on
+  # exit so this helper never leaves a side effect on the global stream.
+  if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+    oldseed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    on.exit(assign(".Random.seed", oldseed, envir = .GlobalEnv), add = TRUE)
+  } else {
+    on.exit(rm(".Random.seed", envir = .GlobalEnv), add = TRUE)
   }
+  set.seed(cseed)
+  f_draw <- function() {
+    w <- matrix(1, Tn, N)
+    for (l in seq_len(k)) w <- w * matrix(rnorm(Tn * N, mean = 1, sd = 1), Tn, N)
+    return(w)
+  }
+  wa <- f_draw()
+  wd <- f_draw()
+  out <- list(A = wa, D = wd)
+  return(out)
 }
 
 #' Perform Folded T-tests and Normal Approximations on Matrix Data

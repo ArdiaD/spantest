@@ -19,7 +19,9 @@
 #' The test evaluates whether adding the test assets changes the efficient
 #' frontier implied by the benchmarks. Under standard regularity conditions,
 #' the statistic has an \eqn{F} reference with \eqn{(2N,\ 2(T-K-N))} degrees of
-#' freedom. Finite-sample feasibility requires \eqn{T-K-N \ge 1}.
+#' freedom. Finite-sample feasibility requires \eqn{T-K-N \ge 1}. The covariance
+#' matrices are the maximum-likelihood ones (divisor \eqn{T}), which makes the
+#' statistic the likelihood-ratio form; up to version 1.4-2 they used \eqn{T-1}.
 #'
 #' @references
 #' \insertRef{HubermanKandel1987}{spantest} \cr
@@ -48,8 +50,8 @@ span_hk <- function(R1, R2) {
   mu <- matrix(colMeans(R), ncol = 1)
   mu1 <- matrix(colMeans(R1), ncol = 1)
 
-  Sigma <- cov(R)
-  Sigma1 <- cov(R1)
+  Sigma <- f_cov_ml(R)            # divisor T: the likelihood-ratio form
+  Sigma1 <- f_cov_ml(R1)
   iSigma <- tryCatch(solve(Sigma), error = function(e) return(NULL))
   iSigma1 <- tryCatch(solve(Sigma1), error = function(e) return(NULL))
   if (is.null(iSigma) || is.null(iSigma1)) return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0 and delta = 0"))

@@ -17,7 +17,11 @@
 #' @details
 #' Under standard assumptions (i.i.d. returns, full-rank covariances), the
 #' reference distribution is \eqn{F_{N,\ T-K-N}}. Finite-sample feasibility
-#' requires \eqn{T-K-N \ge 1}.
+#' requires \eqn{T-K-N \ge 1}. The covariance matrices are the maximum-likelihood
+#' ones (divisor \eqn{T}), as in Kan and Zhou (2012); with them F1, the first step
+#' of their step-down test, is the GRS statistic, so \code{span_f1()} returns the
+#' same value as \code{span_grs()} and \code{span_bj()}. Up to version 1.4-2 it
+#' used the divisor \eqn{T-1}.
 #'
 #' @references
 #' \insertRef{KanZhou2012}{spantest}
@@ -46,8 +50,8 @@ span_f1 <- function(R1, R2) {
   mu_full <- matrix(colMeans(R), ncol = 1)
   mu_bench <- matrix(colMeans(R1), ncol = 1)
 
-  Sigma_full <- cov(R)
-  Sigma_bench <- cov(R1)
+  Sigma_full <- f_cov_ml(R)        # divisor T: then F1 is the GRS statistic
+  Sigma_bench <- f_cov_ml(R1)
 
   iSigma_full <- tryCatch(solve(Sigma_full), error = function(e) return(NULL))
   iSigma_bench <- tryCatch(solve(Sigma_bench), error = function(e) return(NULL))

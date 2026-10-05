@@ -1,3 +1,72 @@
+# Changes in Version 1.4-3 (DA)
+- span_as(): at L > 0 the multiplier weights are now drawn per statistic: an
+  independent T x N matrix for the alpha scores and another for the delta
+  scores, each a product of L independent N(1, 1) factors, so the weights are
+  independent across factors, dates, assets and the two scores. This is how the
+  theory defines them (drawn afresh for each asset-level statistic). Up to 1.4-2
+  one T-vector was shared by every asset and by both scores.
+  A shared vector leaves the cross-sectional dependence of the asset-level
+  statistics intact; independent weights shrink it (by about 2^-L for scores
+  without autocorrelation). Under a pervasive common factor in the residuals
+  (span_simulate(gamma = ), gamma_i ~ U(0.7, 0.9)), at L = 2, T = 250, K = 2 and
+  10, N = 100 and 1000, 1000 replications, the three tests reject a true null in
+  6.0-8.5% of the samples with the shared vector and in 2.4-4.8% with
+  independent weights (5.4-9.6% at L = 0). Under approximately sparse dependence
+  the two differ by about one point of size; alpha and joint power gain 2-7
+  points and delta power at N = 1000 loses 3-5.
+  Results at L = 0 are unchanged bit for bit (checked against 1.4-2 on 60 data
+  sets); every result at L > 0 changes, including with the same seed. The draw
+  of a seed puts the alpha factors first, then the delta factors.
+  Independent weights do not make the global p-value less dependent on the
+  draw: a Cauchy average of independent terms does not concentrate as N grows.
+  Cost: T x N x 2L normal draws per call. span_as() at T = 250, N = 1000,
+  three exponents and L = 0, 1, 2 takes 0.12 s instead of 0.08 s.
+- span_as(): the control B is removed: a call is one draw of the weights, from
+  seed (default 123), and passing B is an error. B > 1 merged B draws per asset
+  with the Cauchy rule, which treats B views of one asset's returns as B
+  independent pieces of evidence; in the one design where it was measured, it
+  was mildly liberal per asset.
+  Results with B = 1, the default, are unchanged: that draw already came from
+  seed. f_getpv_batch() and f_getpv() lose their B argument too.
+- span_hk(), span_f1(), span_f2(): the covariance matrices are now the
+  maximum-likelihood ones (divisor T, new internal f_cov_ml()) instead of cov()
+  (divisor T - 1), as in Kan and Zhou (2012) and in the papers that use these
+  tests. span_hk() is then the likelihood-ratio form of the Huberman-Kandel test,
+  and span_f1() returns the GRS statistic exactly, since F1, the first step of
+  Kan and Zhou's step-down test, is the GRS test (checked to 3e-12; span_grs() and
+  span_bj() were already identical). The statistics move by at most 1.4-1.7% at
+  T = 60 to 250, and size by about 0.2 point. span_f2()'s documentation now says
+  that it tests delta = 0 given alpha = 0, and points to span_km() for delta = 0
+  with free intercepts.
+- span_py(): the condition N <= T - K - 1 is removed. The statistic uses the
+  asset-level t-statistics and the pairwise residual correlations, never the
+  inverse of the N x N residual covariance, and Pesaran and Yamagata design the
+  test for large N, N > T included. The thresholded correlation sum is
+  vectorised (identical results where the test was already defined; 0.14 s at
+  N = 1000, T = 250).
+- span_mstv(): the derandomized rule now follows the authors' replication code
+  (github.com/PierValla95/RandomizedAlphaTest, Empirics/Analysis_MSTV_nu4.R): B =
+  floor(log(N)^2) perturbation draws from seed, after the one-shot draw, each a
+  block of N normals; Q is the share of draws whose maximum does not exceed the
+  critical value, and the rule rejects when Q < (1 - tau) - B^(-1/4). Up to 1.4-2
+  Q was its B -> infinity limit in closed form, prod_i Phi(c - psi_i). That limit
+  is a different rule in practice: with B between 15 and 50 the simulated share is
+  coarse, and a size-adjusted MSTV-D built on the closed form reaches 99-100%
+  power where the authors' rule reaches 18-73% (DGP12, K <= 10, a = 0.2). With
+  identical draws, Q and the decision equal those of the co-author's
+  implementation of the authors' rule (40 data sets). logQ is no longer returned.
+- span_mstv(): the default nu is 5, the value of the authors' simulations,
+  instead of 4. The statistic, its pooled scale (divisor N T, as in their code)
+  and the critical value are unchanged.
+- f_mult() replaces the internal f_prods(). f_getpv() gains wN and wcol so
+  that a loop over the columns reproduces f_getpv_batch() (tested at L = 0, 1
+  and 2).
+- Tests: test-span-as-weights.R checks the structure and moments of the
+  weights, the caller's random-number stream, two identical assets, the L = 0
+  results against 1.4-2, and that at L = 2 each test fires on its own
+  hypothesis only. The tests of B give way to tests of the seed: the default,
+  its effect at L = 0 (none) and L = 2, its validation, and the error on B.
+
 # Changes in Version 1.4-2 (DA)
 - span_mstv(): new test, the randomized alpha test of Massacci, Sarno, Trapani
   and Vallarino (2026, forthcoming in JASA). It estimates equation by equation,

@@ -14,9 +14,8 @@ span_as(bench, test, control = list())
 \item{control}{Optional list passed to internal computation:
 \describe{
 \item{\code{ks}}{Numeric vector of subseries exponents; each sets the NUMBER of blocks to \code{floor(T^k)}, each of length about \code{T / floor(T^k)}; default \code{c(1/3)}.}
-\item{\code{L}}{Numeric vector of perturbation scales for randomized projections; default \code{c(0, 2)}.}
-\item{\code{B}}{Number of independent perturbation draws to merge when \code{L > 0}; default \code{1}. See \sQuote{Choosing B}.}
-\item{\code{seed}}{Seed of the first perturbation draw; default \code{123}. Draw \eqn{b} uses \code{seed + b - 1}. A simulation should pass a different seed in each replication; see \sQuote{Simulations}.}
+\item{\code{L}}{Numeric vector of the number of multiplier factors in the weights of each statistic (0: no weights); default \code{c(0, 2)}. See \sQuote{Weights}.}
+\item{\code{seed}}{Seed of the draw of the weights when \code{L > 0}; default \code{123}. A call is one draw; a simulation should pass a different seed in each replication; see \sQuote{One draw per call} and \sQuote{Simulations}.}
 }}
 }
 \value{
@@ -41,42 +40,45 @@ Residual perturbations controlled by \code{L} generate test statistics robust to
 cross-sectional dependence and conditional heteroskedasticity. Resulting sub-p-values are aggregated
 by the Cauchy Combination Test (CCT), which remains valid under dependence and retains power in high dimensions.
 }
-\section{Choosing B}{
+\section{Weights}{
 
-When \code{L > 0} the score is multiplied by a random weight vector. That
-vector is shared by every test asset, so a single draw is a single realisation
-of the test and its effect does \emph{not} average out across the
-cross-section. The test is valid for any fixed draw --- its size is correct ---
-but the p-value it returns on one data set can vary substantially from draw to
-draw, especially when \code{T} is short (few subseries) or \code{N} is large.
-\code{B > 1} draws \code{B} independent weight vectors and merges the
-resulting p-values per asset with the Cauchy rule, which is valid under
-arbitrary dependence and is not carried by a single extreme draw. The default
-\code{B = 1} reproduces the historical single-draw behaviour exactly; for
-applications, and for any result that will be reported, \code{B = 100} or more
-is recommended. Cost is modest: the expensive residual construction is done
-once and only the subseries statistic is recomputed per draw.
+When \code{L > 0} the score of each statistic is multiplied by its own weights
+\eqn{\kappa_{i,t} = \prod_{l=1}^{L} \kappa_{l,i,t}}, \eqn{\kappa_{l,i,t} \sim N(1, 1)},
+drawn independently of the data and of each other across factors, dates, assets
+and between the alpha and the delta score of an asset. Since version 1.4-3 this
+is the definition of the theory; up to version 1.4-2 one weight vector was
+shared by every asset and by both scores. Sharing it leaves the cross-sectional
+dependence of the statistics intact, while independent weights shrink it, which
+matters when the residuals carry a pervasive common factor: at \code{L = 2},
+\eqn{T = 250}, \eqn{K} = 2 and 10 and \eqn{N} = 100 and 1000, the three tests
+reject a true null in 6.0--8.5\\% of 1000 samples with the shared vector and in
+2.4--4.8\\% with independent weights. The results at \code{L = 0} are unchanged.
+}
 
-Draw \eqn{b} is generated from \code{seed + b - 1}. Consecutive seeds are used
-rather than an explicit substream generator so that \code{B = 1} reproduces
-the historical single-draw result exactly. R scrambles the seed when
-initialising the Mersenne-Twister, so the resulting weight vectors behave as
-independent draws: across 100 consecutive seeds at \eqn{T = 250} the mean
-absolute pairwise correlation is 0.051 and the maximum 0.23, against 0.050 and
-about 0.22 expected under exact independence. Pass an explicit \code{seed} to
-obtain a different, equally valid family of draws.
+\section{One draw per call}{
+
+At \code{L > 0} a call returns the test for one draw of the weights, from
+\code{seed}: the alpha weights first, then the delta weights. The test is valid
+for any draw --- its size is correct --- but the p-value it returns on one data
+set varies from draw to draw, since a Cauchy average of independent terms does
+not concentrate as \eqn{N} grows; report the seed with the result. R scrambles
+the seed when initialising the Mersenne-Twister, so draws from consecutive
+seeds behave as independent draws. Up to version 1.4-2 a control \code{B}
+merged \code{B} draws per asset with the Cauchy rule; it was removed in 1.4-3.
 }
 
 \section{Simulations}{
 
 A Monte Carlo study should draw new weights in each replication, for instance
 \code{seed = base + r} in replication \code{r}. With the same seed in every
-replication, every cell of the study is computed on one weight vector: the
+replication, every cell of the study is computed on one set of weights: the
 results are one realisation of the weights, common to all cells, and the Monte
 Carlo standard errors understate their uncertainty. The weights enter through
-sums over each subseries, so the effect is small but not nil: at
-\eqn{T = 250}, redrawing them per replication moves the size of a cell by about
-one point, in either direction.
+sums over each subseries, so the effect on size is small but not nil (about one
+point at \eqn{T = 250}, in either direction), and the effect on power can be
+larger: in the simulation study of Ardia and Sessinou, the weights of seed 123
+overstated the power at \code{L = 2} by 10 to 25 points at moderate
+alternatives.
 }
 
 \examples{

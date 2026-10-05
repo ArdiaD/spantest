@@ -28,7 +28,12 @@ augmented (benchmark + test) universe to those of the benchmark subset.
 \details{
 Under standard conditions (i.i.d. returns, full-rank covariances), the reference
 distribution is \eqn{F_{N,\ T-K-N+1}}. Finite-sample feasibility requires
-\eqn{T-K-N+1 \ge 1}.
+\eqn{T-K-N+1 \ge 1}. F2 is the second step of the step-down test of Kan and
+Zhou (2012): it tests \eqn{\delta = 0} conditional on \eqn{\alpha = 0}, so it is
+a test of \eqn{\delta = 0} alone only when the intercepts are zero; for
+\eqn{\delta = 0} with free intercepts, use \code{span_km()}. The covariance
+matrices are the maximum-likelihood ones (divisor \eqn{T}); up to version 1.4-2
+they used \eqn{T-1}.
 }
 \examples{
 set.seed(123)

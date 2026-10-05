@@ -1,15 +1,17 @@
 # Correctness of internal helpers and compiled kernels -----------------------
 
 test_that("f_getpv_batch equals a column loop of f_getpv", {
-  # This equivalence is what the vectorised span_as() speedup relies on.
+  # This equivalence is what the vectorised span_as() speedup relies on. Asset j
+  # takes column j of the weights drawn for the whole cross-section (wN, wcol).
   set.seed(1)
   Tn <- 200L; K <- 3L; N <- 6L
   x <- matrix(rnorm(Tn * K), Tn, K)
   Y <- matrix(rnorm(Tn * N), Tn, N)
-  ks <- c(1 / 3); L <- c(0, 2)
+  ks <- c(1 / 3, 1 / 2); L <- c(0, 1, 2)
 
-  batch <- spantest:::f_getpv_batch(x, Y, ks = ks, L = L)
-  loop  <- lapply(seq_len(N), function(j) spantest:::f_getpv(Y[, j], x, ks = ks, L = L))
+  batch <- spantest:::f_getpv_batch(x, Y, ks = ks, L = L, seed = 4L)
+  loop  <- lapply(seq_len(N), function(j)
+    spantest:::f_getpv(Y[, j], x, ks = ks, L = L, seed = 4L, wN = N, wcol = j))
 
   for (nm in names(batch)) {
     col_vals <- vapply(loop, function(z) unname(z[nm]), numeric(1))

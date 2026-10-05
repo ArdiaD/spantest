@@ -18,9 +18,12 @@
 #' The null hypothesis is that all intercepts are zero (\eqn{\alpha = 0}), meaning
 #' the benchmark assets span the expected returns of the test assets. The statistic
 #' adjusts for cross-sectional dependence via the residual covariance and has an
-#' asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. Finite-sample
-#' safeguards require \eqn{T-K-1 > 4} and at least two test assets (\eqn{N \ge 2});
-#' otherwise \code{pval} and \code{stat} are returned as \code{NA}.
+#' asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. It uses the
+#' asset-level t-statistics and the pairwise residual correlations only, never an
+#' inverse of the \eqn{N \times N} residual covariance, so it is defined when
+#' \eqn{N} exceeds \eqn{T}. Finite-sample safeguards require \eqn{T-K-1 > 4} and at
+#' least two test assets (\eqn{N \ge 2}); otherwise \code{pval} and \code{stat} are
+#' returned as \code{NA}. Up to version 1.4-2 it also required \eqn{N \le T-K-1}.
 #'
 #' @references
 #' \insertRef{PesaranYamagata2024}{spantest}
@@ -46,7 +49,7 @@ span_py <- function(R1, R2) {
   # The PY statistic averages pairwise residual correlations, so it requires
   # at least two test assets (N >= 2); with N = 1 the pairwise sum is empty
   # and 0.05 / (N - 1) divides by zero.
-  if (N < 2 || (t - K - N) < 1 || (t - K - 1) <= 4) {
+  if (N < 2 || (t - K - 1) <= 4) {
     return(list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0"))
   }
 
@@ -73,17 +76,9 @@ span_py <- function(R1, R2) {
 
   pN <- 0.05 / (N - 1)
   thetaN <- qnorm(1 - pN / 2)^2
-  rhobar <- 0
-  for (i in 2:N) {
-    for (j in 1:(i - 1)) {
-      temp <- SigmaU[i, j] / sqrt(SigmaU[i, i] * SigmaU[j, j])
-      temp2 <- temp^2
-      if (v * temp2 >= thetaN) {
-        rhobar <- rhobar + temp2
-      }
-    }
-  }
-  rhobar <- rhobar * 2 / (N * (N - 1))
+  # squared pairwise residual correlations, kept above the threshold (pairs i > j)
+  rho2 <- (SigmaU / sqrt(outer(diag_SigmaU, diag_SigmaU)))[upper.tri(SigmaU)]^2
+  rhobar <- sum(rho2[v * rho2 >= thetaN]) * 2 / (N * (N - 1))
 
   Jalpha2 <- sum(t2 - v / (v - 2)) / sqrt(N)
   den <- (v / (v - 2)) * sqrt(2 * (v - 1) * (1 + (N - 1) * rhobar) / (v - 4))

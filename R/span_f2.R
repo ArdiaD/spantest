@@ -18,7 +18,12 @@
 #' @details
 #' Under standard conditions (i.i.d. returns, full-rank covariances), the reference
 #' distribution is \eqn{F_{N,\ T-K-N+1}}. Finite-sample feasibility requires
-#' \eqn{T-K-N+1 \ge 1}.
+#' \eqn{T-K-N+1 \ge 1}. F2 is the second step of the step-down test of Kan and
+#' Zhou (2012): it tests \eqn{\delta = 0} conditional on \eqn{\alpha = 0}, so it is
+#' a test of \eqn{\delta = 0} alone only when the intercepts are zero; for
+#' \eqn{\delta = 0} with free intercepts, use \code{span_km()}. The covariance
+#' matrices are the maximum-likelihood ones (divisor \eqn{T}); up to version 1.4-2
+#' they used \eqn{T-1}.
 #'
 #' @references
 #' \insertRef{KanZhou2012}{spantest}
@@ -48,12 +53,12 @@ span_f2 <- function(R1, R2) {
   }
 
   mu  <- matrix(colMeans(R), ncol = 1)
-  V   <- cov(R)
+  V   <- f_cov_ml(R)               # divisor T: the likelihood-ratio form
   iV  <- tryCatch(solve(V), error = function(e) NULL)
   one <- matrix(1, K + N, 1)
 
   mu1  <- matrix(colMeans(R1), ncol = 1)
-  V1   <- cov(R1)
+  V1   <- f_cov_ml(R1)
   iV1  <- tryCatch(solve(V1), error = function(e) NULL)
   one1 <- matrix(1, K, 1)
 

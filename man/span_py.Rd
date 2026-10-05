@@ -28,9 +28,12 @@ dependence across test assets.
 The null hypothesis is that all intercepts are zero (\eqn{\alpha = 0}), meaning
 the benchmark assets span the expected returns of the test assets. The statistic
 adjusts for cross-sectional dependence via the residual covariance and has an
-asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. Finite-sample
-safeguards require \eqn{T-K-1 > 4} and at least two test assets (\eqn{N \ge 2});
-otherwise \code{pval} and \code{stat} are returned as \code{NA}.
+asymptotic \eqn{\mathcal{N}(0,1)} reference under large \eqn{T,N}. It uses the
+asset-level t-statistics and the pairwise residual correlations only, never an
+inverse of the \eqn{N \times N} residual covariance, so it is defined when
+\eqn{N} exceeds \eqn{T}. Finite-sample safeguards require \eqn{T-K-1 > 4} and at
+least two test assets (\eqn{N \ge 2}); otherwise \code{pval} and \code{stat} are
+returned as \code{NA}. Up to version 1.4-2 it also required \eqn{N \le T-K-1}.
 }
 \examples{
 set.seed(123)

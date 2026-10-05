@@ -6,11 +6,12 @@ test_that("span_mstv returns the documented structure", {
   result <- span_mstv(R1, R2)
 
   expect_type(result, "list")
-  expect_named(result, c("pval", "stat", "H0", "crit", "Q", "logQ",
+  expect_named(result, c("pval", "stat", "H0", "crit", "Q",
                          "reject", "nu", "B"))
   expect_true(result$pval >= 0 && result$pval <= 1)
   expect_true(result$Q >= 0 && result$Q <= 1)
-  expect_equal(result$Q, exp(result$logQ))
+  expect_equal(result$Q * result$B, round(result$Q * result$B))   # a share of B draws
+  expect_equal(result$nu, 5)                                        # the default
   expect_type(result$reject, "logical")
   expect_equal(result$H0, "alpha = 0")
   expect_equal(result$B, floor(log(100)^2))   # their guideline, B = floor(log N)^2
@@ -44,23 +45,31 @@ test_that("the statistic is the one in the paper", {
   expect_equal(out$pval, 1 - exp(-exp(-(Zref - bN) / aN)))
 })
 
-test_that("the closed-form Q is the limit of their B replications", {
-  # Q is the share of perturbation draws that do not reject. span_mstv() computes
-  # it exactly, as prod_i Phi(c - psi_i); this is the average they simulate.
+test_that("Q is the share of the B draws that do not reject, as in the authors' code", {
+  # The derandomized rule draws B blocks of N normals after the one-shot draw, from
+  # the same seed, and rejects when the share Q falls below (1 - tau) - B^(-1/4).
   set.seed(11)
   R1 <- matrix(rnorm(250 * 3), 250, 3)
   R2 <- matrix(rnorm(250 * 200), 250, 200)
   R2[, 1:5] <- R2[, 1:5] + 0.15                 # a few non-zero intercepts
 
-  out <- span_mstv(R1, R2)
+  out <- span_mstv(R1, R2, control = list(seed = 7L))
 
   X    <- cbind(1, R1)
   bhat <- qr.solve(qr(X), R2)
-  psi  <- sqrt(250) * (abs(bhat[1, ]) / sqrt(mean((R2 - X %*% bhat)^2)))^(4 / 2)
-  set.seed(2)
-  Qmc <- mean(replicate(20000, max(psi + rnorm(200)) <= out$crit))
+  psi  <- sqrt(250) * (abs(bhat[1, ]) / sqrt(mean((R2 - X %*% bhat)^2)))^(5 / 2)
+  B    <- floor(log(200)^2)
+  set.seed(7)
+  invisible(rnorm(200))                                   # the one-shot draw
+  Zb   <- apply(psi + matrix(rnorm(200 * B), 200, B), 2, max)
+  Qref <- mean(Zb <= out$crit)
 
-  expect_equal(out$Q, Qmc, tolerance = 0.01)
+  expect_equal(out$Q, Qref)
+  expect_equal(out$reject, Qref < 0.95 - B^(-1 / 4))
+  # another seed, other draws
+  out2 <- span_mstv(R1, R2, control = list(seed = 8L, B = 1000L))
+  expect_equal(out2$B, 1000L)
+  expect_equal(out2$Q * 1000, round(out2$Q * 1000))
 })
 
 test_that("span_mstv leaves the caller's RNG stream untouched", {
@@ -112,5 +121,7 @@ test_that("nu and tau are validated", {
 
   expect_error(span_mstv(R1, R2, control = list(nu = 3)), "nu")
   expect_error(span_mstv(R1, R2, control = list(tau = 1)), "tau")
+  expect_error(span_mstv(R1, R2, control = list(B = 0)), "B")
+  expect_error(span_mstv(R1, R2, control = list(B = 2.5)), "B")
   expect_error(span_mstv(R1[-1, ], R2), "same number of rows")
 })

@@ -12,16 +12,16 @@
 #' @param control Optional list:
 #' \describe{
 #'   \item{\code{nu}}{Number of finite moments the data are assumed to admit,
-#'     \eqn{\nu \ge 4}; default \code{4}. See \sQuote{Choosing nu}.}
+#'     \eqn{\nu \ge 4}; default \code{5}, the value of the authors' simulations.
+#'     See \sQuote{Choosing nu}.}
 #'   \item{\code{tau}}{Nominal level at which the derandomized rule decides;
 #'     default \code{0.05}. It does not affect \code{pval}.}
-#'   \item{\code{B}}{Number of replications the derandomized threshold is built
-#'     for; default \code{floor(log(N)^2)}, their guideline. The replications
-#'     themselves are not simulated (see \sQuote{Details}).}
-#'   \item{\code{seed}}{Seed of the single perturbation draw behind \code{stat}
-#'     and \code{pval}; default \code{123}. The caller's RNG state is restored.
-#'     A simulation must pass a different seed in each replication; see
-#'     \sQuote{Simulations}.}
+#'   \item{\code{B}}{Number of perturbation draws of the derandomized rule;
+#'     default \code{floor(log(N)^2)}, their guideline.}
+#'   \item{\code{seed}}{Seed of the perturbation draws: first the one behind
+#'     \code{stat} and \code{pval}, then the \code{B} draws of the derandomized
+#'     rule; default \code{123}. The caller's RNG state is restored. A simulation
+#'     must pass a different seed in each replication; see \sQuote{Simulations}.}
 #' }
 #'
 #' @return A named list with components:
@@ -30,8 +30,8 @@
 #'   \item{\code{stat}}{The one-shot statistic \eqn{Z_{N,T}}.}
 #'   \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 #'   \item{\code{crit}}{Critical value \eqn{c_\tau} of the one-shot test.}
-#'   \item{\code{Q}}{Derandomized quantity \eqn{Q_{N,T,\infty}(\tau)}, in closed form.}
-#'   \item{\code{logQ}}{Its logarithm, which stays finite when \code{Q} underflows.}
+#'   \item{\code{Q}}{Derandomized quantity \eqn{Q_{N,T,B}(\tau)}: the share of the
+#'     \code{B} perturbation draws whose statistic does not exceed \code{crit}.}
 #'   \item{\code{reject}}{Decision of the derandomized rule: \code{TRUE} when
 #'     \code{Q < (1 - tau) - B^(-1/4)}.}
 #'   \item{\code{nu}, \code{B}}{The settings used.}
@@ -58,15 +58,12 @@
 #' Their remedy is to repeat the perturbation \eqn{B} times and record the share
 #' \eqn{Q_{N,T,B}(\tau)} of replications that do not reject, then decide against
 #' the null when that share falls below \eqn{(1-\tau) - f(B)} with
-#' \eqn{f(B) = B^{-1/4}}. We evaluate the share exactly rather than by
-#' simulation: the perturbations are independent of each other and of the data,
-#' so conditionally on the sample
-#' \deqn{Q_{N,T,\infty}(\tau) = \prod_{i=1}^{N} \Phi(c_\tau - \psi_i),}
-#' computed here on the log scale. This is the \eqn{B \to \infty} limit of their
-#' average, so it removes the simulation error and the residual dependence on the
-#' draws while leaving the rule itself untouched; \eqn{B} still enters through
-#' the threshold \eqn{f(B)}. It also costs one pass over the cross-section
-#' instead of \eqn{B} regressions.
+#' \eqn{f(B) = B^{-1/4}}. As in the authors' replication code, the share is
+#' simulated with \eqn{B = \lfloor (\log N)^2 \rfloor} draws by default, so it is
+#' a multiple of \eqn{1/B} and the decision depends on the draws. Up to version
+#' 1.4-2 the share was evaluated in closed form, as its \eqn{B \to \infty} limit
+#' \eqn{\prod_{i} \Phi(c_\tau - \psi_i)}; that limit is a different rule in
+#' practice, since with \eqn{B} between 15 and 50 the simulated share is coarse.
 #'
 #' The Gumbel limit is an approximation in \eqn{N}, and a poor one when \eqn{N}
 #' is small: at \eqn{N = 2} the one-shot test rejects about a quarter of the time
@@ -79,9 +76,10 @@
 #' exponent \eqn{\nu/2}; the theory needs \eqn{\nu \ge 4} and the admissible
 #' growth of \eqn{N} relative to \eqn{T} widens with it. It can be estimated with
 #' a tail-index estimator, or bounded below by testing \eqn{E|y_{i,t}|^{\nu_0}}
-#' for a candidate \eqn{\nu_0}. The default here is the smallest value the theory
-#' allows, \eqn{\nu = 4}, which is what the authors recommend when \eqn{T} is too
-#' short for reliable tail inference; their simulations use \eqn{\nu = 5}.
+#' for a candidate \eqn{\nu_0}. The default here is \eqn{\nu = 5}, the value of
+#' the authors' simulations; their empirical application reports \eqn{\nu = 4} and
+#' \eqn{\nu = 5}. A smaller \eqn{\nu} makes the test more liberal. Up to version
+#' 1.4-2 the default was 4.
 #'
 #' @section Simulations:
 #' The size of the one-shot test is a probability over the data and the
@@ -93,8 +91,8 @@
 #' the statistic is essentially \eqn{\max_i \omega_i}, so that rate is near 0 or
 #' near 1 whatever the data: with the default seed and \eqn{N = 1000},
 #' \eqn{\max_i \omega_i = 3.24} against a critical value of 3.98, and the
-#' rejection rate is 0 instead of about 4%. The derandomized rule is computed in
-#' closed form and does not depend on the seed.
+#' rejection rate is 0 instead of about 4%. The derandomized rule draws its
+#' \code{B} perturbations from the same seed, so the same holds for it.
 #'
 #' @references
 #' \insertRef{MassacciEtAl2026}{spantest}
@@ -108,11 +106,11 @@
 #'
 #' @family Alpha Spanning Tests
 #'
-#' @importFrom stats pnorm qr qr.solve
+#' @importFrom stats rnorm
 #' @export
 span_mstv <- function(R1, R2, control = list()) {
 
-  con <- list(nu = 4, tau = 0.05, B = NULL, seed = 123L)
+  con <- list(nu = 5, tau = 0.05, B = NULL, seed = 123L)
   con[names(control)] <- control
   stopifnot(
     "nu must be a single number >= 4" =
@@ -121,7 +119,10 @@ span_mstv <- function(R1, R2, control = list()) {
       length(con$tau) == 1L && is.finite(con$tau) && con$tau > 0 && con$tau < 1,
     "seed must be a single whole number" =
       length(con$seed) == 1L && is.finite(con$seed) &&
-      isTRUE(all.equal(con$seed, round(con$seed)))
+      isTRUE(all.equal(con$seed, round(con$seed))),
+    "B must be NULL or a single whole number >= 1" =
+      is.null(con$B) || (length(con$B) == 1L && is.finite(con$B) && con$B >= 1 &&
+                         isTRUE(all.equal(con$B, round(con$B))))
   )
 
   R1 <- as.matrix(R1)
@@ -132,7 +133,7 @@ span_mstv <- function(R1, R2, control = list()) {
   stopifnot("R1 and R2 must have the same number of rows" = nrow(R1) == Tn)
 
   na_out <- list(pval = NA_real_, stat = NA_real_, H0 = "alpha = 0",
-                 crit = NA_real_, Q = NA_real_, logQ = NA_real_,
+                 crit = NA_real_, Q = NA_real_,
                  reject = NA, nu = con$nu, B = NA_integer_)
 
   # The reference distribution is the Gumbel limit of the maximum of N normals.
@@ -165,35 +166,32 @@ span_mstv <- function(R1, R2, control = list()) {
   aN <- bN / (1 + bN^2)
   cr <- bN - aN * log(-log(1 - con$tau))
 
-  # The one-shot statistic is one realisation of a randomized test, so the draw
-  # is seeded; the caller's stream is restored so that anything run afterwards --
-  # in particular the sign-flip tests of the simulation study -- is unaffected.
+  B <- if (is.null(con$B)) max(1L, as.integer(floor(log(N)^2))) else as.integer(con$B)
+
+  # Both procedures are randomized, so the draws are seeded: one for the one-shot
+  # test, then B for the derandomized rule, each a block of N normals as in the
+  # authors' code. The caller's stream is restored so that anything run afterwards
+  # -- in particular the sign-flip tests of the simulation study -- is unaffected.
   has_seed <- exists(".Random.seed", envir = globalenv(), inherits = FALSE)
   if (has_seed) old_seed <- get(".Random.seed", envir = globalenv())
   set.seed(as.integer(con$seed))
-  Z <- max(psi + stats::rnorm(N))
+  Z  <- max(psi + stats::rnorm(N))
+  Zb <- apply(psi + matrix(stats::rnorm(N * B), N, B), 2L, max)
   if (has_seed) {
     assign(".Random.seed", old_seed, envir = globalenv())
   } else {
     rm(".Random.seed", envir = globalenv())
   }
 
-  # Derandomization in closed form. The perturbations are independent across
-  # assets and of the sample, so conditionally on the data
-  #   P(max_i (psi_i + w_i) <= c) = prod_i Phi(c - psi_i),
-  # which is the B -> infinity limit of the share of replications that do not
-  # reject. Accumulated on the log scale: the product runs over N terms and
-  # underflows to exactly zero well before its logarithm ceases to be informative.
-  B    <- if (is.null(con$B)) max(1L, as.integer(floor(log(N)^2))) else as.integer(con$B)
-  logQ <- sum(stats::pnorm(cr - psi, log.p = TRUE))
-  Q    <- exp(logQ)
+  # Derandomization as in the authors' code: the share of the B draws that do not
+  # reject, against the threshold (1 - tau) - B^(-1/4)
+  Q <- mean(Zb <= cr)
 
   list(pval   = as.numeric(1 - exp(-exp(-(Z - bN) / aN))),
        stat   = as.numeric(Z),
        H0     = "alpha = 0",
        crit   = as.numeric(cr),
        Q      = as.numeric(Q),
-       logQ   = as.numeric(logQ),
        reject = isTRUE(Q < (1 - con$tau) - B^(-1 / 4)),
        nu     = con$nu,
        B      = B)

@@ -14,16 +14,16 @@ span_mstv(R1, R2, control = list())
 \item{control}{Optional list:
 \describe{
 \item{\code{nu}}{Number of finite moments the data are assumed to admit,
-\eqn{\nu \ge 4}; default \code{4}. See \sQuote{Choosing nu}.}
+\eqn{\nu \ge 4}; default \code{5}, the value of the authors' simulations.
+See \sQuote{Choosing nu}.}
 \item{\code{tau}}{Nominal level at which the derandomized rule decides;
 default \code{0.05}. It does not affect \code{pval}.}
-\item{\code{B}}{Number of replications the derandomized threshold is built
-for; default \code{floor(log(N)^2)}, their guideline. The replications
-themselves are not simulated (see \sQuote{Details}).}
-\item{\code{seed}}{Seed of the single perturbation draw behind \code{stat}
-and \code{pval}; default \code{123}. The caller's RNG state is restored.
-A simulation must pass a different seed in each replication; see
-\sQuote{Simulations}.}
+\item{\code{B}}{Number of perturbation draws of the derandomized rule;
+default \code{floor(log(N)^2)}, their guideline.}
+\item{\code{seed}}{Seed of the perturbation draws: first the one behind
+\code{stat} and \code{pval}, then the \code{B} draws of the derandomized
+rule; default \code{123}. The caller's RNG state is restored. A simulation
+must pass a different seed in each replication; see \sQuote{Simulations}.}
 }}
 }
 \value{
@@ -33,8 +33,8 @@ A named list with components:
 \item{\code{stat}}{The one-shot statistic \eqn{Z_{N,T}}.}
 \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
 \item{\code{crit}}{Critical value \eqn{c_\tau} of the one-shot test.}
-\item{\code{Q}}{Derandomized quantity \eqn{Q_{N,T,\infty}(\tau)}, in closed form.}
-\item{\code{logQ}}{Its logarithm, which stays finite when \code{Q} underflows.}
+\item{\code{Q}}{Derandomized quantity \eqn{Q_{N,T,B}(\tau)}: the share of the
+\code{B} perturbation draws whose statistic does not exceed \code{crit}.}
 \item{\code{reject}}{Decision of the derandomized rule: \code{TRUE} when
 \code{Q < (1 - tau) - B^(-1/4)}.}
 \item{\code{nu}, \code{B}}{The settings used.}
@@ -69,15 +69,12 @@ applying the one-shot test to the same data can reach different conclusions.
 Their remedy is to repeat the perturbation \eqn{B} times and record the share
 \eqn{Q_{N,T,B}(\tau)} of replications that do not reject, then decide against
 the null when that share falls below \eqn{(1-\tau) - f(B)} with
-\eqn{f(B) = B^{-1/4}}. We evaluate the share exactly rather than by
-simulation: the perturbations are independent of each other and of the data,
-so conditionally on the sample
-\deqn{Q_{N,T,\infty}(\tau) = \prod_{i=1}^{N} \Phi(c_\tau - \psi_i),}
-computed here on the log scale. This is the \eqn{B \to \infty} limit of their
-average, so it removes the simulation error and the residual dependence on the
-draws while leaving the rule itself untouched; \eqn{B} still enters through
-the threshold \eqn{f(B)}. It also costs one pass over the cross-section
-instead of \eqn{B} regressions.
+\eqn{f(B) = B^{-1/4}}. As in the authors' replication code, the share is
+simulated with \eqn{B = \lfloor (\log N)^2 \rfloor} draws by default, so it is
+a multiple of \eqn{1/B} and the decision depends on the draws. Up to version
+1.4-2 the share was evaluated in closed form, as its \eqn{B \to \infty} limit
+\eqn{\prod_{i} \Phi(c_\tau - \psi_i)}; that limit is a different rule in
+practice, since with \eqn{B} between 15 and 50 the simulated share is coarse.
 
 The Gumbel limit is an approximation in \eqn{N}, and a poor one when \eqn{N}
 is small: at \eqn{N = 2} the one-shot test rejects about a quarter of the time
@@ -91,9 +88,10 @@ operate.
 exponent \eqn{\nu/2}; the theory needs \eqn{\nu \ge 4} and the admissible
 growth of \eqn{N} relative to \eqn{T} widens with it. It can be estimated with
 a tail-index estimator, or bounded below by testing \eqn{E|y_{i,t}|^{\nu_0}}
-for a candidate \eqn{\nu_0}. The default here is the smallest value the theory
-allows, \eqn{\nu = 4}, which is what the authors recommend when \eqn{T} is too
-short for reliable tail inference; their simulations use \eqn{\nu = 5}.
+for a candidate \eqn{\nu_0}. The default here is \eqn{\nu = 5}, the value of
+the authors' simulations; their empirical application reports \eqn{\nu = 4} and
+\eqn{\nu = 5}. A smaller \eqn{\nu} makes the test more liberal. Up to version
+1.4-2 the default was 4.
 }
 
 \section{Simulations}{
@@ -107,8 +105,8 @@ draw. Under the null at small \eqn{K} the \eqn{\psi_i} are close to zero and
 the statistic is essentially \eqn{\max_i \omega_i}, so that rate is near 0 or
 near 1 whatever the data: with the default seed and \eqn{N = 1000},
 \eqn{\max_i \omega_i = 3.24} against a critical value of 3.98, and the
-rejection rate is 0 instead of about 4\%. The derandomized rule is computed in
-closed form and does not depend on the seed.
+rejection rate is 0 instead of about 4\%. The derandomized rule draws its
+\code{B} perturbations from the same seed, so the same holds for it.
 }
 
 \examples{
