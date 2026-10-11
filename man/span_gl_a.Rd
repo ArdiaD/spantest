@@ -21,9 +21,11 @@ span_gl_a(R1, R2, control = list())
 \value{
 A list with components:
 \describe{
-\item{\code{pval_LMC}}{Least-Favorable MC p-value.}
-\item{\code{pval_BMC}}{Balanced MC p-value.}
-\item{\code{stat}}{Observed \eqn{F_{\max}} statistic.}
+\item{\code{pval_LMC}}{Local Monte Carlo p-value, the liberal one: an acceptance is read off it.}
+\item{\code{pval_BMC}}{Bounds Monte Carlo p-value, the conservative one: a rejection is read off it.}
+\item{\code{stat}}{Observed \eqn{F_{\max}} statistic: the largest asset-level ratio
+\eqn{(SSR_r - SSR_u)/SSR_u}. The usual F form multiplies it by a positive constant,
+which leaves the ranks, the p-values and the decisions unchanged.}
 \item{\code{Decisions}}{Decision code: \code{1} = Accept, \code{0} = Reject, \code{NA} = Inconclusive.}
 \item{\code{Decisions_string}}{Text label: \code{"Accept"}, \code{"Reject"}, or \code{"Inconclusive"}.}
 \item{\code{H0}}{Null hypothesis description, \code{"alpha = 0"}.}
@@ -33,8 +35,8 @@ A list with components:
 Tests the null \eqn{H_0:\ \alpha = 0} that benchmark assets span the mean
 (intercepts) of the test assets. Following Gungor & Luger (2016), the
 procedure uses a Monte Carlo (MC) test based on an \eqn{F_{\max}} statistic
-with residual sign-flip simulations, yielding Least-Favorable (LMC) and
-Balanced (BMC) MC p-values and a three-way decision rule.
+with residual sign-flip simulations, yielding local (LMC) and
+bounds (BMC) Monte Carlo p-values and a three-way decision rule.
 }
 \details{
 Accept if \code{pval_LMC > alpha}; Reject if \code{pval_BMC <= alpha};

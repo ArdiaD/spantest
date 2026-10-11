@@ -36,6 +36,13 @@ test_that("f_cauchypv returns the common value when all p-values are equal", {
   expect_equal(spantest:::f_cauchypv(rep(0.8, 3)), 0.8, tolerance = 1e-8)
 })
 
+test_that("f_cauchypv replaces a p-value of one by 1 - 1e-12, as the paper states", {
+  expect_equal(spantest:::f_cauchypv(c(1e-14, 1)), spantest:::f_cauchypv(c(1e-14, 1 - 1e-12)))
+  expect_lt(spantest:::f_cauchypv(c(1e-14, 1)), 1e-13)     # was 1 up to 1.4-3
+  p <- c(0.01, 0.3, 0.999999)                               # values below one are untouched
+  expect_identical(spantest:::f_cauchypv(p), 0.5 - atan(mean(tan((0.5 - p) * pi))) / pi)
+})
+
 test_that("f_rsstd is zero-mean, unit-variance, and skews with xi", {
   set.seed(1)
   x <- spantest:::f_rsstd(2e5, nu = 6, xi = 0.9)   # xi < 1 => left-skewed

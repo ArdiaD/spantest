@@ -90,7 +90,10 @@
 #'   twelve names. Names are preferred: they say which cell of the
 #'   innovation-by-dynamics grid is meant, whereas the number must be looked up.
 #'   Numbers remain accepted so existing scripts and stored results keep working;
-#'   see \code{\link{span_dgp_table}()} for the correspondence. Setting \code{dgp}
+#'   see \code{\link{span_dgp_table}()} for the correspondence. The preset numbers
+#'   are not the DGP numbers of Ardia and Sessinou: presets 7--9 are AR-GARCH and
+#'   10--12 are AR, where the paper's DGP7--9 are AR and DGP10--12 AR-GARCH. Pass
+#'   names to reproduce the paper. Setting \code{dgp}
 #'   overrides \code{innovation}/\code{dynamics}/\code{df}/\code{xi}/
 #'   \code{standardize}.
 #' @param gamma Optional pervasive common component in the idiosyncratic terms:

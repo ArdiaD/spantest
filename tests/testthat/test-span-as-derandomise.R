@@ -47,6 +47,10 @@ test_that("control validation rejects a non-integer seed", {
 test_that("degenerate inputs return NA rather than NaN or an error", {
   expect_true(is.na(spantest:::f_cauchypv(numeric(0))))     # every asset missing
   expect_false(is.nan(spantest:::f_cauchypv(numeric(0))))
+  # a test asset without a p-value is left out, and span_as() says so
+  set.seed(1)
+  x0 <- matrix(rnorm(500), 250, 2); y0 <- matrix(rnorm(1000), 250, 4); y0[, 2] <- 0
+  expect_warning(span_as(x0, y0), "1 of 4 test assets")
   # singular benchmark: GL now matches the package's NA convention
   set.seed(13)
   x <- matrix(rnorm(100), 100, 1); x <- cbind(x, x)         # collinear

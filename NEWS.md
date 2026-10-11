@@ -1,3 +1,18 @@
+# Changes in Version 1.4-4 (DA)
+- The Cauchy combination replaces a p-value equal to one by 1 - 1e-12, as the paper
+  states (Section 3.1). An exact one, a null event for continuous data, otherwise
+  contributes tan(-pi/2) = -1.63e16 and outweighs any small p-value: p = (1e-14, 1)
+  combined to 1, and now to 2e-14. Values below one are unchanged, so the result of
+  any data set without an exact one is unchanged bit for bit.
+- span_as() warns when some test assets have no p-value (NA) and are left out of the
+  combination, with their number. They were dropped silently.
+- span_gl_a(), span_gl_ad(): pval_LMC is the local Monte Carlo p-value and pval_BMC
+  the bounds Monte Carlo p-value of Gungor and Luger (2016); the documentation called
+  them "Least-Favorable" and "Balanced". stat is the largest asset-level ratio
+  (SSR_r - SSR_u)/SSR_u, without the constant of the F form.
+- span_simulate(): the documentation says that the preset numbers are not the paper's
+  DGP numbers (the AR and AR-GARCH blocks are swapped), and that names reproduce it.
+
 # Changes in Version 1.4-3 (DA)
 - span_as(): at L > 0 the multiplier weights are now drawn per statistic: an
   independent T x N matrix for the alpha scores and another for the delta

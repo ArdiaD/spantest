@@ -33,16 +33,17 @@ f_ranklex <- function(x, uu) {
 
 # Cauchy combination of p-values, valid under arbitrary dependence.
 #
-# Note on extremes: p = 0 and p = 1 do NOT produce +/-Inf here, because pi/2 is
-# not exactly representable in double precision -- tan((0.5 - 0) * pi) is
-# 1.63e16, finite. The combination therefore saturates rather than overflowing,
-# and a mixed 0/1 input returns 0.5 rather than NaN.
+# A p-value equal to one, a null event for continuous data, is replaced by 1 - 1e-12, as in
+# the paper (Section 3.1): otherwise tan(-pi/2) = -1.63e16 outweighs any small p-value.
+# p = 0 gives tan(pi/2) = 1.63e16, finite (pi/2 is not exactly representable), so the
+# combination saturates rather than overflowing.
 #
 # Empty input is reachable: callers pass na.omit(<per-asset p-values>), which is
 # length zero when every asset is missing. mean(numeric(0)) is NaN, so without
 # the guard the function would return a silent NaN where NA is meant.
 f_cauchypv <- function(p) {
   if (!length(p)) return(NA_real_)
+  p[p >= 1] <- 1 - 1e-12
   out <- 0.5 - atan(mean(tan((0.5 - p) * pi))) / pi
   return(out)
 }

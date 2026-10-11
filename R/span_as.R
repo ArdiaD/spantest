@@ -321,6 +321,10 @@ span_as <- function(bench, test, control = list()) {
   combined_results <- vapply(template_names,
                              function(nm) f_cauchypv(na.omit(pv[[nm]])),
                              numeric(1))
+  n_na <- max(vapply(template_names, function(nm) sum(is.na(pv[[nm]])), numeric(1)))
+  if (n_na > 0)
+    warning(sprintf("span_as(): %d of %d test assets have no p-value and are left out of the combination.",
+                    as.integer(n_na), ncol(test)), call. = FALSE)
 
   return(as.list(combined_results))
 }
